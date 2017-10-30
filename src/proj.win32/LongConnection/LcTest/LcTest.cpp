@@ -1,0 +1,61 @@
+// LcTest.cpp : 定义控制台应用程序的入口点。
+//
+
+#include "stdafx.h"
+#include "LongConnection.h"
+#include "VSBridge.h"
+#include <string>
+#include "wrap/timer.h"
+#include <memory>
+
+std::string HOST = "123.206.229.213";
+short PORT = 27710;
+
+
+int _tmain(int argc, _TCHAR* argv[])
+{
+	LCSetResponse(VSBridge::getInstance());
+	LCStartClient();
+	LCConnect(HOST.c_str(), PORT, 3);
+
+	getchar();
+	LCStopClient(true);
+
+	//比较DataBlock和DataBlockLocal的性能差异
+	std::shared_ptr<char> pBuf(new char[65535]);
+	memset(pBuf.get(), '9', 65535);
+	PreciseTimer timer;
+	printf("测试开始！！！\n");
+
+	timer.start();
+	NetworkUtil::DataBlock data1(65535);
+	timer.stop();
+	printf("DataBlock 构造函数执行 %lf 微秒\n", timer.getElapsedTimeInMicroSec());
+
+	timer.start();
+	NetworkUtil::DataBlockLocal<> data2;//需要有参数()
+	NetworkUtil::DataBlockLocal65535 data3;
+	timer.stop();
+	printf("DataBlockLocal 构造函数执行 %lf 微秒\n", timer.getElapsedTimeInMicroSec());
+	
+	timer.start();
+	data1.append(pBuf.get(), 65535);
+	data1.append(pBuf.get(), 65535);
+	data1.append(pBuf.get(), 65535);
+	timer.stop();
+	printf("DataBlock append函数执行 %lf 微秒\n", timer.getLastElapsedTimeInMicroSec());
+
+	timer.start();
+	data2.append(pBuf.get(), 65535);
+	data2.append(pBuf.get(), 65535);
+	data2.append(pBuf.get(), 65535);
+	timer.stop();
+	printf("DataBlockLocal append函数执行 %lf 微秒\n", timer.getLastElapsedTimeInMicroSec());
+
+	printf("测试结束！！！\n");
+
+	getchar();
+
+	return 0;
+}
+

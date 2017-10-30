@@ -1,0 +1,546 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Classes">
+      <UniqueIdentifier>{94fd1343-b766-450d-8021-24412003b3c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\app">
+      <UniqueIdentifier>{22332e2b-2081-4c33-989e-896dd7c99fad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\bridge">
+      <UniqueIdentifier>{1f371683-7886-4990-9e8a-53f92b21f07c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\charset">
+      <UniqueIdentifier>{8408ec7a-db19-48e6-ac5a-7c1de5b60fe9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\wrap">
+      <UniqueIdentifier>{7b80dc95-9a8a-48e1-8949-963b8a5e7930}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\zip">
+      <UniqueIdentifier>{2a6fae9a-7a71-4f08-9f5d-c137205b3ac7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\zlib">
+      <UniqueIdentifier>{8d6b81ca-287e-4da2-a038-073987afed83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\jni">
+      <UniqueIdentifier>{fffb5782-fae0-4f4c-b574-71dc16ab681e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\rapidjson">
+      <UniqueIdentifier>{a9c382f3-5af4-4196-ad20-d535ea18dc5f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\app\NetApp.h">
+      <Filter>Classes\app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\app\NetInformer.h">
+      <Filter>Classes\app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\app\RequestBase.h">
+      <Filter>Classes\app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\app\ReserveData.h">
+      <Filter>Classes\app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\app\ResponseBase.h">
+      <Filter>Classes\app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\app\Tunnel.h">
+      <Filter>Classes\app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\app\DataDecoderLobby.h">
+      <Filter>Classes\app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\app\DataDecoderRoom.h">
+      <Filter>Classes\app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\bridge\NativeBuffer.h">
+      <Filter>Classes\bridge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\bridge\SimpleJsBridge.h">
+      <Filter>Classes\bridge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\bridge\IIosBridge.h">
+      <Filter>Classes\bridge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\charset\Chinese.h">
+      <Filter>Classes\charset</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\charset\Utf.h">
+      <Filter>Classes\charset</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\charset\CharsetCodec.h">
+      <Filter>Classes\charset</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\zlib\gzguts.h">
+      <Filter>Classes\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\zlib\inffast.h">
+      <Filter>Classes\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\zlib\inffixed.h">
+      <Filter>Classes\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\zlib\inflate.h">
+      <Filter>Classes\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\zlib\inftrees.h">
+      <Filter>Classes\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\zlib\trees.h">
+      <Filter>Classes\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\zlib\zconf.h">
+      <Filter>Classes\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\zlib\zlib.h">
+      <Filter>Classes\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\zlib\zutil.h">
+      <Filter>Classes\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\zlib\crc32.h">
+      <Filter>Classes\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\zlib\deflate.h">
+      <Filter>Classes\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\zip\unzip.h">
+      <Filter>Classes\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\zip\zip.h">
+      <Filter>Classes\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\zip\crypt.h">
+      <Filter>Classes\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\zip\ioapi.h">
+      <Filter>Classes\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\wrap\config.h">
+      <Filter>Classes\wrap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\wrap\crypt.h">
+      <Filter>Classes\wrap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\wrap\event_posix.h">
+      <Filter>Classes\wrap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\wrap\event_win.h">
+      <Filter>Classes\wrap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\wrap\event_wrapper.h">
+      <Filter>Classes\wrap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\wrap\httpcontent.h">
+      <Filter>Classes\wrap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\wrap\jniloghelp.h">
+      <Filter>Classes\wrap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\wrap\md5.h">
+      <Filter>Classes\wrap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\wrap\reactor.h">
+      <Filter>Classes\wrap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\wrap\set_thread_name_win.h">
+      <Filter>Classes\wrap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\wrap\sleep.h">
+      <Filter>Classes\wrap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\wrap\thread_posix.h">
+      <Filter>Classes\wrap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\wrap\thread_win.h">
+      <Filter>Classes\wrap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\wrap\thread_wrapper.h">
+      <Filter>Classes\wrap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\wrap\typedefs.h">
+      <Filter>Classes\wrap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\wrap\aes.h">
+      <Filter>Classes\wrap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\LongConnection.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\protocol.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\simple_util_bridge_JsAndroidBridge.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\jni\JniHelper.h">
+      <Filter>Classes\jni</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\bridge\SimpleBridgeAndroid.h">
+      <Filter>Classes\bridge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\rapidjson\allocators.h">
+      <Filter>Classes\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\rapidjson\document.h">
+      <Filter>Classes\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\rapidjson\encodedstream.h">
+      <Filter>Classes\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\rapidjson\encodings.h">
+      <Filter>Classes\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\rapidjson\error\en.h">
+      <Filter>Classes\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\rapidjson\error\error.h">
+      <Filter>Classes\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\rapidjson\filereadstream.h">
+      <Filter>Classes\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\rapidjson\filewritestream.h">
+      <Filter>Classes\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\rapidjson\fwd.h">
+      <Filter>Classes\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\rapidjson\internal\biginteger.h">
+      <Filter>Classes\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\rapidjson\internal\diyfp.h">
+      <Filter>Classes\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\rapidjson\internal\dtoa.h">
+      <Filter>Classes\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\rapidjson\internal\ieee754.h">
+      <Filter>Classes\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\rapidjson\internal\itoa.h">
+      <Filter>Classes\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\rapidjson\internal\meta.h">
+      <Filter>Classes\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\rapidjson\internal\pow10.h">
+      <Filter>Classes\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\rapidjson\internal\regex.h">
+      <Filter>Classes\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\rapidjson\internal\stack.h">
+      <Filter>Classes\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\rapidjson\internal\strfunc.h">
+      <Filter>Classes\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\rapidjson\internal\strtod.h">
+      <Filter>Classes\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\rapidjson\internal\swap.h">
+      <Filter>Classes\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\rapidjson\istreamwrapper.h">
+      <Filter>Classes\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\rapidjson\memorybuffer.h">
+      <Filter>Classes\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\rapidjson\memorystream.h">
+      <Filter>Classes\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\rapidjson\msinttypes\inttypes.h">
+      <Filter>Classes\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\rapidjson\msinttypes\stdint.h">
+      <Filter>Classes\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\rapidjson\ostreamwrapper.h">
+      <Filter>Classes\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\rapidjson\pointer.h">
+      <Filter>Classes\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\rapidjson\prettywriter.h">
+      <Filter>Classes\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\rapidjson\rapidjson.h">
+      <Filter>Classes\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\rapidjson\reader.h">
+      <Filter>Classes\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\rapidjson\schema.h">
+      <Filter>Classes\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\rapidjson\stream.h">
+      <Filter>Classes\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\rapidjson\stringbuffer.h">
+      <Filter>Classes\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\rapidjson\writer.h">
+      <Filter>Classes\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\wrap\mutex_wrapper.h">
+      <Filter>Classes\wrap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\wrap\client_socket.h">
+      <Filter>Classes\wrap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\wrap\file_mgr.h">
+      <Filter>Classes\wrap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\wrap\byte_order.h">
+      <Filter>Classes\wrap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\wrap\counter.h">
+      <Filter>Classes\wrap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\wrap\data_block.h">
+      <Filter>Classes\wrap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\wrap\data_decoder.h">
+      <Filter>Classes\wrap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\wrap\event_handler.h">
+      <Filter>Classes\wrap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\wrap\http_download_mgr.h">
+      <Filter>Classes\wrap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\wrap\http_downtype.h">
+      <Filter>Classes\wrap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\wrap\rw_stream.h">
+      <Filter>Classes\wrap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\wrap\seq_map.h">
+      <Filter>Classes\wrap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\wrap\thread_informer.h">
+      <Filter>Classes\wrap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\wrap\thread_mgr.h">
+      <Filter>Classes\wrap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\wrap\http_download.h">
+      <Filter>Classes\wrap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\wrap\tm_seqmap.h">
+      <Filter>Classes\wrap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\wrap\timer.h">
+      <Filter>Classes\wrap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\bridge\SimpleBridge.h">
+      <Filter>Classes\bridge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\bridge\SimpleBridgeIos.h">
+      <Filter>Classes\bridge</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\app\NetInformer.cpp">
+      <Filter>Classes\app</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\app\RequestBase.cpp">
+      <Filter>Classes\app</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\app\Tunnel.cpp">
+      <Filter>Classes\app</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\app\DataDecoderLobby.cpp">
+      <Filter>Classes\app</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\app\DataDecoderRoom.cpp">
+      <Filter>Classes\app</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\app\NetApp.cpp">
+      <Filter>Classes\app</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\bridge\NativeBuffer.cpp">
+      <Filter>Classes\bridge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\bridge\SimpleJsBridge.cpp">
+      <Filter>Classes\bridge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\charset\Utf.cpp">
+      <Filter>Classes\charset</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\charset\CharsetCodec.cpp">
+      <Filter>Classes\charset</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\charset\Chinese.cpp">
+      <Filter>Classes\charset</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\zlib\gzclose.c">
+      <Filter>Classes\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\zlib\gzlib.c">
+      <Filter>Classes\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\zlib\gzread.c">
+      <Filter>Classes\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\zlib\gzwrite.c">
+      <Filter>Classes\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\zlib\infback.c">
+      <Filter>Classes\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\zlib\inffast.c">
+      <Filter>Classes\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\zlib\inflate.c">
+      <Filter>Classes\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\zlib\inftrees.c">
+      <Filter>Classes\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\zlib\trees.c">
+      <Filter>Classes\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\zlib\uncompr.c">
+      <Filter>Classes\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\zlib\zutil.c">
+      <Filter>Classes\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\zlib\adler32.c">
+      <Filter>Classes\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\zlib\compress.c">
+      <Filter>Classes\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\zlib\crc32.c">
+      <Filter>Classes\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\zlib\deflate.c">
+      <Filter>Classes\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\zip\unzip.c">
+      <Filter>Classes\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\zip\zip.c">
+      <Filter>Classes\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\zip\ioapi.c">
+      <Filter>Classes\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\wrap\crypt.cpp">
+      <Filter>Classes\wrap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\wrap\event.cpp">
+      <Filter>Classes\wrap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\wrap\httpcontent.cpp">
+      <Filter>Classes\wrap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\wrap\jniloghelp.cpp">
+      <Filter>Classes\wrap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\wrap\md5.cpp">
+      <Filter>Classes\wrap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\wrap\reactor.cpp">
+      <Filter>Classes\wrap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\wrap\sleep.cpp">
+      <Filter>Classes\wrap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\wrap\thread.cpp">
+      <Filter>Classes\wrap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\wrap\aes.cpp">
+      <Filter>Classes\wrap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\LongConnection.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\simple_util_bridge_JsAndroidBridge.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\jni\JniHelper.cpp">
+      <Filter>Classes\jni</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\bridge\SimpleBridgeAndroid.cpp">
+      <Filter>Classes\bridge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\wrap\mutex_wrapper.cpp">
+      <Filter>Classes\wrap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\wrap\client_socket.cpp">
+      <Filter>Classes\wrap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\wrap\file_mgr.cpp">
+      <Filter>Classes\wrap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\wrap\byte_order.cpp">
+      <Filter>Classes\wrap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\wrap\data_decoder.cpp">
+      <Filter>Classes\wrap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\wrap\event_handler.cpp">
+      <Filter>Classes\wrap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\wrap\http_download_mgr.cpp">
+      <Filter>Classes\wrap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\wrap\rw_stream.cpp">
+      <Filter>Classes\wrap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\wrap\seq_map.cpp">
+      <Filter>Classes\wrap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\wrap\thread_informer.cpp">
+      <Filter>Classes\wrap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\wrap\thread_mgr.cpp">
+      <Filter>Classes\wrap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\wrap\http_download.cpp">
+      <Filter>Classes\wrap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\wrap\timer.cpp">
+      <Filter>Classes\wrap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\bridge\SimpleBridge.cpp">
+      <Filter>Classes\bridge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\bridge\SimpleBridgeIos.cpp">
+      <Filter>Classes\bridge</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
