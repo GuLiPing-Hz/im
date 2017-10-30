@@ -10,8 +10,8 @@
 #include "WSProgressHUD.h"
 
 #define APPKEY @"4ed38057df363e8355229ec53687c549"
-#define HOST @"192.168.1.9"
-//#define HOST  @"123.206.229.213"
+//#define HOST @"192.168.1.9"
+#define HOST  @"123.206.229.213"
 #define PORT  27710
 
 #define UID1 @"1000001"
