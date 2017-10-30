@@ -25,13 +25,13 @@ void KeepLiveLobbyAndRoom() {
     if (15 < (time_new - time_old)) {
         time_old = time_new;
         //业务
-        if (NetApp::getInstance()->GetRoomTunnel()->IsTokenLogin()) {
+        if (NetApp::GetInstance()->getRoomTunnel()->IsTokenLogin()) {
             //Room服务器 心跳包
 // 			NetApp::getInstance()->postMessage((int)VATYPE_ROOMKEEPALIVE, NULL);
 // 			NetApp::getInstance()->GetInformer()->Inform();
         }
 
-        if (NetApp::getInstance()->GetLobbyTunnel()->IsTokenLogin()) {
+        if (NetApp::GetInstance()->getLobbyTunnel()->IsTokenLogin()) {
             //Lobby服务器 心跳包
 // 			NetApp::getInstance()->postMessage((int)VATYPE_LOBBYKEEPALIVE, NULL);
 // 			NetApp::getInstance()->GetInformer()->Inform();
@@ -39,7 +39,7 @@ void KeepLiveLobbyAndRoom() {
     }
 }
 
-NetApp *NetApp::getInstance() {
+NetApp *NetApp::GetInstance() {
     static NetApp ins;
     return &ins;
 }
@@ -70,7 +70,7 @@ NetApp::~NetApp() {
         delete m_pObjectCS;
 }
 
-void NetApp::SetToken(const char *token, unsigned int tokenlen) {
+void NetApp::setToken(const char *token, unsigned int tokenlen) {
     m_bIsAuth = true;
     memset(m_Token, 0, sizeof(m_Token));
     int len = min(sizeof(m_Token) - 1, tokenlen);
@@ -114,14 +114,10 @@ void NetApp::delTimeout(int seq) {
 void NetApp::onTimeout(NetworkUtil::ReserveData *data) {
     if (data) {
 		int seq = data->seq;
-
         if (data->serverid == eServerID::lobby) {//给对应的连接构造一条超时回调。
-			GetResponseHandler()->onLobbyMsg(data->type == NetworkUtil::ReserveData::TYPE_TIMEOUT
+			getResponseHandler()->onLobbyMsg(data->type == NetworkUtil::ReserveData::TYPE_TIMEOUT
 				? RESULT_TIMEOUT : RESULT_REQ_NOT_SEND, nullptr, 0, seq);
         }
-
-		free(data);
-		m_RDMap.del(seq);//移除
     }
 }
 
@@ -129,7 +125,7 @@ void NetApp::setHeartbeatFunc(NetworkUtil::RUNKEEPLIVE func) {
     m_Reactor.mFuncKeepLive = func;
 }
 
-bool NetApp::Start() {
+bool NetApp::start() {
     m_bIsAuth = false;
     int id = 0;
 
@@ -150,7 +146,7 @@ bool NetApp::Start() {
     return m_Reactor.run();
 }
 
-void NetApp::Stop() {
+void NetApp::stop() {
     m_Reactor.stop();
     m_Informer.unInit();
 }

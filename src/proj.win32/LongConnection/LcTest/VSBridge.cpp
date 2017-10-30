@@ -15,7 +15,7 @@ VSBridge::VSBridge(){
 VSBridge::~VSBridge() {
 }
 
-#define  APPKEY  "4ed38057df363e8355229ec53687c549"
+#define APPKEY  "4ed38057df363e8355229ec53687c549"
 #define UID1  "1000001"
 #define TOKEN1  "018f0be0cb075ee761cf8d44be2b287e"
 

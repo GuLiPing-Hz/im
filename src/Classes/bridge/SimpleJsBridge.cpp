@@ -253,7 +253,7 @@ void SimpleJsBridge::onLobbyTunnelConnectSuccess()//成功连接大厅服务器
 	callJsFromNative(GetStrFromRoot(paramRoot));
 
 	//启动心跳包
-	NetApp::getInstance()->setHeartbeatFunc([this]()->void{
+	NetApp::GetInstance()->setHeartbeatFunc([this]()->void{
 
 		//心跳包时间计数
 		static int time_old = 0;
@@ -263,7 +263,7 @@ void SimpleJsBridge::onLobbyTunnelConnectSuccess()//成功连接大厅服务器
 		{
 			time_old = time_new;
 
-			if (NetApp::getInstance()->GetLobbyTunnel()->isConnected()){
+			if (NetApp::GetInstance()->getLobbyTunnel()->isConnected()){
 				MAKE_PARAM_ROOT(NATIVE_2_JS_HEARTBEAT, 0, 0);
 				callJsFromNative(GetStrFromRoot(paramRoot));
 			}

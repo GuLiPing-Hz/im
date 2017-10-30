@@ -34,8 +34,6 @@ public:
 	virtual ~CThreadMgr(void);
 
 public:
-
-public:
 	//创建线程，指定优先级
 	bool createThread(const char* name = 0, eThreadPriority iPriority = kNormalPriority);
 	//资源回收

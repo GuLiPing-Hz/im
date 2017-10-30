@@ -11,7 +11,7 @@ int LobbyDataDecoder::onPackage(ClientSocketBase *pClient,const char* buf,unsign
 {
 	//LobbyTunnel *pLobbyTunnel = (LobbyTunnel*)pClient;
 
-	NetApp::getInstance()->GetResponseHandler()->onLobbyMsg(0, buf, buflen);
+	NetApp::GetInstance()->getResponseHandler()->onLobbyMsg(0, buf, buflen);
 
 	return 0;
 }

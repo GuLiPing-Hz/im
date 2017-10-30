@@ -27,7 +27,7 @@ private:
     virtual ~NetApp();
 
 public:
-    static NetApp *getInstance();
+    static NetApp *GetInstance();
 
     //NetworkUtil::MessageCenter
     virtual int getMessage(NetworkUtil::MSGINFO &msg);
@@ -42,27 +42,27 @@ public:
 
     void setHeartbeatFunc(NetworkUtil::RUNKEEPLIVE func);
 
-    bool Start();
+    bool start();
 
-    void Stop();
+    void stop();
 
-    LobbyTunnel *GetLobbyTunnel() { return &m_LobbyTunnel; }
+    LobbyTunnel *getLobbyTunnel() { return &m_LobbyTunnel; }
 
-    RoomTunnel *GetRoomTunnel() { return &m_RoomTunnel; }
+    RoomTunnel *getRoomTunnel() { return &m_RoomTunnel; }
 
-    void SetToken(const char *token, unsigned int tokenlen);
+    void setToken(const char *token, unsigned int tokenlen);
 
-    const char *GetToken() { return m_Token; }
+    const char *getToken() { return m_Token; }
 
-    unsigned int GetTokenlen() { return m_Tokenlen; }
+    unsigned int getTokenlen() { return m_Tokenlen; }
 
-    void SetMyIDx(int idx) { m_iMyIDx = idx; }
+    void setMyIDx(int idx) { m_iMyIDx = idx; }
 
-    const int GetMyIDx() { return m_iMyIDx; }
+    const int getMyIDx() { return m_iMyIDx; }
 
-    void SetResponseHandler(ResponseBase *pRb) { m_pResponse = pRb; }
+    void setResponseHandler(ResponseBase *pRb) { m_pResponse = pRb; }
 
-    ResponseBase *GetResponseHandler() { return m_pResponse; }
+    ResponseBase *getResponseHandler() { return m_pResponse; }
 
     //处理消息的发送与接收
     int postMessage(int serverId, NetworkUtil::ClientSocket *conn, int cmd, void *v, int seq) {
@@ -73,9 +73,9 @@ public:
     postMessage(int serverId, NetworkUtil::ClientSocket *conn, int cmd, void *v, int len, int seq,
                 bool back = true);
 
-    NetInformer *GetInformer() { return &m_Informer; }
+    NetInformer *getInformer() { return &m_Informer; }
 
-    inline bool IsAuth() { return m_bIsAuth; }
+    inline bool isAuth() { return m_bIsAuth; }
 
 private:
     CriticalSectionWrapper *m_pObjectCS;

@@ -45,36 +45,36 @@ bool Tunnel::SendCompressBuf(NetworkUtil::BinaryWriteStream &stream)
 
 bool Tunnel::onSocketConnect()
 {
-	if (NetApp::getInstance()->GetLobbyTunnel() == this)
-		NetApp::getInstance()->GetResponseHandler()->onLobbyTunnelConnectSuccess();
-	else if (NetApp::getInstance()->GetRoomTunnel() == this)
-		NetApp::getInstance()->GetResponseHandler()->onRoomTunnelConnectSuccess();
+	if (NetApp::GetInstance()->getLobbyTunnel() == this)
+		NetApp::GetInstance()->getResponseHandler()->onLobbyTunnelConnectSuccess();
+	else if (NetApp::GetInstance()->getRoomTunnel() == this)
+		NetApp::GetInstance()->getResponseHandler()->onRoomTunnelConnectSuccess();
 
 	return true;
 }
 
 void Tunnel::onSocketConnectTimeout()
 {
-	if (NetApp::getInstance()->GetLobbyTunnel() == this)
-		NetApp::getInstance()->GetResponseHandler()->onLobbyTunnelConnectTimeout();
-	else if (NetApp::getInstance()->GetRoomTunnel() == this)
-		NetApp::getInstance()->GetResponseHandler()->onRoomTunnelConnectTimeout();
+	if (NetApp::GetInstance()->getLobbyTunnel() == this)
+		NetApp::GetInstance()->getResponseHandler()->onLobbyTunnelConnectTimeout();
+	else if (NetApp::GetInstance()->getRoomTunnel() == this)
+		NetApp::GetInstance()->getResponseHandler()->onRoomTunnelConnectTimeout();
 }
 
 void Tunnel::onSocketConnectError(int errCode)
 {
-	if (NetApp::getInstance()->GetLobbyTunnel() == this)
-		NetApp::getInstance()->GetResponseHandler()->onLobbyTunnelConnectError(errCode);
-	else if (NetApp::getInstance()->GetRoomTunnel() == this)
-		NetApp::getInstance()->GetResponseHandler()->onRoomTunnelConnectError(errCode);
+	if (NetApp::GetInstance()->getLobbyTunnel() == this)
+		NetApp::GetInstance()->getResponseHandler()->onLobbyTunnelConnectError(errCode);
+	else if (NetApp::GetInstance()->getRoomTunnel() == this)
+		NetApp::GetInstance()->getResponseHandler()->onRoomTunnelConnectError(errCode);
 }
 
 void Tunnel::onSocketClose()
 {
-	if (NetApp::getInstance()->GetLobbyTunnel() == this)
-		NetApp::getInstance()->GetResponseHandler()->onLobbyTunnelClose();
-	else if (NetApp::getInstance()->GetRoomTunnel() == this)
-		NetApp::getInstance()->GetResponseHandler()->onRoomTunnelClose();
+	if (NetApp::GetInstance()->getLobbyTunnel() == this)
+		NetApp::GetInstance()->getResponseHandler()->onLobbyTunnelClose();
+	else if (NetApp::GetInstance()->getRoomTunnel() == this)
+		NetApp::GetInstance()->getResponseHandler()->onRoomTunnelClose();
 }
 
 void Tunnel::onSocketRecvError(int errCode)
@@ -91,8 +91,8 @@ void Tunnel::onSocketSendError(int errCode)
 
 void Tunnel::onNetLevelError(int errCode)
 {
-	if (NetApp::getInstance()->GetLobbyTunnel() == this)
-		NetApp::getInstance()->GetResponseHandler()->onLobbyTunnelError(errCode);
-	else if (NetApp::getInstance()->GetRoomTunnel() == this)
-		NetApp::getInstance()->GetResponseHandler()->onRoomTunnelError(errCode);
+	if (NetApp::GetInstance()->getLobbyTunnel() == this)
+		NetApp::GetInstance()->getResponseHandler()->onLobbyTunnelError(errCode);
+	else if (NetApp::GetInstance()->getRoomTunnel() == this)
+		NetApp::GetInstance()->getResponseHandler()->onRoomTunnelError(errCode);
 }

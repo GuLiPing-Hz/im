@@ -19,13 +19,13 @@ ThreadWrapper* handleNetThread = NULL;
 
 bool RunClientThreadFunc(void* lpParam)
 {
-	return NetApp::getInstance()->Start();
+	return NetApp::GetInstance()->start();
 }
 
 void OnThreadStart(unsigned int threadid)
 {
 	//保存线程ID到g_NetApp中
-	NetApp::getInstance()->m_nThreadId = threadid;
+	NetApp::GetInstance()->m_nThreadId = threadid;
     
 #if defined(NETUTIL_ANDROID) && !defined(COCOS_PROJECT)
     cocos2d::JniHelper::attachCurThread(threadid);
@@ -40,7 +40,7 @@ void OnTreadEnd(unsigned int threadid)
 }
 
 void RequestBase::setResponse(ResponseBase* resp){
-	NetApp::getInstance()->SetResponseHandler(resp);
+	NetApp::GetInstance()->setResponseHandler(resp);
 }
 
 /************************************************************************/
@@ -77,7 +77,7 @@ int RequestBase::startClient()
 
 void RequestBase::stopClient(bool finish)
 {
-	NetApp::getInstance()->Stop();
+	NetApp::GetInstance()->stop();
 	if(handleNetThread)
 	{
 		if(!handleNetThread->WaitFor(3000))
@@ -96,36 +96,36 @@ void RequestBase::stopClient(bool finish)
 
 const char* RequestBase::getToken()
 {
-	return NetApp::getInstance()->GetToken();
+	return NetApp::GetInstance()->getToken();
 }
 
 unsigned int RequestBase::getTokenlen()
 {
-	return NetApp::getInstance()->GetTokenlen();
+	return NetApp::GetInstance()->getTokenlen();
 }
 
 //大厅是否连接
 bool RequestBase::isConnectLobby()
 {
-	return NetApp::getInstance()->GetLobbyTunnel()->isConnected();
+	return NetApp::GetInstance()->getLobbyTunnel()->isConnected();
 }
 
 //房间是否连接
 bool RequestBase::isConnectRoom()
 {
-	return NetApp::getInstance()->GetRoomTunnel()->isConnected();
+	return NetApp::GetInstance()->getRoomTunnel()->isConnected();
 }
 
 //大厅是否token
 bool RequestBase::isTokenLoginLobby()
 {
-	return NetApp::getInstance()->GetLobbyTunnel()->IsTokenLogin();
+	return NetApp::GetInstance()->getLobbyTunnel()->IsTokenLogin();
 }
 
 //房间是否token
 bool RequestBase::isTokenLoginRoom()
 {
-	return NetApp::getInstance()->GetRoomTunnel()->IsTokenLogin();
+	return NetApp::GetInstance()->getRoomTunnel()->IsTokenLogin();
 }
 
 int RequestBase::connectLobby(const char* host,short port,int timeout)
@@ -147,7 +147,7 @@ int RequestBase::connectLobby(const char* host,short port,int timeout)
 	strncpy(data->ip, host, sizeof(data->ip));
 	data->port = port;
 	data->timeout = timeout;
-	int ret = NetApp::getInstance()->postMessage(eServerID::none, nullptr, MSG_CONNECT_LOBBY, data, 0);
+	int ret = NetApp::GetInstance()->postMessage(eServerID::none, nullptr, MSG_CONNECT_LOBBY, data, 0);
 	if (ret == -1){
 		free(data);
 		return -1;
@@ -156,7 +156,7 @@ int RequestBase::connectLobby(const char* host,short port,int timeout)
 }
 int RequestBase::disConnectLobby()
 {
-	return NetApp::getInstance()->postMessage(eServerID::none, nullptr, MSG_DISCONNECT_LOBBY, nullptr, 0);
+	return NetApp::GetInstance()->postMessage(eServerID::none, nullptr, MSG_DISCONNECT_LOBBY, nullptr, 0);
 }
 int RequestBase::connectRoom(const char* host,short port,int type,int timeout)
 {
@@ -175,7 +175,7 @@ int RequestBase::disConnectRoom()
 
 void RequestBase::setSeqIsBack(int seq)
 {
-	NetApp::getInstance()->delTimeout(seq);
+	NetApp::GetInstance()->delTimeout(seq);
 }
 
 int RequestBase::sendMsgToLobby(const char* msg, unsigned int len, int seq, bool needBack){
@@ -186,7 +186,7 @@ int RequestBase::sendMsgToLobby(const char* msg, unsigned int len, int seq, bool
 	if (!data)
 		return -1;
 	memcpy(data, msg, len);
-	int ret = NetApp::getInstance()->postMessage(eServerID::lobby, NetApp::getInstance()->GetLobbyTunnel()
+	int ret = NetApp::GetInstance()->postMessage(eServerID::lobby, NetApp::GetInstance()->getLobbyTunnel()
 		, NetworkUtil::MSG_SEND_DATA, data, len, seq, needBack);
 	if (ret == -1){
 		free(data);

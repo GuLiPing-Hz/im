@@ -51,20 +51,4 @@ namespace NetworkUtil
 		SeqMap<T,Map>::Clear();
 	}
 	*/
-
-	template<typename KeyT,typename ValueT>
-	KVMap<KeyT,ValueT>::KVMap(bool threadSafe)
-	:_csw(NULL)
-	,_safe(threadSafe)
-	{
-		if(_safe)
-			_csw = CriticalSectionWrapper::CreateCriticalSection();
-	}
-
-	template<typename KeyT,typename ValueT>
-		KVMap<KeyT,ValueT>::~KVMap()
-	{
-		if(_csw)
-			delete _csw;
-	}
 }

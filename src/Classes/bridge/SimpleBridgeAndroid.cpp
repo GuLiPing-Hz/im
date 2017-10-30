@@ -20,7 +20,7 @@ SimpleBridgeAndroid::~SimpleBridgeAndroid() {
 }
 
 void SimpleBridgeAndroid::callNative(const std::string &method, const std::string &param) {
-   cocos2d::JniHelper::callStaticStringMethod(NetApp::getInstance()->m_nThreadId,
+   cocos2d::JniHelper::callStaticStringMethod(NetApp::GetInstance()->m_nThreadId,
                                               "simple.util.bridge.JsAndroidBridge", "callNative",
                                               method, param);
 

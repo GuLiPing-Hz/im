@@ -36,7 +36,6 @@ protected:
 public:
 	virtual int callByNative(const std::string& param);
 
-
 	//ResponseBase
 	virtual void onLobbyTunnelConnectSuccess();		//成功连接大厅服务器
 
@@ -53,7 +52,7 @@ public:
 	virtual void onLobbyTunnelError(const int code);
 
 	/*
-	@param code: 0 正常返回，-9999超时
+	@param code: 0 正常返回，RESULT_TIMEOUT:超时
 	@param cmd: 如果请求超时，那么对应的请求seq会传过来
 	*/
 	virtual void onLobbyMsg(const int code, const char* msg, const unsigned int len, const int seq = 0);

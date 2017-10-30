@@ -22,15 +22,20 @@ namespace NetworkUtil{
 		{}
 
 		virtual void onTimeOut(){
-			std::map<int, ReserveData*> RDMap = *getMap();
-			std::map<int, ReserveData*>::iterator it;
+			CriticalSectionScoped lock(mCS);//安全锁
 
-			ReserveData *pRD;
-			for (it = RDMap.begin(); it != RDMap.end(); it++)
+			SeqMap_ThreadSafe<ReserveData*>::iterator it;
+			for (it = begin(); it != end();)
 			{
-				pRD = it->second;
-				if ((time(NULL) - pRD->t) > pRD->timeout)//超时，没响应
+				ReserveData* pRD = it->second;
+				if (pRD && ((time(NULL) - pRD->t) > pRD->timeout)){//超时，没响应
 					pRD->OnTimeOut();
+					free(pRD);//释放内存
+					it = del(it);//移除
+				}
+				else{
+					it++;
+				}
 			}
 		}
 	};

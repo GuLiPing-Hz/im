@@ -105,20 +105,20 @@ public class MainActivity extends AppCompatActivity {
         LCRequest request = LCRequest.sayTo(type, UID0, to, content, "", new LCResponse() {
             @Override
             public void onSuccess(Bundle bundle) {
-                Toast.makeText(MainActivity.this, "发言成功", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MainActivity.this, "发言成功", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onFailed(int i, String s) {
                 Log.e(Tag, "失败,请求内容是:(code=" + i + ")" + s);
-                Toast.makeText(MainActivity.this, "发言失败 code =" + i, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MainActivity.this, "发言失败 code =" + i, Toast.LENGTH_SHORT).show();
             }
         });
 
         if (request != null) {
-            Toast.makeText(this, "正在发言...", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "正在发言...", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(this, "发言请求失败...", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "发言请求失败...", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -128,31 +128,31 @@ public class MainActivity extends AppCompatActivity {
             public void onSuccess(Bundle bundle) {
                 Toast.makeText(MainActivity.this, "进入房间成功", Toast.LENGTH_SHORT).show();
 
-                sayTo(LConnection.TYPE_TEAM,UID1,"<gpmsg from=\"3001041\" dateline=\"2017-10-27 11:25:13\" id=\"30010411509074713903\" type=\"1\" to=\"3002167\"><send avatar=\"http://eaglelive-10077467.image.myqcloud.com/31cc83ff-2ef6-43fe-9b96-5d5df6ce66dc?imageView2/1/w/260/h/260 \" uid=\"3001041\" nickname=\"Erennnnnnnnnnnnn\" level=\"100\" grade=\"0\" role_id=\"1\" icon=\"0\"/><gift image=\"\" id=\"\" mode=\"\" number=\"\" name=\"\"/><praise num=\"\"/>" + "<action avatar=\"\" gender=\"\" uid=\"\" nickname=\"\" age=\"\" total_num=\"\" role_id=\"\" type=\"\"/><msg file_location=\"\" file=\"\" body=\"是\"/></gpmsg>");
+                //sayTo(LConnection.TYPE_TEAM,UID1,"<gpmsg from=\"3001041\" dateline=\"2017-10-27 11:25:13\" id=\"30010411509074713903\" type=\"1\" to=\"3002167\"><send avatar=\"http://eaglelive-10077467.image.myqcloud.com/31cc83ff-2ef6-43fe-9b96-5d5df6ce66dc?imageView2/1/w/260/h/260 \" uid=\"3001041\" nickname=\"Erennnnnnnnnnnnn\" level=\"100\" grade=\"0\" role_id=\"1\" icon=\"0\"/><gift image=\"\" id=\"\" mode=\"\" number=\"\" name=\"\"/><praise num=\"\"/>" + "<action avatar=\"\" gender=\"\" uid=\"\" nickname=\"\" age=\"\" total_num=\"\" role_id=\"\" type=\"\"/><msg file_location=\"\" file=\"\" body=\"是\"/></gpmsg>");
 
-//                new Thread() {
-//                    @Override
-//                    public void run() {
-//                        while (true) {
+                new Thread() {
+                    @Override
+                    public void run() {
+                        while (true) {
 //                            sHandler.post(new Runnable() {
 //                                @Override
 //                                public void run() {
 //                                    sayTo(LConnection.TYPE_TEAM, UID1,"123456");
 //                                }
 //                            });
-//
-//                            //底层不用上锁
-//                            //LCRequest.sayTo(LConnection.TYPE_TEAM, "1000001", UID1, "123456", "", null);
-//
-//                            try {
-//                                Thread.sleep(1);
-//                            } catch (InterruptedException e) {
-//                                e.printStackTrace();
-//                            }
-//                        }
-//
-//                    }
-//                }.start();
+
+                            sayTo(LConnection.TYPE_TEAM, UID1,"123456");
+//                            LCRequest.sayTo(LConnection.TYPE_TEAM, "1000001", UID1, "123456", "", null);
+
+                            try {
+                                Thread.sleep(10);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                    }
+                }.start();
             }
 
             @Override

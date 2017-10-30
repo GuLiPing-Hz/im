@@ -1,4 +1,4 @@
-#include "SimpleBridge.h"
+﻿#include "SimpleBridge.h"
 #include "../LongConnection.h"
 #include "../protocol.h"
 #include <memory>
@@ -148,7 +148,7 @@ void SimpleBridge::onLobbyTunnelConnectSuccess()        //成功连接大厅服�
 
 #ifndef LCTEST
     //启动心跳包
-    NetApp::getInstance()->setHeartbeatFunc([this]() -> void {
+    NetApp::GetInstance()->setHeartbeatFunc([this]() -> void {
 
         //心跳包时间计数
         static int time_old = 0;
@@ -157,7 +157,7 @@ void SimpleBridge::onLobbyTunnelConnectSuccess()        //成功连接大厅服�
         if (15 < (time_new - time_old))//15秒
         {
             time_old = time_new;
-            if (NetApp::getInstance()->GetLobbyTunnel()->isConnected()) {
+            if (NetApp::GetInstance()->getLobbyTunnel()->isConnected()) {
                 LCHeartbeat();
             }
         }

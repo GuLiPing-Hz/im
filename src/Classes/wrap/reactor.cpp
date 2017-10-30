@@ -59,15 +59,18 @@ namespace NetworkUtil
 		if(lasttime != 0 && (time(NULL) - lasttime) < 1)
 			return;
 
-		std::map<int,TMEHINFO>::iterator it;
-		for (it = mTMEHMap.begin(); it != mTMEHMap.end(); it++)
+		MAPINTTMHINFO tempMap = mTMEHMap;//拷贝一份
+		MAPINTTMHINFO::iterator it,itReal;
+		for (it = tempMap.begin(); it != tempMap.end(); it++)
 		{
+			itReal = mTMEHMap.find(it->first);
 			time_t cur = time(NULL);
 			if ((cur - it->second.regtime) > it->second.life)
 			{
-				it->second.regtime = cur;//重新计数
+				//先修改一下数据源
+				itReal->second.regtime = cur;
 				//处理超时
-				it->second.handler->onTimeOut();
+				it->second.handler->onTimeOut();//这里可能会有删除mTMEHMap元素的操作，所以我们必须拷贝map
 			}
 		}
 		lasttime = time(NULL);
