@@ -35,3 +35,7 @@
 -keep public class simple.config.LConnection {*;}
 -keep public class simple.config.LCRequest {*;}
 -keep public class simple.config.LCResponse {*;}
+
+#保留注释
+-keepattributes *Annotation*
+-keep class * extends java.lang.annotation.Annotation { *; }

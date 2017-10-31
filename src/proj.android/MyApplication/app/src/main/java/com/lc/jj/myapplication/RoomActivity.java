@@ -116,25 +116,25 @@ public class RoomActivity extends AppCompatActivity {
                     return;
                 }
 
-//                sayTo(LConnection.TYPE_TEAM, mRoomID, say, "");
+                sayTo(LConnection.TYPE_TEAM, mRoomID, say, "");
 
-                new Thread() {
-                    @Override
-                    public void run() {
-                        while (true) {
-                            LCRequest.sayTo(LConnection.TYPE_TEAM, LoginActivity.sMyUID, mRoomID, String.valueOf(mSayInt++), "", null);
-                            if(mSayInt == 100000){
-                                mSayInt = 0;
-                            }
-                            try {
-                                Thread.sleep(1);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-
-                    }
-                }.start();
+//                new Thread() {
+//                    @Override
+//                    public void run() {
+//                        while (true) {
+//                            LCRequest.sayTo(LConnection.TYPE_TEAM, LoginActivity.sMyUID, mRoomID, String.valueOf(mSayInt++), "", null);
+//                            if(mSayInt == 100000){
+//                                mSayInt = 0;
+//                            }
+//                            try {
+//                                Thread.sleep(1);
+//                            } catch (InterruptedException e) {
+//                                e.printStackTrace();
+//                            }
+//                        }
+//
+//                    }
+//                }.start();
             }
             break;
             case R.id.btn_exitroom: {

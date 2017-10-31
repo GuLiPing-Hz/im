@@ -39,12 +39,14 @@ public class LConnection {
      *
      * @return
      */
-    //连接超时
+    //请求超时
     public static final int RESULT_TIMEOUT = -9999;
-    //服务器发来的协议无法解析
+    //解析服务器协议失败
     public static final int RESULT_ERROR_PARSE = -9998;
-    //SDK 内存溢出
+    //SDK内存溢出
     public static final int RESULT_OOM = -9997;
+    //请求未送出，可能处于断网状态
+    public static final int RESULT_REQ_NOT_SEND = -9996;
 
     public static int getVersionNumber() {
         return 1;
