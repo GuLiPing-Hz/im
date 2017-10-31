@@ -18,9 +18,14 @@
 /**
  SDK 内部code
  */
+//请求超时
 #define RESULT_TIMEOUT -9999
+//解析服务器协议失败
 #define RESULT_ERROR_PARSE -9998
+//SDK内存溢出
 #define RESULT_OOM -9997
+//请求未送出，可能处于断网状态
+#define RESULT_REQ_NOT_SEND -9996
 
 @interface LConnection : NSObject
 

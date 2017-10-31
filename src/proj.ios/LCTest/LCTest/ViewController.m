@@ -10,8 +10,8 @@
 #include "WSProgressHUD.h"
 
 #define APPKEY @"4ed38057df363e8355229ec53687c549"
-//#define HOST @"192.168.1.9"
-#define HOST  @"123.206.229.213"
+#define HOST @"192.168.1.9"
+//#define HOST  @"123.206.229.213"
 #define PORT  27710
 
 #define UID1 @"1000001"
@@ -283,7 +283,7 @@
         return;
     }
     
-    content = @"<gpmsg from=\"3001041\" dateline=\"2017-10-27 11:25:13\" id=\"30010411509074713903\" type=\"1\" to=\"3002167\"><send avatar=\"http://eaglelive-10077467.image.myqcloud.com/31cc83ff-2ef6-43fe-9b96-5d5df6ce66dc?imageView2/1/w/260/h/260 \" uid=\"3001041\" nickname=\"Erennnnnnnnnnnnn\" level=\"100\" grade=\"0\" role_id=\"1\" icon=\"0\"/><gift image=\"\" id=\"\" mode=\"\" number=\"\" name=\"\"/><praise num=\"\"/><action avatar=\"\" gender=\"\" uid=\"\" nickname=\"\" age=\"\" total_num=\"\" role_id=\"\" type=\"\"/><msg file_location=\"\" file=\"\" body=\"是\"/></gpmsg>";
+    //content = @"<gpmsg from=\"3001041\" dateline=\"2017-10-27 11:25:13\" id=\"30010411509074713903\" type=\"1\" to=\"3002167\"><send avatar=\"http://eaglelive-10077467.image.myqcloud.com/31cc83ff-2ef6-43fe-9b96-5d5df6ce66dc?imageView2/1/w/260/h/260 \" uid=\"3001041\" nickname=\"Erennnnnnnnnnnnn\" level=\"100\" grade=\"0\" role_id=\"1\" icon=\"0\"/><gift image=\"\" id=\"\" mode=\"\" number=\"\" name=\"\"/><praise num=\"\"/><action avatar=\"\" gender=\"\" uid=\"\" nickname=\"\" age=\"\" total_num=\"\" role_id=\"\" type=\"\"/><msg file_location=\"\" file=\"\" body=\"是\"/></gpmsg>";
     
     LCRequest* req = [LCRequest sayTo:type withFrom:self.mMyUID withTo:sayId withContent:content withExt:@"" withResp:^(int type,NSDictionary* successData,int failedCode,NSString* reqJson) {
         if(type == RESPONSE_SUCCESS){
