@@ -11,6 +11,14 @@
 #include "SimpleBridgeIos.h"
 #include <string.h>
 
+/*
+ 查看framework
+lipo -info 编译的exe
+ 
+ 生成真机和模拟都能使用的framework
+ lipo -create framework名  XXX/framework名   -output  XXX/framework名
+*/
+ 
 #define RESULT_METHOD @"method"
 #define RESULT_CODE  @"code"
 #define RESULT_ARG0  @"arg0"

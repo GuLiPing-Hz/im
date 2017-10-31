@@ -249,6 +249,7 @@
 		3FEDD17F1F8C8029006D59F9 /* counter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = counter.h; sourceTree = "<group>"; };
 		3FEDD1811F8C8040006D59F9 /* timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = timer.h; sourceTree = "<group>"; };
 		3FEDD1821F8C8040006D59F9 /* timer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = timer.cpp; sourceTree = "<group>"; };
+		3FF0AA0D1FA8774D0004CC64 /* merge.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = merge.sh; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -306,6 +307,7 @@
 				3F31AADB1F8B765B000FF66B /* LCResponse.h */,
 				3F31AADD1F8B7826000FF66B /* LCRequest.h */,
 				3F31AADE1F8B7826000FF66B /* LCRequest.mm */,
+				3FF0AA0D1FA8774D0004CC64 /* merge.sh */,
 			);
 			path = LConnection;
 			sourceTree = "<group>";
@@ -624,6 +626,7 @@
 				3F31AAC11F8B7343000FF66B /* Frameworks */,
 				3F31AAC21F8B7343000FF66B /* Headers */,
 				3F31AAC31F8B7343000FF66B /* Resources */,
+				3FF0AA121FA87CE00004CC64 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -701,6 +704,22 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		3FF0AA121FA87CE00004CC64 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "${PROJECT_DIR}/LConnection/merge.sh";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		3F3029291F90CC5D00BF0ED6 /* Sources */ = {
