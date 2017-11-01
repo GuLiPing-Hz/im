@@ -40,6 +40,7 @@ public class RoomActivity extends AppCompatActivity {
     List<TalkBean> mTalkBeanList = new ArrayList<>();
     LCRequest mRoomTalk;
     String mRoomID;
+    boolean mThreadRun;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +48,7 @@ public class RoomActivity extends AppCompatActivity {
         setContentView(R.layout.activity_room);
         ButterKnife.bind(this);
 
+        mThreadRun = true;
         mRoomID = getIntent().getStringExtra(ROOMID);
 
         mTextRoomid.setText("房间ID:" + mRoomID);
@@ -82,6 +84,8 @@ public class RoomActivity extends AppCompatActivity {
         if (mRoomTalk != null) {//关闭监听
             LConnection.removeReq(mRoomTalk);
         }
+
+        mThreadRun = false;
     }
 
     void sayTo(int type, String to, String content, String ext) {
@@ -106,9 +110,30 @@ public class RoomActivity extends AppCompatActivity {
     }
 
     int mSayInt = 0;
-    @OnClick({R.id.btn_send, R.id.btn_exitroom})
+
+    @OnClick({R.id.btn_send, R.id.btn_exitroom,R.id.btnFor})
     public void onViewClicked(View view) {
         switch (view.getId()) {
+            case R.id.btnFor:{
+                new Thread() {
+                    @Override
+                    public void run() {
+                        while (mThreadRun) {
+                            LCRequest.sayTo(LConnection.TYPE_TEAM, LoginActivity.sMyUID, mRoomID, String.valueOf(mSayInt++), "", null);
+                            if (mSayInt == 100000) {
+                                mSayInt = 0;
+                            }
+                            try {
+                                Thread.sleep(1);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                    }
+                }.start();
+            }
+            break;
             case R.id.btn_send: {
                 String say = mEtSay.getText().toString();
                 if (TextUtils.isEmpty(say)) {
@@ -117,24 +142,6 @@ public class RoomActivity extends AppCompatActivity {
                 }
 
                 sayTo(LConnection.TYPE_TEAM, mRoomID, say, "");
-
-//                new Thread() {
-//                    @Override
-//                    public void run() {
-//                        while (true) {
-//                            LCRequest.sayTo(LConnection.TYPE_TEAM, LoginActivity.sMyUID, mRoomID, String.valueOf(mSayInt++), "", null);
-//                            if(mSayInt == 100000){
-//                                mSayInt = 0;
-//                            }
-//                            try {
-//                                Thread.sleep(1);
-//                            } catch (InterruptedException e) {
-//                                e.printStackTrace();
-//                            }
-//                        }
-//
-//                    }
-//                }.start();
             }
             break;
             case R.id.btn_exitroom: {

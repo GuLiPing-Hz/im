@@ -36,8 +36,8 @@ public class LoginActivity extends AppCompatActivity {
     public static final int RequestCode1 = 1;
 
     public static final String APPKEY = "4ed38057df363e8355229ec53687c549";
-//    public static final String HOST = "192.168.1.9";//
-    public static final String HOST = "192.168.1.11";//
+    public static final String HOST = "192.168.1.67";//
+//    public static final String HOST = "192.168.1.11";//
 //    public static final String HOST = "123.206.229.213";
     public static final short PORT = 27710;
 
