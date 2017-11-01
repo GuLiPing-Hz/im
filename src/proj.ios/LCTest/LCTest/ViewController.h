@@ -36,6 +36,7 @@
 - (IBAction)clickSay:(id)sender;
 - (IBAction)uidChanged:(id)sender;
 - (IBAction)clickSpace:(id)sender;
+- (IBAction)clickFor:(id)sender;
 
 @end
 

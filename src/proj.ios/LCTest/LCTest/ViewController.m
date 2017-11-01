@@ -10,7 +10,8 @@
 #include "WSProgressHUD.h"
 
 #define APPKEY @"4ed38057df363e8355229ec53687c549"
-#define HOST @"192.168.1.9"
+#define HOST @"192.168.1.67"
+//#define HOST @"192.168.1.9"
 //#define HOST  @"123.206.229.213"
 #define PORT  27710
 
@@ -303,9 +304,6 @@
 - (IBAction)clickSay:(id)sender {
     //单独发送一次聊天
     [self say];
-    
-    //启动一个timer 0.01次发送房间信息
-//    [NSTimer scheduledTimerWithTimeInterval:0.01 target:self selector:@selector(say) userInfo:NULL repeats:YES];
 }
 
 - (IBAction)uidChanged:(id)sender {
@@ -323,6 +321,11 @@
 - (IBAction)clickSpace:(id)sender {
     //点击空白隐藏键盘
     [[UIApplication sharedApplication] sendAction:@selector(resignFirstResponder) to:nil from:nil forEvent:nil];
+}
+
+- (IBAction)clickFor:(id)sender {
+    //启动一个timer 0.01次发送房间信息
+    [NSTimer scheduledTimerWithTimeInterval:0.001 target:self selector:@selector(say) userInfo:NULL repeats:YES];
 }
 
 @end
