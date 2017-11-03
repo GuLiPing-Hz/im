@@ -41,51 +41,33 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         LConnection.initLConnection(this, sHandler);
+        LCRequest.SetMaxReLoginTimes(3);
+        LCRequest.SetAppHostPort(APPKEY, HOST, PORT, 2);
 
-        LCRequest req = LCRequest.connectTo(HOST, PORT, 2, new LCResponse() {
-
+        LCRequest req = LCRequest.login(UID1, TOKEN1, new LCResponse() {
             @Override
-            public void onSuccess(Bundle bundle) {
-                Toast.makeText(MainActivity.this, "连接服务器成功,开始登陆", Toast.LENGTH_SHORT).show();
+            public void onSuccess(Bundle data) {
                 /**
-                 * 成功连接服务器后,开启我们的监听服务器的连接
+                 * 成功登录后,开启我们的监听服务器的连接
                  */
                 LCRequest.listenConnect(mConnectResp, false);
 
-                //登录操作
-                LCRequest req = LCRequest.login(UID0, TOKEN0, APPKEY, new LCResponse() {
-                    @Override
-                    public void onSuccess(Bundle bundle) {
-                        Toast.makeText(MainActivity.this, "登陆成功", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "登陆成功", Toast.LENGTH_SHORT).show();
 
-//                        boolean ret = LCRequest.logout();
-                        enterRoom();
-//                        sayTo();
-                    }
-
-                    @Override
-                    public void onFailed(int i, String s) {
-                        Log.e(Tag, "失败,请求内容是:(code=" + i + ")" + s);
-                        Toast.makeText(MainActivity.this, "登陆失败code =" + i, Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-                if (req != null) {
-                    Toast.makeText(MainActivity.this, "正在登录...", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(MainActivity.this, "无法请求登录", Toast.LENGTH_SHORT).show();
-                }
+//              boolean ret = LCRequest.logout();
+//                enterRoom();
+//              sayTo();
             }
 
             @Override
-            public void onFailed(int i, String s) {
-                Log.e(Tag, "失败,请求内容是:(code=" + i + ")" + s);
-                Toast.makeText(MainActivity.this, "连接服务器失败code =" + i, Toast.LENGTH_SHORT).show();
+            public void onFailed(int code, String jsonReq) {
+                Log.e(Tag, "失败,请求内容是:(code=" + code + ")" + jsonReq);
+                Toast.makeText(MainActivity.this, "登陆失败code =" + code, Toast.LENGTH_SHORT).show();
             }
         });
 
         if (req != null) {
-            Toast.makeText(this, "正在连接服务器", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "正在登录", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this, "网络库启动失败,无法连接服务器", Toast.LENGTH_SHORT).show();
         }
@@ -101,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
      */
     public native String stringFromJNI();
 
-    void sayTo(int type, String to,String content) {
+    void sayTo(int type, String to, String content) {
         LCRequest request = LCRequest.sayTo(type, UID0, to, content, "", new LCResponse() {
             @Override
             public void onSuccess(Bundle bundle) {
@@ -141,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
 //                                }
 //                            });
 
-                            sayTo(LConnection.TYPE_TEAM, UID1,"123456");
+                            sayTo(LConnection.TYPE_TEAM, UID1, "123456");
 //                            LCRequest.sayTo(LConnection.TYPE_TEAM, "1000001", UID1, "123456", "", null);
 
                             try {
