@@ -10,9 +10,9 @@
 #include "WSProgressHUD.h"
 
 #define APPKEY @"4ed38057df363e8355229ec53687c549"
-#define HOST @"192.168.1.67"
+//#define HOST @"192.168.1.67"
 //#define HOST @"192.168.1.9"
-//#define HOST  @"123.206.229.213"
+#define HOST  @"123.206.229.213"
 #define PORT  27710
 
 #define UID1 @"1000001"
@@ -44,6 +44,8 @@
     [self.mEtToken setText:TOKEN1];
     
     [LConnection initLConnection];
+    [LCRequest SetMaxReloginTime:3];
+    [LCRequest SetAppHostPort:APPKEY withIp:HOST withPort:PORT withTimeout:10];
 }
 
 -(void)viewWillDisappear:(BOOL)animated{
@@ -66,6 +68,78 @@
     [self.mTextStatus setText:status];
 }
 
+-(void)listenIMConnect
+{
+    self.mConnectReq = [LCRequest listenConnect:^(int type,NSDictionary* successData,int failedCode,NSString* reqJson){
+        //连接断开了.我们先移除监听
+        [LConnection removeReq:self.mConnectReq];
+        
+        //监听不会有成功的回调
+        if(type == RESPONSE_FAILED){
+            [self showStatus:[NSString stringWithFormat:@"服务器异常 code =%d",failedCode]];
+            
+            //重连
+            [LCRequest relogin:^(int type,NSDictionary* successData,int failedCode,NSString* reqJson) {
+                if(type == RESPONSE_SUCCESS){
+                    [self showStatus:[NSString stringWithFormat:@"重连成功"]];
+                    
+                    //重连成功的时候,我们再加上
+                    [LConnection appendReq:self.mConnectReq];
+                } else {
+                    [self showStatus:[NSString stringWithFormat:@"重连超过最大次数,返回登录界面"]];
+                    
+                    self.mMyUID = nil;
+                    self.mMyRoomId = nil;
+                    self.mIsLogin = NO;
+                    self.mIsInRoom = NO;
+                }
+            }];
+        } else if(type == RESPONSE_CLOSED){
+            if(failedCode == 0){//服务器直接close
+                [self showTip:@"服务器主动断开,请退到登录界面重新登录"];
+                
+                [self showStatus:[NSString stringWithFormat:@"服务器主动断开,请退到登录界面重新登录"]];
+            }
+            else if(failedCode == 9){//收到服务器的关闭code 参见服务器文档code原因
+                [self showTip:[NSString stringWithFormat:@"有其他设备登录您的账号" ]];
+                
+                [self showStatus:[NSString stringWithFormat:@"有其他设备登录您的账号"]];
+            }
+            else{
+                [self showTip:[NSString stringWithFormat:@"服务器主动断开,请退到登录界面重新登录code=%d",failedCode ]];
+                
+                [self showStatus:[NSString stringWithFormat:@"服务器主动断开,请退到登录界面重新登录code=%d",failedCode ]];
+            }
+            
+            self.mMyUID = nil;
+            self.mMyRoomId = nil;
+            self.mIsLogin = NO;
+            self.mIsInRoom = NO;
+        }
+        
+    } withAuto:NO];
+}
+
+-(void)listenIMMsg
+{
+    self.mSayReq = [LCRequest listenSay:^(int type,NSDictionary* successData,int failedCode,NSString* reqJson) {
+        if(type == RESPONSE_SUCCESS){
+            
+            NSNumber* temp1 = successData[@"type"];
+            int talkType = [temp1 intValue];
+            NSString* from = successData[@"from"];
+            NSString* to = successData[@"to"];
+            NSString* content = successData[@"content"];
+            NSString* ext = successData[@"ext"];
+            //聊天消息这里只是log了一下
+            NSString* log = [NSString stringWithFormat:@"[%@] |%@| 对 |%@| 说{%@} ext={%@}",talkType==TYPE_P2P?@"P2P":@"TEAM",from,to,content,ext];
+            NSLog(log);
+            [self.mTextStatus setText:log];
+            
+        }//监听不会收到失败消息
+    } withAuto:NO];
+}
+
 - (IBAction)clickLogin:(id)sender {
     if(self.mIsLogin){
         [self showTip:@"您已经登录"];
@@ -80,92 +154,31 @@
         return;
     }
     
-    LCRequest* req = [LCRequest connectTo:HOST withPort:PORT withTimeout:10 wihtResp:^(int type,NSDictionary* successData,int failedCode,NSString* reqJson){
-        
+    LCRequest* req = [LCRequest login:uid withToken:token withResp:^(int type,NSDictionary* successData,int failedCode,NSString* reqJson) {
         if(type == RESPONSE_SUCCESS){
-            [self showStatus:@"连接服务器成功,开始登录"];
-            
             /*
-             连接成功之后需要监听服务器连接
+             成功之后需要监听服务器连接
              */
-            self.mConnectReq = [LCRequest listenConnect:^(int type,NSDictionary* successData,int failedCode,NSString* reqJson){
-                //监听不会有成功的回调
-                if(type == RESPONSE_FAILED){
-                    [self showStatus:[NSString stringWithFormat:@"服务器异常 code =%d",failedCode]];
-                } else if(type == RESPONSE_CLOSED){
-                    if(failedCode == 0){//服务器直接close
-                        [self showTip:@"服务器主动断开,请退到登录界面重新登录"];
-                        
-                        [self showStatus:[NSString stringWithFormat:@"服务器主动断开,请退到登录界面重新登录"]];
-                    }
-                    else if(failedCode == 9){//收到服务器的关闭code 参见服务器文档code原因
-                        [self showTip:[NSString stringWithFormat:@"有其他设备登录您的账号" ]];
-                        
-                        [self showStatus:[NSString stringWithFormat:@"有其他设备登录您的账号"]];
-                    }
-                    else{
-                        [self showTip:[NSString stringWithFormat:@"服务器主动断开,请退到登录界面重新登录code=%d",failedCode ]];
-                        
-                        [self showStatus:[NSString stringWithFormat:@"服务器主动断开,请退到登录界面重新登录code=%d",failedCode ]];
-                    }
-                    
-                    self.mMyUID = nil;
-                    self.mMyRoomId = nil;
-                    self.mIsLogin = NO;
-                    self.mIsInRoom = NO;
-                }
-                
-                
-            } withAuto:NO];
+            [self listenIMConnect];
             
-            LCRequest* req = [LCRequest login:uid withToken:token withKey:APPKEY withResp:^(int type,NSDictionary* successData,int failedCode,NSString* reqJson) {
-                if(type == RESPONSE_SUCCESS){
-                    [self showStatus:@"登录成功"];
-                    self.mMyUID = uid;
-                    self.mIsLogin = YES;
-                    
-                    self.mSayReq = [LCRequest listenSay:^(int type,NSDictionary* successData,int failedCode,NSString* reqJson) {
-                        if(type == RESPONSE_SUCCESS){
-                            
-                            NSNumber* temp1 = successData[@"type"];
-                            int talkType = [temp1 intValue];
-                            NSString* from = successData[@"from"];
-                            NSString* to = successData[@"to"];
-                            NSString* content = successData[@"content"];
-                            NSString* ext = successData[@"ext"];
-                            //聊天消息这里只是log了一下
-                            NSString* log = [NSString stringWithFormat:@"[%@] |%@| 对 |%@| 说{%@} ext={%@}",talkType==TYPE_P2P?@"P2P":@"TEAM",from,to,content,ext];
-                            NSLog(log);
-                            [self.mTextStatus setText:log];
-                            
-                        }//监听不会收到失败消息
-                    } withAuto:NO];
-                    
-                } else if(type == RESPONSE_FAILED){
-                    NSLog(@"失败,请求内容是:(code=%d) %@",failedCode,reqJson);
-                    [self showStatus:[NSString stringWithFormat:@"登录失败 code =%d",failedCode]];
-                }//请求里面不会有连接断开的回调
-            }];
-            if(req != nil){
-                [self showStatus:@"正在登录..."];
-            } else {
-                [self showStatus:@"无法请求登录"];
-            }
+            //监听发言
+            [self listenIMMsg];
+            
+            
+            [self showStatus:@"登录成功"];
+            self.mMyUID = uid;
+            self.mIsLogin = YES;
+            
         } else if(type == RESPONSE_FAILED){
-            if(failedCode == RESULT_TIMEOUT){
-                [self showStatus:[NSString stringWithFormat:@"连接服务器超时!!!",failedCode]];
-            } else {
-                NSLog(@"失败,请求内容是:(code=%d) %@",failedCode,reqJson);
-                [self showStatus:[NSString stringWithFormat:@"连接服务器失败 code =%d",failedCode]];
-            }
-            
+            NSLog(@"失败,请求内容是:(code=%d) %@",failedCode,reqJson);
+            [self showStatus:[NSString stringWithFormat:@"登录失败 code =%d",failedCode]];
         }//请求里面不会有连接断开的回调
     }];
     
     if(req != nil){
-        [self showStatus:@"正在连接服务器..."];
+        [self showStatus:@"正在登录..."];
     } else {
-        [self showStatus:@"网络库启动失败,无法连接服务器"];
+        [self showStatus:@"无法请求登录"];
     }
 }
 
@@ -179,7 +192,6 @@
         
         [LConnection removeReq:self.mSayReq];
         [LConnection removeReq:self.mConnectReq];
-        [LCRequest disconnect];
         
         self.mMyUID = nil;
         self.mIsLogin = NO;

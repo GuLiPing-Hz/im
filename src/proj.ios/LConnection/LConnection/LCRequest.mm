@@ -11,6 +11,34 @@
 
 @implementation LCRequest
 
+static NSString* sAppKey;
+static NSString* sUId;
+static NSString* sToken;
+
+static NSString* sIp;
+static short sPort = 0;
+static int sTimeout = 10;
+
+static int sMaxReLoginTimes = 3;
+static int sCurReloginTimes = 0;
+static BOOL sIsLogin = NO;
+
++(BOOL)IsLogin
+{
+    return sIsLogin;
+}
++(void)SetMaxReloginTime:(int)times
+{
+    sMaxReLoginTimes = times;
+}
++(void)SetAppHostPort:(NSString*)appkey withIp:(NSString*)ip withPort:(short)port withTimeout:(int)timeout
+{
+    sAppKey = appkey;
+    sIp = ip;
+    sPort = port;
+    sTimeout = timeout;
+}
+
 -(instancetype)init:(NSString*)method withResponse:(response_bloct_t)response
 {
     return [self init:method withResponse:response withAuto:YES];
@@ -55,17 +83,13 @@
  */
 +(instancetype)listenConnect:(response_bloct_t)response withAuto:(BOOL) _auto
 {
-    return [[LCRequest alloc] init:@"connectLobby" withResponse:response withAuto:_auto];
-}
-
-/**
- * 断开连接
- *
- * @return
- */
-+(BOOL)disconnect
-{
-    return [LConnection disconnect];
+    return [[LCRequest alloc] init:@"connectLobby" withResponse:^(int type,NSDictionary* successData,int failedCode,NSString* reqJson){
+        if(type == RESPONSE_FAILED || type == RESPONSE_CLOSED){
+            sIsLogin = NO;
+        }
+        if(response != NULL)
+            response(type,successData,failedCode,reqJson);
+    } withAuto:_auto];
 }
 
 /**
@@ -77,11 +101,67 @@
  * @param response
  * @return
  */
-+(instancetype)login:(NSString*) uid withToken:(NSString*) token withKey:(NSString*) appkey withResp:(response_bloct_t) response
++(instancetype)login:(NSString*) uid withToken:(NSString*) token withResp:(response_bloct_t) response
 {
-    if ([LConnection login:uid withToken:token withKey:appkey])
-        return [[LCRequest alloc] init:@"login" withResponse:response];
+    if(sAppKey == NULL || sIp == NULL || sPort == 0)
+        return NULL;
+    
+    sIsLogin = NO;
+    sUId = uid;
+    sToken = token;
+    
+    [LConnection disconnect];
+    if([LConnection connectTo:sIp withPort:sPort withTimeout:sTimeout]){
+        return [LCRequest listenConnect:^(int type,NSDictionary* successData,int failedCode,NSString* reqJson) {
+            if(type == RESPONSE_SUCCESS){
+                if ([LConnection login:uid withToken:token withKey:sAppKey])
+                    LCRequest* ret = [[LCRequest alloc] init:@"login" withResponse:^(int type,NSDictionary* successData,int failedCode,NSString* reqJson){
+                        if(type == RESPONSE_SUCCESS){
+                            sIsLogin = YES;
+                        } else {
+                            sIsLogin = NO;
+                        }
+                        
+                        if(response)
+                            response(type,successData,failedCode,reqJson);
+                    }];
+                else if(response){
+                    response(RESPONSE_FAILED,NULL,RESULT_REQ_NOT_SEND,NULL);
+                }
+            } else if(response){
+                response(type,successData,failedCode,reqJson);
+            }
+        } withAuto:YES];
+    }
+    
     return NULL;
+}
+
++(instancetype)relogin:(response_bloct_t) response
+{
+    sCurReloginTimes = 0;
+    return [LCRequest reloginInner:response];
+}
+
++(instancetype)reloginInner:(response_bloct_t) response
+{
+    LCRequest* ret = [LCRequest login:sUId withToken:sToken withResp:^(int type,NSDictionary* successData,int failedCode,NSString* reqJson) {
+        if(type == RESPONSE_SUCCESS){
+            if(response)
+                response(type,successData,failedCode,reqJson);
+        } else if(type == RESPONSE_FAILED){
+            sCurReloginTimes ++;
+            if(sCurReloginTimes < sMaxReLoginTimes){
+                [LCRequest reloginInner:response];
+            } else {
+                if(response){
+                    response(type,successData,failedCode,reqJson);
+                }
+            }
+        }
+    }];
+    
+    return ret;
 }
 
 /**
@@ -91,7 +171,17 @@
  */
 +(BOOL)logout
 {
-    return [LConnection logout];
+    if([LConnection logout]){
+        sIsLogin = NO;
+        
+        //执行一个异步延迟操作,断开服务器连接
+        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC));
+        dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+            [LConnection disconnect];
+        });
+        return YES;
+    }
+    return NO;
 }
 
 /**

@@ -1,6 +1,0 @@
-framework module LConnection {
-  umbrella header "LConnection.h"
-
-  export *
-  module * { export * }
-}

@@ -32,20 +32,17 @@ typedef void (^response_bloct_t)(int,NSDictionary*,int,NSString*);
  */
 @property(nonatomic,assign) BOOL mAutoRemove;//
 
+/**
+ 是否登录
+ */
++(BOOL)IsLogin;
+//设定最大重连次数
++(void)SetMaxReloginTime:(int)times;
+//设置IM appkey和服务器参数
++(void)SetAppHostPort:(NSString*)appkey withIp:(NSString*)ip withPort:(short)port withTimeout:(int)timeout;
+
 -(instancetype)init:(NSString*)method withResponse:(response_bloct_t)response;
 -(instancetype)init:(NSString*)method withResponse:(response_bloct_t)response withAuto:(BOOL) _auto;
-
-
-/**
- * 连接服务器
- *
- * @param ip
- * @param port
- * @param timeout
- * @param response
- * @return
- */
-+(instancetype)connectTo:(NSString*) ip withPort:(short)port withTimeout:(int) timeout wihtResp: (response_bloct_t) response;
 
 /**
  * 监听服务器连接
@@ -57,13 +54,6 @@ typedef void (^response_bloct_t)(int,NSDictionary*,int,NSString*);
 +(instancetype)listenConnect:(response_bloct_t)response withAuto:(BOOL) _auto;
 
 /**
- * 断开连接
- *
- * @return
- */
-+(BOOL)disconnect;
-
-/**
  * 登陆服务器
  *
  * @param uid
@@ -72,8 +62,12 @@ typedef void (^response_bloct_t)(int,NSDictionary*,int,NSString*);
  * @param response
  * @return
  */
-+(instancetype)login:(NSString*) uid withToken:(NSString*) token withKey:(NSString*) appkey withResp:(response_bloct_t) response;
++(instancetype)login:(NSString*) uid withToken:(NSString*) token withResp:(response_bloct_t) response;
 
+/**
+ 重连服务器
+ */
++(instancetype)relogin:(response_bloct_t) response;
 /**
  * 登出服务器
  *

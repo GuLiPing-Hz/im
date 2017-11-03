@@ -189,7 +189,6 @@
 		3F31AB5A1F8B883E000FF66B /* md5.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = md5.h; sourceTree = "<group>"; };
 		3F31AB5B1F8B883E000FF66B /* mutex_wrapper.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = mutex_wrapper.cpp; sourceTree = "<group>"; };
 		3F31AB5C1F8B883E000FF66B /* mutex_wrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mutex_wrapper.h; sourceTree = "<group>"; };
-		3F31AB5E1F8B883E000FF66B /* no_copyable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = no_copyable.h; sourceTree = "<group>"; };
 		3F31AB5F1F8B883E000FF66B /* reactor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = reactor.cpp; sourceTree = "<group>"; };
 		3F31AB601F8B883E000FF66B /* reactor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = reactor.h; sourceTree = "<group>"; };
 		3F31AB611F8B883E000FF66B /* rw_stream.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = rw_stream.cpp; sourceTree = "<group>"; };
@@ -483,7 +482,6 @@
 				3F31AB5A1F8B883E000FF66B /* md5.h */,
 				3F31AB5B1F8B883E000FF66B /* mutex_wrapper.cpp */,
 				3F31AB5C1F8B883E000FF66B /* mutex_wrapper.h */,
-				3F31AB5E1F8B883E000FF66B /* no_copyable.h */,
 				3F31AB5F1F8B883E000FF66B /* reactor.cpp */,
 				3F31AB601F8B883E000FF66B /* reactor.h */,
 				3F31AB611F8B883E000FF66B /* rw_stream.cpp */,
