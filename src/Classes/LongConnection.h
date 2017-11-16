@@ -90,9 +90,9 @@ extern "C" {
 	发言
 	@param seq 请求序列号
 	@param type 0：点对点发消息，1：群内消息
-	@param from
-	@param to
-	@param content attach
+	@param from 发言者
+	@param to   发言对象
+	@param content 发言内容
 	@param ext 扩展内容
 	@return 成功 返回seq值,我们的请求的序列号 ; 失败 返回-1
 
@@ -103,7 +103,7 @@ extern "C" {
 	/*
 	进入房间
 	@param seq 请求序列号
-	@param room_id
+	@param room_id  房间ID
 	@return 成功 返回seq值,我们的请求的序列号 ; 失败 返回-1
 
 	@注意:需要先登陆
