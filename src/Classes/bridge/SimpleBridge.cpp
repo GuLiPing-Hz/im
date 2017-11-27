@@ -10,7 +10,7 @@ std::string GetStrFromRoot(const rapidjson::Value &root) {
     root.Accept(writer);
     std::string result = buffer.GetString();
 #ifdef WIN32
-    LOGI("GetStrFromRoot result = %s", result.c_str());
+    LOGI("GetStrFromRoot result = %s\n", result.c_str());
 #endif
     return result;
 }
@@ -37,6 +37,30 @@ rapidjson::Value GetValueFromUnitSingle(BufferUnit *data) {
 		}
 		else if (data->type == BufferUnit::type_str) {
 			ret.SetString(pSingle->str.c_str(), pSingle->str.size());
+		}
+
+		return ret;
+	}
+	else {
+		return rapidjson::Value(rapidjson::kNullType);
+	}
+}
+
+rapidjson::Value GetValueFromBufferJson(BufferJson *data) {
+	if (data && data->list.empty()) {
+		rapidjson::Value ret;
+		if (data->type == BufferJson::type_char || data->type == BufferJson::type_short
+			|| data->type == BufferJson::type_int) {
+			ret.SetInt(data->data.base.i);
+		}
+		else if (data->type == BufferUnit::type_int64) {
+			ret.SetInt64(data->data.base.ll);
+		}
+		else if (data->type == BufferUnit::type_float) {
+			ret.SetFloat(data->data.base.f);
+		}
+		else if (data->type == BufferUnit::type_str) {
+			ret.SetString(data->data.str.c_str(), data->data.str.size());
 		}
 
 		return ret;
@@ -81,7 +105,36 @@ void AddParam(rapidjson::Document &doc, rapidjson::Value &root, const std::strin
 	}
 }
 
-void AddParamEx(rapidjson::Document &doc, rapidjson::Value &root, const VECBUNIT &data,
+void AddParam(rapidjson::Document &doc, rapidjson::Value &root, const std::string &name,
+	BufferJson *data, bool isInner) {
+	rapidjson::Value nameValue(rapidjson::kStringType);
+	nameValue.SetString(name.c_str(), name.size(), doc.GetAllocator());
+
+	if (data) {
+		if (data->list.empty()) {
+			rapidjson::Value value = GetValueFromBufferJson(data);
+			root.AddMember(nameValue, value, doc.GetAllocator());
+		}
+		else {
+			rapidjson::Value arraValue(rapidjson::kArrayType);
+			for (unsigned int i=0; i<data->list.size(); i++) {
+				BufferJson* item = data->list[i];
+				rapidjson::Value value = GetValueFromBufferJson(item);
+				arraValue.PushBack(value, doc.GetAllocator());
+			}
+
+			if (isInner)
+				root.PushBack(arraValue, doc.GetAllocator());
+			else
+				root.AddMember(nameValue, arraValue, doc.GetAllocator());
+		}
+	}
+	else {
+		root.AddMember(nameValue, rapidjson::Value(rapidjson::kNullType), doc.GetAllocator());
+	}
+}
+
+void AddParamEx(rapidjson::Document &doc, rapidjson::Value &root, const VECBUNIT& data,
 	const VECSTRING &name) {
 	if (data.size() < name.size()) {
 		root.SetArray();
@@ -115,9 +168,49 @@ void AddParamEx(rapidjson::Document &doc, rapidjson::Value &root, const VECBUNIT
 	}
 }
 
-void AddParamNames(rapidjson::Document &doc, rapidjson::Value &root, const VECBUNIT &data, int count, ...)
+void AddParamEx(rapidjson::Document &doc, rapidjson::Value &root, const BufferJson* data,
+	const VECSTRING &name) {
+	if (!data || data->list.size() < name.size()) {
+		root.SetArray();
+		return;
+	}
+
+	for (unsigned int i = 0; i < name.size(); i++) {
+		BufferJson *unit = data->list[i];
+		if (!unit->list.empty()) {
+			rapidjson::Value arraValue(rapidjson::kArrayType);
+			for (unsigned int j = 0; j < unit->list.size(); j++) {//这里一共就内嵌2层，如果还有嵌套说明协议定的有问题，可以改的简单点
+				BufferJson *arra1 = unit->list[j];
+				AddParam(doc, arraValue, "", arra1, true);
+			}
+
+			rapidjson::Value nameValue(rapidjson::kStringType);
+			nameValue.SetString(name[i].c_str(), name[i].size(), doc.GetAllocator());
+			root.AddMember(nameValue, arraValue, doc.GetAllocator());
+		}
+		else {
+			AddParam(doc, root, name[i], unit, false);
+		}
+	}
+}
+
+void AddParamNames(rapidjson::Document &doc, rapidjson::Value &root, const VECBUNIT& data, int count, ...)
 {
-	std::vector<std::string> names;
+	VECSTRING names;
+	va_list args;
+	va_start(args, count);
+	for (int i = 0; i < count; ++i) {
+		const char *arg = va_arg(args, const char*);
+		names.push_back(arg);
+	}
+	va_end(args);
+
+	AddParamEx(doc, root, data, names);
+}
+
+void AddParamNames(rapidjson::Document &doc, rapidjson::Value &root, const BufferJson* data, int count, ...)
+{
+	VECSTRING names;
 	va_list args;
 	va_start(args, count);
 	for (int i = 0; i < count; ++i) {
@@ -259,21 +352,29 @@ SimpleBridge::onLobbyMsg(const int code, const char *msg, const unsigned int len
         if (cmd == CMD_LOGIN_C2S2C) {
 			callNative("login", GetStrFromRoot(paramRoot));
         } else if (cmd == CMD_SAYTO_C2S2C) {
-            VECBUNIT data = AutoParseNativeBuffer(nativeBuf);
+            //VECBUNIT data = AutoParseNativeBuffer(nativeBuf);
+			BufferJson* data = AutoParseNativeBufferEx(nativeBuf);
             AddParamNames(doc, paramRoot, data, 4, "arg0", "arg1", "arg2", "arg3", "arg4");
             callNative("sayTo", GetStrFromRoot(paramRoot));
+			FreeBufferList(data);
         } else if (cmd == CMD_NOTIFY_S2C) {
-            VECBUNIT data = AutoParseNativeBuffer(nativeBuf);
+            //VECBUNIT data = AutoParseNativeBuffer(nativeBuf);
+			BufferJson* data = AutoParseNativeBufferEx(nativeBuf);
             AddParamNames(doc, paramRoot, data, 2, "arg0", "arg1");
             callNative("notify", GetStrFromRoot(paramRoot));
+			FreeBufferList(data);
         } else if (cmd == CMD_ENTERROOM_C2S2C) {
-            VECBUNIT data = AutoParseNativeBuffer(nativeBuf);
+            //VECBUNIT data = AutoParseNativeBuffer(nativeBuf);
+			BufferJson* data = AutoParseNativeBufferEx(nativeBuf);
             AddParamNames(doc, paramRoot, data, 2, "arg0", "arg1");
             callNative("enterRoom", GetStrFromRoot(paramRoot));
+			FreeBufferList(data);
         } else if (cmd == CMD_EXITROOM_C2S2C) {
-            VECBUNIT data = AutoParseNativeBuffer(nativeBuf);
+            //VECBUNIT data = AutoParseNativeBuffer(nativeBuf);
+			BufferJson* data = AutoParseNativeBufferEx(nativeBuf);
             AddParamNames(doc, paramRoot, data, 1, "arg0");
             callNative("exitRoom", GetStrFromRoot(paramRoot));
+			FreeBufferList(data);
 		} else if (cmd == CMD_DRIVEAWAY_S2C){
 			//被服务器踢下线了,我们需要主动断开连接
 			LCDisconnect();

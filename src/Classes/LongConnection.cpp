@@ -1,4 +1,4 @@
-#include "LongConnection.h"
+﻿#include "LongConnection.h"
 #include "app/RequestBase.h"
 #include "wrap/counter.h"
 #include "bridge/NativeBuffer.h"
@@ -133,7 +133,7 @@ int LCSayTo(const int seq, int type, const char *from, const char *to, const cha
     bool ok = nativeBuf->writeChar(BufferUnit::type_int);
 	ok &= nativeBuf->writeInt(type);
 	ok &= nativeBuf->writeChar(BufferUnit::type_array + BufferUnit::type_char);
-	ok &= nativeBuf->writeString(strlen(from), from) > 0;
+	ok &= nativeBuf->writeString(strlen(from), from);
 	ok &= nativeBuf->writeChar(BufferUnit::type_array + BufferUnit::type_char);
 	ok &= nativeBuf->writeString(strlen(to), to);
 	ok &= nativeBuf->writeChar(BufferUnit::type_array + BufferUnit::type_char);

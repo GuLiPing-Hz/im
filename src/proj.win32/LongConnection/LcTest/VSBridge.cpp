@@ -37,7 +37,20 @@ void VSBridge::callNative(const std::string& method, const std::string& param)
 	else if (method == "login") {
 		//LCLogout();
 
-// 		LCEnterRoom(tempSeq1, "1000001");
+		rapidjson::Document doc;
+		rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> &allocator = doc.GetAllocator();
+		rapidjson::Value root(rapidjson::kObjectType);
+		root.AddMember("method", "enterRoom", allocator);
+		root.AddMember("arg0", "1000001", allocator);
+		callByNative(GetStrFromRoot(root));
+	}
+	else if (method == "sayTo") {
+		LOGI("sayTo %s\n", param.c_str());
+	}
+	else if (method == "notify") {
+	}
+	else if (method == "enterRoom") {
+		LOGI("enterRoom %s\n", param.c_str());
 
 		rapidjson::Document doc;
 		rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> &allocator = doc.GetAllocator();
@@ -49,13 +62,6 @@ void VSBridge::callNative(const std::string& method, const std::string& param)
 		root.AddMember("arg3", "123456", allocator);
 		root.AddMember("arg4", "", allocator);
 		callByNative(GetStrFromRoot(root));
-	}
-	else if (method == "sayTo") {
-	}
-	else if (method == "notify") {
-	}
-	else if (method == "enterRoom") {
-		printf("GetStrFromRoot = %s \n", param.c_str());
 	}
 	else if (method == "exitRoom") {
 	}

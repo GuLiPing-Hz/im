@@ -1,6 +1,7 @@
 ﻿#include "NativeBuffer.h"
 #include <memory>
 
+/*
 BufferUnitSingle *ReadNativeBufferSingle(NativeBuffer *nativeBuf, int type, int &len) {
 	BufferUnitSingle *ret = new BufferUnitSingle();
 	if (!ret)
@@ -119,6 +120,149 @@ VECBUNIT AutoParseNativeBuffer(NativeBuffer *nativeBuf) {
 	} while (nativeBuf->hasData());
 
 	return ret;
+}
+
+void FreeBufferList(VECBUNIT &lst){
+	VECBUNIT::iterator it = lst.begin();
+	for (it; it != lst.end(); it++){
+		BufferUnit* bu = *it;
+		if (bu)
+			delete bu;
+	}
+}
+*/
+
+BufferJson *ReadNativeBufferJson(NativeBuffer *nativeBuf, int type, int &len) {
+	BufferJson *ret = new BufferJson();
+	if (!ret)
+		return ret;
+
+	ret->type = (BufferJson::eDataType) type;
+
+	if (type == BufferJson::type_char) {
+		nativeBuf->readChar(ret->data.base.c);
+		len = 1;
+	}
+	else if (type == BufferJson::type_short) {
+		nativeBuf->readShort(ret->data.base.s);
+		len = 2;
+	}
+	else if (type == BufferJson::type_int) {
+		nativeBuf->readInt(ret->data.base.i);
+		len = 4;
+	}
+	else if (type == BufferJson::type_int64) {
+		//这里 js引擎默认把long long 型数据转换为stirng，所以需要数字比较的时候记得转int
+		nativeBuf->readInt64(ret->data.base.ll);//直接我这里把它转了
+		len = 8;
+	}
+	else if (type == BufferJson::type_float) {
+		nativeBuf->readFloat(ret->data.base.f);
+		len = 4;
+	}
+	else if (type == BufferJson::type_str) {
+		ret->data.str = nativeBuf->readString();
+		len = 2 + (int)ret->data.str.length();//字符串长度+字符串
+	}
+	else {
+		ret->type = BufferJson::type_unknow;
+		LOGE("readNativeBufferSingle unknown type= %d\n", type);
+	}
+
+	// Log.i("readNativeBufferSingle type=" + typeof ret.value + ",value = " + ret.value);
+	return ret;
+}
+
+BufferJson* AutoParseNativeBufferEx(NativeBuffer *nativeBuf){
+	BufferJson* ret = NULL;
+	if (!nativeBuf)
+		return ret;
+
+	ret = new BufferJson();
+	do {
+		char type;
+		nativeBuf->readChar(type);//读取标志位
+
+		if (type > 22)//异常type
+			break;
+
+		if (type > BufferJson::type_array + 1) {//字符串解析不能放在这里
+			char realType = type & 0xf;//数据具体类型
+			short arraLen;
+			nativeBuf->readShort(arraLen);
+			// Log.i("readNativeBufferData realType=" + realType + ",arraLen=" + arraLen);
+
+			BufferJson *arra = new BufferJson();//数组存储
+			arra->type = (BufferJson::eDataType) realType;//数组的具体类型
+			if (realType == 6) {//自定义结构数据
+				//arra->isInner = true;
+				if (arraLen > 0) {//不是空数组
+					for (int i = 0; i < arraLen; i++) {
+						//读取数据结构长度
+						short structLen;
+						nativeBuf->readShort(structLen);
+						// Log.i("readNativeBufferData structLen = " + structLen);
+
+						int tempLen = 0;
+						BufferJson *struc = new BufferJson();//数据结构
+						//struc->isInner = false;
+						struc->type = BufferJson::type_custom;
+						while (tempLen < structLen) {
+							char tempType;
+							nativeBuf->readChar(tempType);
+							tempLen += 1;//1字节
+
+							int inLen = 0;
+							BufferJson *tempRet = ReadNativeBufferJson(nativeBuf, tempType ,inLen);
+							struc->list.push_back(tempRet);//把值记录下来
+
+							if (inLen == 0) {//出现异常了！！！，
+								int remainLen = structLen - tempLen;
+								if (remainLen > 0) {
+									//把多余的数据跳过一下
+									nativeBuf->skipBuffer(remainLen);
+								}
+								break;
+							}
+
+							tempLen += inLen;
+						}
+						arra->list.push_back(struc);//放入结构数据
+					}
+				}
+			}
+			else {
+				//arra->isInner = false;
+				for (int i = 0; i < arraLen; i++) {
+					int inLen = 0;
+					BufferJson *tempRet = ReadNativeBufferJson(nativeBuf, realType, inLen);
+					arra->list.push_back(tempRet);//把值记录下来
+				}
+			}
+			ret->list.push_back(arra);
+		}
+		else {
+			int inLen = 0;
+			BufferJson *tempRet = ReadNativeBufferJson(nativeBuf, type, inLen);
+			ret->list.push_back(tempRet);//把值记录下来
+		}
+
+	} while (nativeBuf->hasData());
+
+	return ret;
+}
+
+void FreeBufferList(BufferJson* &bj){
+	if (bj){
+		BufferJson::VECTORBJ::iterator it = bj->list.begin();
+		for (it; it != bj->list.end(); it++){
+			BufferJson* item = *it;
+			if (item)
+				delete item;
+		}
+		delete bj;
+		bj = NULL;
+	}
 }
 
 std::string XorString(const char *data, int datalen, const char *key, int len) {

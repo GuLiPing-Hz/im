@@ -63,17 +63,11 @@ protected:
 protected:
 	virtual void callNative(const std::string& method, const std::string& param) = 0;
 
-
 private:
 	CriticalSectionWrapper* mSection;
 	MAPSEQREQDATA mMapSeq;
 };
 
 std::string GetStrFromRoot(const rapidjson::Value &root);
-
-rapidjson::Value GetValueFromUnitSingle(BufferUnit *data);
-void AddParam(rapidjson::Document &doc, rapidjson::Value &root, const std::string &name, BufferUnit *data, bool isInner);
-void AddParamEx(rapidjson::Document &doc, rapidjson::Value &root, const VECBUNIT &data, const VECSTRING &name);
-void AddParamNames(rapidjson::Document &doc, rapidjson::Value &root, const VECBUNIT &data, int count, ...);
 
 #endif//SIMPLEBRIDGE_H__

@@ -114,9 +114,6 @@ private:
     unsigned int readPos_;
 };
 
-
-#define TYPE_ARRA_MASK 0x10
-
 struct BufferUnit {
     enum eDataType {
         type_unknow = 0,
@@ -172,7 +169,48 @@ struct BufferUnitArra : public BufferUnit {
 typedef std::vector<BufferUnit *> VECBUNIT;
 typedef std::vector<std::string> VECSTRING;
 
-VECBUNIT AutoParseNativeBuffer(NativeBuffer *nativeBuf);
+//VECBUNIT AutoParseNativeBuffer(NativeBuffer *nativeBuf);
+//void FreeBufferList(VECBUNIT &bj);
+
+struct BufferJson{
+	enum eDataType {
+		type_unknow = 0,
+		type_char = 1,//[16+1][数组长度][data]
+		type_short = 2,
+		type_int = 3,
+		type_int64 = 4,
+		type_float = 5,//[]
+		//17需要单独拎出来
+		type_str = 17,
+
+		//下面两个主要给BufferUnitArra使用
+		type_custom = 6,//[16+6][数组长度][{结构长度,结构体}]...
+		type_array = 16,//
+	};
+	eDataType type;
+
+	struct Data{
+		union BaseData {//联合数据结构
+			char c;
+			short s;
+			int i;
+			long long ll;
+			float f;
+		};
+		BaseData base;
+		//字符串需要另外存放
+		std::string str;
+	};
+	Data data;
+	
+	typedef std::vector<BufferJson*> VECTORBJ;
+	VECTORBJ list;
+};
+
+//自动解析网络的协议数据
+BufferJson* AutoParseNativeBufferEx(NativeBuffer *nativeBuf);
+//调用上面的函数需要配对调用释放函数
+void FreeBufferList(BufferJson* &bj);
 
 std::string XorString(const char *data, int datalen, const char *key, int len);
 
