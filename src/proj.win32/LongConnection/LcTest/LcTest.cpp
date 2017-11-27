@@ -2,6 +2,7 @@
 //
 
 #include "stdafx.h"
+#include <vld.h>
 #include "LongConnection.h"
 #include "VSBridge.h"
 #include <string>
