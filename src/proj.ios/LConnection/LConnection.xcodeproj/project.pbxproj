@@ -16,6 +16,7 @@
 		3F31AB9B1F8B8DBC000FF66B /* SimpleBridgeIos.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3F31AB991F8B8DBC000FF66B /* SimpleBridgeIos.cpp */; };
 		3F31AB9E1F8B9418000FF66B /* SimpleBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F31AB9C1F8B9417000FF66B /* SimpleBridge.h */; };
 		3F31AB9F1F8B9418000FF66B /* SimpleBridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3F31AB9D1F8B9417000FF66B /* SimpleBridge.cpp */; };
+		3FEA0F241FCD43540081E11A /* pool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3FEA0F231FCD43540081E11A /* pool.cpp */; };
 		3FEDD15D1F8C7FA0006D59F9 /* DataDecoderLobby.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3F31AAE31F8B883E000FF66B /* DataDecoderLobby.cpp */; };
 		3FEDD15E1F8C7FAF006D59F9 /* DataDecoderRoom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3F31AAE51F8B883E000FF66B /* DataDecoderRoom.cpp */; };
 		3FEDD15F1F8C7FAF006D59F9 /* NetApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3F31AAE71F8B883E000FF66B /* NetApp.cpp */; };
@@ -245,6 +246,8 @@
 		3F31AB991F8B8DBC000FF66B /* SimpleBridgeIos.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleBridgeIos.cpp; sourceTree = "<group>"; };
 		3F31AB9C1F8B9417000FF66B /* SimpleBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleBridge.h; sourceTree = "<group>"; };
 		3F31AB9D1F8B9417000FF66B /* SimpleBridge.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleBridge.cpp; sourceTree = "<group>"; };
+		3FEA0F221FCD43440081E11A /* pool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pool.h; sourceTree = "<group>"; };
+		3FEA0F231FCD43540081E11A /* pool.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = pool.cpp; sourceTree = "<group>"; };
 		3FEDD17F1F8C8029006D59F9 /* counter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = counter.h; sourceTree = "<group>"; };
 		3FEDD1811F8C8040006D59F9 /* timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = timer.h; sourceTree = "<group>"; };
 		3FEDD1821F8C8040006D59F9 /* timer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = timer.cpp; sourceTree = "<group>"; };
@@ -482,6 +485,8 @@
 				3F31AB5A1F8B883E000FF66B /* md5.h */,
 				3F31AB5B1F8B883E000FF66B /* mutex_wrapper.cpp */,
 				3F31AB5C1F8B883E000FF66B /* mutex_wrapper.h */,
+				3FEA0F231FCD43540081E11A /* pool.cpp */,
+				3FEA0F221FCD43440081E11A /* pool.h */,
 				3F31AB5F1F8B883E000FF66B /* reactor.cpp */,
 				3F31AB601F8B883E000FF66B /* reactor.h */,
 				3F31AB611F8B883E000FF66B /* rw_stream.cpp */,
@@ -770,6 +775,7 @@
 				3FEDD1721F8C8010006D59F9 /* httpcontent.cpp in Sources */,
 				3FEDD1731F8C8010006D59F9 /* jniloghelp.cpp in Sources */,
 				3FEDD1741F8C8010006D59F9 /* md5.cpp in Sources */,
+				3FEA0F241FCD43540081E11A /* pool.cpp in Sources */,
 				3FEDD1751F8C8010006D59F9 /* mutex_wrapper.cpp in Sources */,
 				3FEDD1761F8C8010006D59F9 /* reactor.cpp in Sources */,
 				3FEDD1771F8C8010006D59F9 /* rw_stream.cpp in Sources */,
