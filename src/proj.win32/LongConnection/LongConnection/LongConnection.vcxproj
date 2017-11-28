@@ -157,6 +157,7 @@
     <ClInclude Include="..\..\..\Classes\wrap\jniloghelp.h" />
     <ClInclude Include="..\..\..\Classes\wrap\md5.h" />
     <ClInclude Include="..\..\..\Classes\wrap\mutex_wrapper.h" />
+    <ClInclude Include="..\..\..\Classes\wrap\pool.h" />
     <ClInclude Include="..\..\..\Classes\wrap\reactor.h" />
     <ClInclude Include="..\..\..\Classes\wrap\rw_stream.h" />
     <ClInclude Include="..\..\..\Classes\wrap\seq_map.h" />
@@ -229,6 +230,7 @@
     <ClCompile Include="..\..\..\Classes\wrap\jniloghelp.cpp" />
     <ClCompile Include="..\..\..\Classes\wrap\md5.cpp" />
     <ClCompile Include="..\..\..\Classes\wrap\mutex_wrapper.cpp" />
+    <ClCompile Include="..\..\..\Classes\wrap\pool.cpp" />
     <ClCompile Include="..\..\..\Classes\wrap\reactor.cpp" />
     <ClCompile Include="..\..\..\Classes\wrap\rw_stream.cpp" />
     <ClCompile Include="..\..\..\Classes\wrap\seq_map.cpp" />

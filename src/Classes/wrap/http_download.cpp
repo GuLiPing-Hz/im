@@ -8,6 +8,8 @@
 #include "http_download.h"
 #include "http_download_mgr.h"
 #include "httpcontent.h"
+#include <algorithm>
+
 #ifdef WIN32
 #define R_OK  4  /* Read */
 #define W_OK  2  /* Write */
@@ -25,13 +27,6 @@
 #include "file_mgr.h"
 
 #include "config.h"
-
-#ifndef max
-#define max(a,b) (((a) > (b)) ? (a) : (b))
-#endif//max
-#ifndef min
-#define min(a,b) (((a)>(b))?(b):(a))
-#endif//min
 
 #define PER_RECV_BUF_SIZE			65535/*1024 * 25*/   // 接收缓冲区大小
 #define TRY_MAX_TIMES 3
@@ -800,7 +795,7 @@ CHttpDownload::eDownloadType CHttpDownload::dealWithTransferEncodingAndCommon(Da
 
 		nCurLenData = pDb->getPos();
 		if(m_bTransferEncodingChunked)
-			nCurRealLen = (int)min(m_nCurChunkSize-m_nCurChunkDownloadSize,nCurLenData);
+			nCurRealLen = (int) MIN(m_nCurChunkSize-m_nCurChunkDownloadSize,(long)nCurLenData);
 		else
 			nCurRealLen = nCurLenData;
 

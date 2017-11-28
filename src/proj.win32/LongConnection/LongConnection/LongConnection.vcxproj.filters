@@ -363,6 +363,9 @@
     <ClInclude Include="..\..\..\Classes\bridge\SimpleBridgeIos.h">
       <Filter>Classes\bridge</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Classes\wrap\pool.h">
+      <Filter>Classes\wrap</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -541,6 +544,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\Classes\bridge\SimpleBridgeIos.cpp">
       <Filter>Classes\bridge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\wrap\pool.cpp">
+      <Filter>Classes\wrap</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

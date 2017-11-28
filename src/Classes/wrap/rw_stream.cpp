@@ -12,13 +12,6 @@
 	#include "netinet/in.h"
 #endif
 
-#ifndef max
-#define max(a,b) (((a) > (b)) ? (a) : (b))
-#endif//max
-#ifndef min
-#define min(a,b) (((a)>(b))?(b):(a))
-#endif//min
-
 namespace NetworkUtil
 {
 ////////////////////////////////read operation//////////////////////////////////////////
@@ -99,7 +92,7 @@ namespace NetworkUtil
 		if(!szBuffer || !iLen)
 			return 0;
 
-		unsigned int minLen = min(iLen, getSize());
+		unsigned int minLen = MIN(iLen, getSize());
 		memcpy(szBuffer, getData(), minLen);
 		return minLen;
 	}

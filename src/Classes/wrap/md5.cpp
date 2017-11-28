@@ -1,4 +1,5 @@
 ﻿#include "md5.h"
+#include <string.h>
 
 using namespace std;
 

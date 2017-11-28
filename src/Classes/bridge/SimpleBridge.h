@@ -28,7 +28,8 @@ struct MethodParam{
 };
 typedef std::map<int, MethodParam> MAPSEQREQDATA;
 
-class SimpleBridge : public  ResponseBase
+
+class IM_DLL SimpleBridge : public  ResponseBase
 {
 protected:
 	SimpleBridge();
@@ -68,6 +69,6 @@ private:
 	MAPSEQREQDATA mMapSeq;
 };
 
-std::string GetStrFromRoot(const rapidjson::Value &root);
+IM_DLL std::string GetStrFromRoot(const rapidjson::Value &root);
 
 #endif//SIMPLEBRIDGE_H__

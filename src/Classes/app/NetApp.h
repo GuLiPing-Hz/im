@@ -28,6 +28,7 @@ private:
 
 public:
     static NetApp *GetInstance();
+	static void ReleaseApp();
 
     //NetworkUtil::MessageCenter
     virtual int getMessage(NetworkUtil::MSGINFO &msg);

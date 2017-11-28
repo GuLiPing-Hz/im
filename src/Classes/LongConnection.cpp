@@ -85,11 +85,11 @@ int LCLogin(const int seq, const char *uid, const char *token, const char *appke
         return -1;
 
     NativeBuffer *nativeBuf = BuildNativeBuffer(CMD_LOGIN_C2S2C, seq);
-	bool ok = nativeBuf->writeChar(BufferUnit::type_array + BufferUnit::type_char);
+	bool ok = nativeBuf->writeChar(BufferJson::type_array + BufferJson::type_char);
     ok &= nativeBuf->writeString(strlen(uid), uid);
-	ok &= nativeBuf->writeChar(BufferUnit::type_array + BufferUnit::type_char);
+	ok &= nativeBuf->writeChar(BufferJson::type_array + BufferJson::type_char);
 	ok &= nativeBuf->writeString(strlen(token), token);
-	ok &= nativeBuf->writeChar(BufferUnit::type_array + BufferUnit::type_char);
+	ok &= nativeBuf->writeChar(BufferJson::type_array + BufferJson::type_char);
 	ok &= nativeBuf->writeString(strlen(appkey), appkey);
 	if (!ok)
 		return -1;
@@ -130,15 +130,15 @@ int LCSayTo(const int seq, int type, const char *from, const char *to, const cha
         return -1;
 
     NativeBuffer *nativeBuf = BuildNativeBuffer(CMD_SAYTO_C2S2C, seq);
-    bool ok = nativeBuf->writeChar(BufferUnit::type_int);
+    bool ok = nativeBuf->writeChar(BufferJson::type_int);
 	ok &= nativeBuf->writeInt(type);
-	ok &= nativeBuf->writeChar(BufferUnit::type_array + BufferUnit::type_char);
+	ok &= nativeBuf->writeChar(BufferJson::type_array + BufferJson::type_char);
 	ok &= nativeBuf->writeString(strlen(from), from);
-	ok &= nativeBuf->writeChar(BufferUnit::type_array + BufferUnit::type_char);
+	ok &= nativeBuf->writeChar(BufferJson::type_array + BufferJson::type_char);
 	ok &= nativeBuf->writeString(strlen(to), to);
-	ok &= nativeBuf->writeChar(BufferUnit::type_array + BufferUnit::type_char);
+	ok &= nativeBuf->writeChar(BufferJson::type_array + BufferJson::type_char);
 	ok &= nativeBuf->writeString(strlen(content), content);
-	ok &= nativeBuf->writeChar(BufferUnit::type_array + BufferUnit::type_char);
+	ok &= nativeBuf->writeChar(BufferJson::type_array + BufferJson::type_char);
 	ok &= nativeBuf->writeString(ext ? strlen(ext) : 0, ext);
 	if (!ok)
 		return -1;
@@ -161,7 +161,7 @@ int LCEnterRoom(const int seq, const char *room_id) {
         return -1;
 
     NativeBuffer *nativeBuf = BuildNativeBuffer(CMD_ENTERROOM_C2S2C, seq);
-	bool ok = nativeBuf->writeChar(BufferUnit::type_array + BufferUnit::type_char);
+	bool ok = nativeBuf->writeChar(BufferJson::type_array + BufferJson::type_char);
     ok &= nativeBuf->writeString(strlen(room_id), room_id);
 	if (!ok)
 		return -1;

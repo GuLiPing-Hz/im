@@ -6,6 +6,7 @@
 #include "../wrap/config.h"
 #include <string>
 #include <vector>
+#include "../wrap/pool.h"
 
 #ifdef COCOS_PROJECT
 #include "cocos2d.h"
@@ -23,7 +24,7 @@ void register_NativeBuffer(JSContext *cx, JS::HandleObject ns);
 */
 class NativeBuffer
 #ifdef COCOS_PROJECT
-    : public cocos2d::Ref
+	: public cocos2d::Ref
 #endif
 {
 #ifdef COCOS_PROJECT
@@ -31,148 +32,92 @@ protected:
 #else
 public:
 #endif
-    NativeBuffer(char format = OP_BIGENDIAN);
-    virtual ~NativeBuffer();
+	NativeBuffer(char format = OP_BIGENDIAN);
+	virtual ~NativeBuffer();
 
 #ifdef COCOS_PROJECT
 public:
-    static NativeBuffer *Create();
+	static NativeBuffer *Create();
 #endif
-    //读写位置归0
-    void clearBuffer();
+	//读写位置归0
+	void clearBuffer();
 
-    void moveBuffer(char *&data, unsigned int len);
+	void moveBuffer(char *&data, unsigned int len);
 
 	const NetworkUtil::DataBlockLocal65535* getBuffer() const;
 
-    bool hasData();
+	bool hasData();
 
-    bool skipBuffer(const unsigned int len);
+	bool skipBuffer(const unsigned int len);
 
-    /**
-     *
-     * @param c
-     * @return 是否写入成功
-     */
-    template<typename T>
-    bool writeType(const T c);
+	/**
+	 *
+	 * @param c
+	 * @return 是否写入成功
+	 */
+	template<typename T>
+	bool writeType(const T c);
 
-    template<typename T>
-    bool readType(T &c);
+	template<typename T>
+	bool readType(T &c);
 
-    bool writeChar(const char c);
+	bool writeChar(const char c);
 
 	bool writeUChar(const unsigned char c);
 
-    bool writeShort(const short c);
+	bool writeShort(const short c);
 
 	bool writeUShort(const unsigned short c);
 
-    bool writeInt(const int c);
+	bool writeInt(const int c);
 
 	bool writeUInt(const unsigned int c);
 
-    bool writeInt64(const long long c);
+	bool writeInt64(const long long c);
 
 	bool writeUInt64(const unsigned long long c);
 
-    bool writeFloat(const float c);
+	bool writeFloat(const float c);
 
-    bool writeString(const unsigned short len, const char *c);
+	bool writeString(const unsigned short len, const char *c);
 
 	bool writeStringNoLen(const unsigned short len, const char *c);
 
-    bool readChar(char &c);
+	bool readChar(char &c);
 
 	bool readUChar(unsigned char &c);
 
-    bool readShort(short &c);
+	bool readShort(short &c);
 
 	bool readUShort(unsigned short &c);
 
-    bool readInt(int &c);
+	bool readInt(int &c);
 
 	bool readUInt(unsigned int &c);
 
-    bool readInt64(long long &c);
+	bool readInt64(long long &c);
 
 	bool readUInt64(unsigned long long &c);
 
-    bool readFloat(float &c);
+	bool readFloat(float &c);
 
 	bool readString(unsigned short &len, char *c);
 
-    bool readBuffer(char *c, unsigned int len);
+	bool readBuffer(char *c, unsigned int len);
 
-    std::string readString();
+	std::string readString();
 
 private:
-    NetworkUtil::DataBlockLocal65535 data_;
-    int swap_;
+	NetworkUtil::DataBlockLocal65535 data_;
+	int swap_;
 
-    //记录读取位置
-    unsigned int readPos_;
+	//记录读取位置
+	unsigned int readPos_;
 };
 
-struct BufferUnit {
-    enum eDataType {
-        type_unknow = 0,
-        type_char = 1,//[16+1][数组长度][data]
-        type_short = 2,
-        type_int = 3,
-        type_int64 = 4,
-        type_float = 5,//[]
-        //17需要单独拎出来
-        type_str = 17,
-
-        //下面两个主要给BufferUnitArra使用
-        type_custom = 6,//[16+6][数组长度][{结构长度,结构体}]...
-        type_array = 16,//
-    };
-
-    bool isSingle;//true 为BufferUnitSingle ，false 为BufferUnitArra
-    eDataType type;
-};
-
-//自动化解析buffer基础单元
-struct BufferUnitSingle : public BufferUnit {
-
-	BufferUnitSingle(){
-		isSingle = true;
-	}
-
-    union Data {
-        char c;
-        short s;
-        int i;
-        long long ll;
-        float f;
-    };
-    Data data;
-    //字符串需要另外存放
-    std::string str;
-};
-
-struct BufferUnitArra : public BufferUnit {
-
-	BufferUnitArra(){
-		isSingle = false;
-	}
-
-// 	type_custom = 6,//[16+6][数组长度][{结构长度,结构体}]...
-// 	type_array = 16,//
-    bool isInner;//是否是内嵌的数组 true 读取array ，false 读取 custom
-    std::vector<BufferUnit *> base;//基础数组数据
-    std::vector<BufferUnitArra *> data;//通用数据类型 嵌套的数组
-};
-
-typedef std::vector<BufferUnit *> VECBUNIT;
 typedef std::vector<std::string> VECSTRING;
 
-//VECBUNIT AutoParseNativeBuffer(NativeBuffer *nativeBuf);
-//void FreeBufferList(VECBUNIT &bj);
-
-struct BufferJson{
+struct BufferJson /*: PoolObj*/{
 	enum eDataType {
 		type_unknow = 0,
 		type_char = 1,//[16+1][数组长度][data]
@@ -202,15 +147,27 @@ struct BufferJson{
 		std::string str;
 	};
 	Data data;
-	
+
 	typedef std::vector<BufferJson*> VECTORBJ;
 	VECTORBJ list;
+
+	//BufferJson() :PoolObj("BufferJson"){}
+
+// 	virtual void reuse(){
+// 		PoolObj::reuse();
+// 		clear();
+// 	}
+
+	void clear(){
+		type = type_unknow;
+		list.clear();
+	}
 };
 
 //自动解析网络的协议数据
 BufferJson* AutoParseNativeBufferEx(NativeBuffer *nativeBuf);
 //调用上面的函数需要配对调用释放函数
-void FreeBufferList(BufferJson* &bj);
+void RecycleBufferList(BufferJson* &bj);
 
 std::string XorString(const char *data, int datalen, const char *key, int len);
 

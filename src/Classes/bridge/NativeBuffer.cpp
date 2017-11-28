@@ -1,139 +1,124 @@
 ﻿#include "NativeBuffer.h"
 #include <memory>
 
-/*
-BufferUnitSingle *ReadNativeBufferSingle(NativeBuffer *nativeBuf, int type, int &len) {
-	BufferUnitSingle *ret = new BufferUnitSingle();
-	if (!ret)
-		return ret;
-
-	ret->type = (BufferUnit::eDataType) type;
-
-	if (type == BufferUnit::type_char) {
-		nativeBuf->readChar(ret->data.c);
-		len = 1;
-	}
-	else if (type == BufferUnit::type_short) {
-		nativeBuf->readShort(ret->data.s);
-		len = 2;
-	}
-	else if (type == BufferUnit::type_int) {
-		nativeBuf->readInt(ret->data.i);
-		len = 4;
-	}
-	else if (type == BufferUnit::type_int64) {
-		//这里 js引擎默认把long long 型数据转换为stirng，所以需要数字比较的时候记得转int
-		nativeBuf->readInt64(ret->data.ll);//直接我这里把它转了
-		len = 8;
-	}
-	else if (type == BufferUnit::type_float) {
-		nativeBuf->readFloat(ret->data.f);
-		len = 4;
-	}
-	else if (type == BufferUnit::type_str) {
-		ret->str = nativeBuf->readString();
-		len = 2 + (int)ret->str.length();//字符串长度+字符串
-	}
-	else {
-		ret->type = BufferUnit::type_unknow;
-		LOGE("readNativeBufferSingle unknown type= %d\n", type);
-	}
-
-	// Log.i("readNativeBufferSingle type=" + typeof ret.value + ",value = " + ret.value);
-	return ret;
-}
-
-VECBUNIT AutoParseNativeBuffer(NativeBuffer *nativeBuf) {
-	VECBUNIT ret;
-	if (!nativeBuf)
-		return ret;
-
-	do {
-		char type;
-		nativeBuf->readChar(type);//读取标志位
-
-		if (type > 22)//异常type
-			break;
-
-		if (type > BufferUnit::type_array + 1) {//字符串解析不能放在这里
-			char realType = type & 0xf;//数据具体类型
-			short arraLen;
-			nativeBuf->readShort(arraLen);
-			// Log.i("readNativeBufferData realType=" + realType + ",arraLen=" + arraLen);
-
-			BufferUnitArra *arra = new BufferUnitArra();//数组存储
-			arra->type = (BufferUnit::eDataType) realType;//数组的具体类型
-			if (realType == 6) {//自定义结构数据
-				arra->isInner = true;
-				if (arraLen > 0) {//不是空数组
-					for (int i = 0; i < arraLen; i++) {
-						//读取数据结构长度
-						short structLen;
-						nativeBuf->readShort(structLen);
-						// Log.i("readNativeBufferData structLen = " + structLen);
-
-						int tempLen = 0;
-						BufferUnitArra *struc = new BufferUnitArra();//数据结构
-						struc->isInner = false;
-						struc->type = BufferUnit::type_custom;
-						while (tempLen < structLen) {
-							char tempType;
-							nativeBuf->readChar(tempType);
-							tempLen += 1;//1字节
-
-							int inLen = 0;
-							BufferUnitSingle *tempRet = ReadNativeBufferSingle(nativeBuf, tempType,
-								inLen);
-							struc->base.push_back(tempRet);//把值记录下来
-
-							if (inLen == 0) {//出现异常了！！！，
-								int remainLen = structLen - tempLen;
-								if (remainLen > 0) {
-									//把多余的数据跳过一下
-									nativeBuf->skipBuffer(remainLen);
-								}
-								break;
-							}
-
-							tempLen += inLen;
-						}
-						arra->data.push_back(struc);//放入结构数据
-					}
-				}
-			}
-			else {
-				arra->isInner = false;
-				for (int i = 0; i < arraLen; i++) {
-					int inLen = 0;
-					BufferUnitSingle *tempRet = ReadNativeBufferSingle(nativeBuf, realType, inLen);
-					arra->base.push_back(tempRet);//把值记录下来
-				}
-			}
-			ret.push_back(arra);
-		}
-		else {
-			int inLen = 0;
-			BufferUnitSingle *tempRet = ReadNativeBufferSingle(nativeBuf, type, inLen);
-			ret.push_back(tempRet);//把值记录下来
-		}
-
-	} while (nativeBuf->hasData());
-
-	return ret;
-}
-
-void FreeBufferList(VECBUNIT &lst){
-	VECBUNIT::iterator it = lst.begin();
-	for (it; it != lst.end(); it++){
-		BufferUnit* bu = *it;
-		if (bu)
-			delete bu;
-	}
-}
-*/
+// BufferJson ReadNativeBufferJson1(NativeBuffer *nativeBuf, int type, int &len) {
+// 	BufferJson ret;
+// 
+// 	ret.type = (BufferJson::eDataType) type;
+// 
+// 	if (type == BufferJson::type_char) {
+// 		nativeBuf->readChar(ret.data.base.c);
+// 		len = 1;
+// 	}
+// 	else if (type == BufferJson::type_short) {
+// 		nativeBuf->readShort(ret.data.base.s);
+// 		len = 2;
+// 	}
+// 	else if (type == BufferJson::type_int) {
+// 		nativeBuf->readInt(ret.data.base.i);
+// 		len = 4;
+// 	}
+// 	else if (type == BufferJson::type_int64) {
+// 		//这里 js引擎默认把long long 型数据转换为stirng，所以需要数字比较的时候记得转int
+// 		nativeBuf->readInt64(ret.data.base.ll);//直接我这里把它转了
+// 		len = 8;
+// 	}
+// 	else if (type == BufferJson::type_float) {
+// 		nativeBuf->readFloat(ret.data.base.f);
+// 		len = 4;
+// 	}
+// 	else if (type == BufferJson::type_str) {
+// 		ret.data.str = nativeBuf->readString();
+// 		len = 2 + (int)ret.data.str.length();//字符串长度+字符串
+// 	}
+// 	else {
+// 		ret.type = BufferJson::type_unknow;
+// 		LOGE("readNativeBufferSingle unknown type= %d\n", type);
+// 	}
+// 
+// 	// Log.i("readNativeBufferSingle type=" + typeof ret.value + ",value = " + ret.value);
+// 	return ret;
+// }
+// 
+// BufferJson* AutoParseNativeBufferEx1(NativeBuffer *nativeBuf){
+// 	static BufferJson ret;
+// 	ret.type = BufferJson::type_unknow;
+// 	ret.list.clear();
+// 	do {
+// 		char type;
+// 		nativeBuf->readChar(type);//读取标志位
+// 
+// 		if (type > 22)//异常type
+// 			break;
+// 
+// 		if (type > BufferJson::type_array + 1) {//字符串解析不能放在这里
+// 			char realType = type & 0xf;//数据具体类型
+// 			short arraLen;
+// 			nativeBuf->readShort(arraLen);
+// 			// Log.i("readNativeBufferData realType=" + realType + ",arraLen=" + arraLen);
+// 
+// 			BufferJson arra;//数组存储
+// 			arra.type = (BufferJson::eDataType) realType;//数组的具体类型
+// 			if (realType == 6) {//自定义结构数据
+// 				//arra->isInner = true;
+// 				if (arraLen > 0) {//不是空数组
+// 					for (int i = 0; i < arraLen; i++) {
+// 						//读取数据结构长度
+// 						short structLen;
+// 						nativeBuf->readShort(structLen);
+// 						// Log.i("readNativeBufferData structLen = " + structLen);
+// 
+// 						int tempLen = 0;
+// 						BufferJson struc;//数据结构
+// 						//struc->isInner = false;
+// 						struc.type = BufferJson::type_custom;
+// 						while (tempLen < structLen) {
+// 							char tempType;
+// 							nativeBuf->readChar(tempType);
+// 							tempLen += 1;//1字节
+// 
+// 							int inLen = 0;
+// 							BufferJson tempRet = ReadNativeBufferJson1(nativeBuf, tempType, inLen);
+// 							struc.list.push_back(tempRet);//把值记录下来
+// 
+// 							if (inLen == 0) {//出现异常了！！！，
+// 								int remainLen = structLen - tempLen;
+// 								if (remainLen > 0) {
+// 									//把多余的数据跳过一下
+// 									nativeBuf->skipBuffer(remainLen);
+// 								}
+// 								break;
+// 							}
+// 
+// 							tempLen += inLen;
+// 						}
+// 						arra.list.push_back(struc);//放入结构数据
+// 					}
+// 				}
+// 			}
+// 			else {
+// 				//arra->isInner = false;
+// 				for (int i = 0; i < arraLen; i++) {
+// 					int inLen = 0;
+// 					BufferJson tempRet = ReadNativeBufferJson1(nativeBuf, realType, inLen);
+// 					arra.list.push_back(tempRet);//把值记录下来
+// 				}
+// 			}
+// 			ret.list.push_back(arra);
+// 		}
+// 		else {
+// 			int inLen = 0;
+// 			BufferJson tempRet = ReadNativeBufferJson1(nativeBuf, type, inLen);
+// 			ret.list.push_back(tempRet);//把值记录下来
+// 		}
+// 
+// 	} while (nativeBuf->hasData());
+// 
+// 	return &ret;
+// }
 
 BufferJson *ReadNativeBufferJson(NativeBuffer *nativeBuf, int type, int &len) {
-	BufferJson *ret = new BufferJson();
+	BufferJson *ret =  new BufferJson(); //PoolMgr::GetIns()->getFromPool<BufferJson>("BufferJson");
 	if (!ret)
 		return ret;
 
@@ -178,7 +163,7 @@ BufferJson* AutoParseNativeBufferEx(NativeBuffer *nativeBuf){
 	if (!nativeBuf)
 		return ret;
 
-	ret = new BufferJson();
+	ret =  new BufferJson(); //PoolMgr::GetIns()->getFromPool<BufferJson>("BufferJson");
 	do {
 		char type;
 		nativeBuf->readChar(type);//读取标志位
@@ -192,7 +177,7 @@ BufferJson* AutoParseNativeBufferEx(NativeBuffer *nativeBuf){
 			nativeBuf->readShort(arraLen);
 			// Log.i("readNativeBufferData realType=" + realType + ",arraLen=" + arraLen);
 
-			BufferJson *arra = new BufferJson();//数组存储
+			BufferJson *arra =  new BufferJson(); //PoolMgr::GetIns()->getFromPool<BufferJson>("BufferJson");//数组存储
 			arra->type = (BufferJson::eDataType) realType;//数组的具体类型
 			if (realType == 6) {//自定义结构数据
 				//arra->isInner = true;
@@ -204,7 +189,7 @@ BufferJson* AutoParseNativeBufferEx(NativeBuffer *nativeBuf){
 						// Log.i("readNativeBufferData structLen = " + structLen);
 
 						int tempLen = 0;
-						BufferJson *struc = new BufferJson();//数据结构
+						BufferJson *struc =  new BufferJson(); //PoolMgr::GetIns()->getFromPool<BufferJson>("BufferJson");//数据结构
 						//struc->isInner = false;
 						struc->type = BufferJson::type_custom;
 						while (tempLen < structLen) {
@@ -252,16 +237,20 @@ BufferJson* AutoParseNativeBufferEx(NativeBuffer *nativeBuf){
 	return ret;
 }
 
-void FreeBufferList(BufferJson* &bj){
+void RecycleBufferList(BufferJson* &bj){
 	if (bj){
-		BufferJson::VECTORBJ::iterator it = bj->list.begin();
-		for (it; it != bj->list.end(); it++){
-			BufferJson* item = *it;
-			if (item)
-				delete item;
+		if (bj->list.empty()){
+			//PoolMgr::GetIns()->addToPool(bj);
+			delete bj;
+			bj = nullptr;
 		}
-		delete bj;
-		bj = NULL;
+		else{
+			BufferJson::VECTORBJ::iterator it = bj->list.begin();
+			for (it; it != bj->list.end(); it++){
+				BufferJson* item = *it;
+				RecycleBufferList(item);
+			}
+		}
 	}
 }
 

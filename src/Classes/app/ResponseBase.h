@@ -16,7 +16,17 @@
 //请求未送出，可能处于断网状态
 #define RESULT_REQ_NOT_SEND -9996
 
-class ResponseBase
+#ifdef WIN32
+#ifdef LONGCONNECTION_EXPORTS
+#define IM_DLL __declspec(dllexport)
+#else
+#define IM_DLL __declspec(dllimport)
+#endif // LONGCONNECTION_EXPORTS
+#else
+#define IM_DLL
+#endif // WIN32
+
+class IM_DLL ResponseBase
 {
 public:
 	ResponseBase(void){};

@@ -141,13 +141,14 @@ int _tmain(int argc, _TCHAR* argv[])
 	LCStartClient();
 	LCConnect(HOST.c_str(), PORT, 3);
 
-	getchar();
+	SleepMs(3000);
+	//getchar();
 	LCStopClient(true);
 
 	//testXN();
 	//testMap();
 
-	getchar();
+	//getchar();
 
 	return 0;
 }

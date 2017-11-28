@@ -21,45 +21,20 @@ std::string GetStrFromRoot(const rapidjson::Value &root) {
     rapidjson::Value paramRoot(rapidjson::kObjectType); \
     paramRoot.AddMember(MACRO_CODE, (MACRO_code), allocator);
 
-rapidjson::Value GetValueFromUnitSingle(BufferUnit *data) {
-	if (data && data->isSingle) {
-		rapidjson::Value ret;
-		BufferUnitSingle *pSingle = (BufferUnitSingle *)data;
-		if (data->type == BufferUnit::type_char || data->type == BufferUnit::type_short
-			|| data->type == BufferUnit::type_int) {
-			ret.SetInt(pSingle->data.i);
-		}
-		else if (data->type == BufferUnit::type_int64) {
-			ret.SetInt64(pSingle->data.ll);
-		}
-		else if (data->type == BufferUnit::type_float) {
-			ret.SetFloat(pSingle->data.f);
-		}
-		else if (data->type == BufferUnit::type_str) {
-			ret.SetString(pSingle->str.c_str(), pSingle->str.size());
-		}
-
-		return ret;
-	}
-	else {
-		return rapidjson::Value(rapidjson::kNullType);
-	}
-}
-
-rapidjson::Value GetValueFromBufferJson(BufferJson *data) {
+rapidjson::Value GetValueFromBufferJson(const BufferJson *data) {
 	if (data && data->list.empty()) {
 		rapidjson::Value ret;
 		if (data->type == BufferJson::type_char || data->type == BufferJson::type_short
 			|| data->type == BufferJson::type_int) {
 			ret.SetInt(data->data.base.i);
 		}
-		else if (data->type == BufferUnit::type_int64) {
+		else if (data->type == BufferJson::type_int64) {
 			ret.SetInt64(data->data.base.ll);
 		}
-		else if (data->type == BufferUnit::type_float) {
+		else if (data->type == BufferJson::type_float) {
 			ret.SetFloat(data->data.base.f);
 		}
-		else if (data->type == BufferUnit::type_str) {
+		else if (data->type == BufferJson::type_str) {
 			ret.SetString(data->data.str.c_str(), data->data.str.size());
 		}
 
@@ -71,42 +46,7 @@ rapidjson::Value GetValueFromBufferJson(BufferJson *data) {
 }
 
 void AddParam(rapidjson::Document &doc, rapidjson::Value &root, const std::string &name,
-	BufferUnit *data, bool isInner) {
-	rapidjson::Value nameValue(rapidjson::kStringType);
-	nameValue.SetString(name.c_str(), name.size(), doc.GetAllocator());
-
-	if (data) {
-		if (data->isSingle) {
-			rapidjson::Value value = GetValueFromUnitSingle(data);
-			root.AddMember(nameValue, value, doc.GetAllocator());
-		}
-		else {
-			BufferUnitArra *pArray = (BufferUnitArra *)data;
-			if (pArray->isInner) {
-				LOGE("the BufferUnitArra is inner");
-				root.AddMember(nameValue, rapidjson::Value(rapidjson::kNullType), doc.GetAllocator());
-				return;
-			}
-
-			rapidjson::Value arraValue(rapidjson::kArrayType);
-			for (unsigned int i = 0; i < pArray->base.size(); i++) {
-				rapidjson::Value value = GetValueFromUnitSingle(data);
-				arraValue.PushBack(value, doc.GetAllocator());
-			}
-
-			if (isInner)
-				root.PushBack(arraValue, doc.GetAllocator());
-			else
-				root.AddMember(nameValue, arraValue, doc.GetAllocator());
-		}
-	}
-	else {
-		root.AddMember(nameValue, rapidjson::Value(rapidjson::kNullType), doc.GetAllocator());
-	}
-}
-
-void AddParam(rapidjson::Document &doc, rapidjson::Value &root, const std::string &name,
-	BufferJson *data, bool isInner) {
+	const BufferJson *data, bool isInner) {
 	rapidjson::Value nameValue(rapidjson::kStringType);
 	nameValue.SetString(name.c_str(), name.size(), doc.GetAllocator());
 
@@ -118,7 +58,7 @@ void AddParam(rapidjson::Document &doc, rapidjson::Value &root, const std::strin
 		else {
 			rapidjson::Value arraValue(rapidjson::kArrayType);
 			for (unsigned int i=0; i<data->list.size(); i++) {
-				BufferJson* item = data->list[i];
+				const BufferJson* item = data->list[i];
 				rapidjson::Value value = GetValueFromBufferJson(item);
 				arraValue.PushBack(value, doc.GetAllocator());
 			}
@@ -134,40 +74,6 @@ void AddParam(rapidjson::Document &doc, rapidjson::Value &root, const std::strin
 	}
 }
 
-void AddParamEx(rapidjson::Document &doc, rapidjson::Value &root, const VECBUNIT& data,
-	const VECSTRING &name) {
-	if (data.size() < name.size()) {
-		root.SetArray();
-		return;
-	}
-
-	for (unsigned int i = 0; i < name.size(); i++) {
-		BufferUnit *unit = data[i];
-
-		bool isInner = false;
-		if (!unit->isSingle) {
-			BufferUnitArra *arra = (BufferUnitArra *)unit;
-			if (arra->isInner) {
-				isInner = true;
-
-				rapidjson::Value arraValue(rapidjson::kArrayType);
-				for (unsigned int j = 0;
-					j < arra->data.size(); j++) {//这里一共就内嵌2层，如果还有嵌套说明协议定的有问题，可以改的简单点
-					BufferUnitArra *arra1 = arra->data[j];
-					AddParam(doc, arraValue, "", arra1, true);
-				}
-
-				rapidjson::Value nameValue(rapidjson::kStringType);
-				nameValue.SetString(name[i].c_str(), name[i].size(), doc.GetAllocator());
-				root.AddMember(nameValue, arraValue, doc.GetAllocator());
-			}
-		}
-
-		if (!isInner)
-			AddParam(doc, root, name[i], unit, false);
-	}
-}
-
 void AddParamEx(rapidjson::Document &doc, rapidjson::Value &root, const BufferJson* data,
 	const VECSTRING &name) {
 	if (!data || data->list.size() < name.size()) {
@@ -176,11 +82,11 @@ void AddParamEx(rapidjson::Document &doc, rapidjson::Value &root, const BufferJs
 	}
 
 	for (unsigned int i = 0; i < name.size(); i++) {
-		BufferJson *unit = data->list[i];
+		const BufferJson *unit = data->list[i];
 		if (!unit->list.empty()) {
 			rapidjson::Value arraValue(rapidjson::kArrayType);
-			for (unsigned int j = 0; j < unit->list.size(); j++) {//这里一共就内嵌2层，如果还有嵌套说明协议定的有问题，可以改的简单点
-				BufferJson *arra1 = unit->list[j];
+			for (unsigned int j = 0; j < unit->list.size(); j++) {
+				const BufferJson *arra1 = unit->list[j];
 				AddParam(doc, arraValue, "", arra1, true);
 			}
 
@@ -192,20 +98,6 @@ void AddParamEx(rapidjson::Document &doc, rapidjson::Value &root, const BufferJs
 			AddParam(doc, root, name[i], unit, false);
 		}
 	}
-}
-
-void AddParamNames(rapidjson::Document &doc, rapidjson::Value &root, const VECBUNIT& data, int count, ...)
-{
-	VECSTRING names;
-	va_list args;
-	va_start(args, count);
-	for (int i = 0; i < count; ++i) {
-		const char *arg = va_arg(args, const char*);
-		names.push_back(arg);
-	}
-	va_end(args);
-
-	AddParamEx(doc, root, data, names);
 }
 
 void AddParamNames(rapidjson::Document &doc, rapidjson::Value &root, const BufferJson* data, int count, ...)
@@ -352,29 +244,32 @@ SimpleBridge::onLobbyMsg(const int code, const char *msg, const unsigned int len
         if (cmd == CMD_LOGIN_C2S2C) {
 			callNative("login", GetStrFromRoot(paramRoot));
         } else if (cmd == CMD_SAYTO_C2S2C) {
-            //VECBUNIT data = AutoParseNativeBuffer(nativeBuf);
+// 			PreciseTimer timer;
+// 			printf("测试开始！！！\n");
+// 			timer.start();
 			BufferJson* data = AutoParseNativeBufferEx(nativeBuf);
             AddParamNames(doc, paramRoot, data, 4, "arg0", "arg1", "arg2", "arg3", "arg4");
             callNative("sayTo", GetStrFromRoot(paramRoot));
-			FreeBufferList(data);
+			RecycleBufferList(data);
+// 			timer.stop();
+// 			printf("CMD_SAYTO_C2S2C 消耗 %lf 微秒\n", timer.getElapsedTimeInMicroSec());
         } else if (cmd == CMD_NOTIFY_S2C) {
-            //VECBUNIT data = AutoParseNativeBuffer(nativeBuf);
 			BufferJson* data = AutoParseNativeBufferEx(nativeBuf);
             AddParamNames(doc, paramRoot, data, 2, "arg0", "arg1");
             callNative("notify", GetStrFromRoot(paramRoot));
-			FreeBufferList(data);
+			RecycleBufferList(data);
         } else if (cmd == CMD_ENTERROOM_C2S2C) {
             //VECBUNIT data = AutoParseNativeBuffer(nativeBuf);
 			BufferJson* data = AutoParseNativeBufferEx(nativeBuf);
-            AddParamNames(doc, paramRoot, data, 2, "arg0", "arg1");
-            callNative("enterRoom", GetStrFromRoot(paramRoot));
-			FreeBufferList(data);
-        } else if (cmd == CMD_EXITROOM_C2S2C) {
-            //VECBUNIT data = AutoParseNativeBuffer(nativeBuf);
+			AddParamNames(doc, paramRoot, data, 2, "arg0", "arg1");
+			callNative("enterRoom", GetStrFromRoot(paramRoot));
+			RecycleBufferList(data);
+		}
+		else if (cmd == CMD_EXITROOM_C2S2C) {
 			BufferJson* data = AutoParseNativeBufferEx(nativeBuf);
             AddParamNames(doc, paramRoot, data, 1, "arg0");
             callNative("exitRoom", GetStrFromRoot(paramRoot));
-			FreeBufferList(data);
+			RecycleBufferList(data);
 		} else if (cmd == CMD_DRIVEAWAY_S2C){
 			//被服务器踢下线了,我们需要主动断开连接
 			LCDisconnect();

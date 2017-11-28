@@ -61,6 +61,7 @@ add_library( # Sets the name of the library.
              ../../../Classes/wrap/thread_informer.cpp
              ../../../Classes/wrap/thread_mgr.cpp
              ../../../Classes/wrap/timer.cpp
+             ../../../Classes/wrap/pool.cpp
 
              ../../../Classes/charset/CharsetCodec.cpp
              ../../../Classes/charset/Chinese.cpp

@@ -21,6 +21,7 @@ VSBridge::~VSBridge() {
 
 void VSBridge::callNative(const std::string& method, const std::string& param)
 {
+	LOGI("%s : %s\n", __FUNCTION__, param.c_str());
 	if (method == "onLobbyTunnelConnectSuccess"){
 
 		rapidjson::Document doc;

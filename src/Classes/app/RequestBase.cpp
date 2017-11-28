@@ -88,10 +88,12 @@ void RequestBase::stopClient(bool finish)
 		handleNetThread = NULL;
 	}
 
+	if (finish){
 #ifdef _WIN32
-	if(finish)
 		WSACleanup();
 #endif
+		NetApp::ReleaseApp();
+	}
 }
 
 const char* RequestBase::getToken()

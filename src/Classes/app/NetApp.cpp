@@ -2,20 +2,13 @@
 #include "DataDecoderLobby.h"
 #include "DataDecoderRoom.h"
 #include "../wrap/crypt.h"
+#include "../wrap/pool.h"
 
 #ifdef _WIN32
 #include <Windows.h>
 #endif
 
 float g_Version = 1.00;
-
-#ifndef max
-#define max(a, b)            (((a) > (b)) ? (a) : (b))
-#endif//max
-#ifndef min
-#define min(a, b) \
-(((a)>(b))?(b):(a))
-#endif//min
 
 void KeepLiveLobbyAndRoom() {
     //心跳包时间计数
@@ -42,6 +35,11 @@ void KeepLiveLobbyAndRoom() {
 NetApp *NetApp::GetInstance() {
     static NetApp ins;
     return &ins;
+}
+
+void NetApp::ReleaseApp(){
+	CCharsetCodec::UninitCharset();
+	PoolMgr::ReleaseIns();
 }
 
 NetApp::NetApp()
@@ -73,7 +71,7 @@ NetApp::~NetApp() {
 void NetApp::setToken(const char *token, unsigned int tokenlen) {
     m_bIsAuth = true;
     memset(m_Token, 0, sizeof(m_Token));
-    int len = min(sizeof(m_Token) - 1, tokenlen);
+    int len = MIN(sizeof(m_Token) - 1, tokenlen);
     memcpy(m_Token, token, len);
     m_Tokenlen = len;
 }
