@@ -53,6 +53,8 @@ namespace NetworkUtil{
 	class ReserveData;
 
 	struct MessageCenter{
+		virtual int postMessage(int serverId, ClientSocket *conn, int cmd, void *v, int len, int seq,
+			bool back = true) = 0;
 		virtual int getMessage(MSGINFO& msg) = 0;
 		virtual int sendToSvr(ClientSocket* pSvr, const char* buf, int len) = 0;
 		virtual void addTimeout(int seq, ReserveData* data) = 0;

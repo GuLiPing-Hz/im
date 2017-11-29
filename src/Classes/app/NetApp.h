@@ -16,86 +16,87 @@
 extern float g_Version;
 
 enum eServerID {
-    none,
-    lobby,
+	none,
+	lobby,
 };
 
 class NetApp : public NetworkUtil::MessageCenter {
 private:
-    NetApp();
+	NetApp();
 
-    virtual ~NetApp();
+	virtual ~NetApp();
 
 public:
-    static NetApp *GetInstance();
+	static NetApp *GetInstance();
 	static void ReleaseApp();
 
-    //NetworkUtil::MessageCenter
-    virtual int getMessage(NetworkUtil::MSGINFO &msg);
+	//NetworkUtil::MessageCenter
+	virtual int postMessage(int serverId, NetworkUtil::ClientSocket *conn, int cmd, void *v, int len, int seq,
+		bool back = true);
 
-    virtual int sendToSvr(NetworkUtil::ClientSocket *pSvr, const char *buf, int len);
+	virtual int getMessage(NetworkUtil::MSGINFO &msg);
 
-    virtual void addTimeout(int seq, NetworkUtil::ReserveData *data);
+	virtual int sendToSvr(NetworkUtil::ClientSocket *pSvr, const char *buf, int len);
 
-    virtual void delTimeout(int seq);
+	virtual void addTimeout(int seq, NetworkUtil::ReserveData *data);
 
-    virtual void onTimeout(NetworkUtil::ReserveData *data);
+	virtual void delTimeout(int seq);
 
-    void setHeartbeatFunc(NetworkUtil::RUNKEEPLIVE func);
+	virtual void onTimeout(NetworkUtil::ReserveData *data);
 
-    bool start();
+	void setHeartbeatFunc(NetworkUtil::RUNKEEPLIVE func);
 
-    void stop();
+	bool start();
 
-    LobbyTunnel *getLobbyTunnel() { return &m_LobbyTunnel; }
+	void stop();
 
-    RoomTunnel *getRoomTunnel() { return &m_RoomTunnel; }
+	LobbyTunnel *getLobbyTunnel() { return &m_LobbyTunnel; }
 
-    void setToken(const char *token, unsigned int tokenlen);
+	RoomTunnel *getRoomTunnel() { return &m_RoomTunnel; }
 
-    const char *getToken() { return m_Token; }
+	void setToken(const char *token, unsigned int tokenlen);
 
-    unsigned int getTokenlen() { return m_Tokenlen; }
+	const char *getToken() { return m_Token; }
 
-    void setMyIDx(int idx) { m_iMyIDx = idx; }
+	unsigned int getTokenlen() { return m_Tokenlen; }
 
-    const int getMyIDx() { return m_iMyIDx; }
+	void setMyIDx(int idx) { m_iMyIDx = idx; }
 
-    void setResponseHandler(ResponseBase *pRb) { m_pResponse = pRb; }
+	const int getMyIDx() { return m_iMyIDx; }
 
-    ResponseBase *getResponseHandler() { return m_pResponse; }
+	void setResponseHandler(ResponseBase *pRb) { m_pResponse = pRb; }
 
-    //处理消息的发送与接收
-    int postMessage(int serverId, NetworkUtil::ClientSocket *conn, int cmd, void *v, int seq) {
-        return postMessage(serverId, conn, cmd, v, 0, seq, false);
-    }
+	ResponseBase *getResponseHandler() { return m_pResponse; }
 
-    int
-    postMessage(int serverId, NetworkUtil::ClientSocket *conn, int cmd, void *v, int len, int seq,
-                bool back = true);
+	//处理消息的发送与接收
+	int postMessage(int serverId, NetworkUtil::ClientSocket *conn, int cmd, void *v, int seq) {
+		return postMessage(serverId, conn, cmd, v, 0, seq, false);
+	}
 
-    NetInformer *getInformer() { return &m_Informer; }
+	
 
-    inline bool isAuth() { return m_bIsAuth; }
+	NetInformer *getInformer() { return &m_Informer; }
+
+	inline bool isAuth() { return m_bIsAuth; }
 
 private:
-    CriticalSectionWrapper *m_pObjectCS;
-    NetworkUtil::NetReactor m_Reactor;
-    LobbyTunnel m_LobbyTunnel;
-    RoomTunnel m_RoomTunnel;
-    Counter m_Counter;
-    char m_Token[256];
-    int m_iMyIDx;
-    unsigned int m_Tokenlen;
-    NetworkUtil::TMSeqMap m_RDMap;
-    NetInformer m_Informer;
-    std::list<NetworkUtil::MSGINFO> m_requestlist;
-    std::list<int> m_wseq;
-    bool m_bIsAuth;
-    ResponseBase *m_pResponse;    //回调响应基类
+	CriticalSectionWrapper *m_pObjectCS;
+	NetworkUtil::NetReactor m_Reactor;
+	LobbyTunnel m_LobbyTunnel;
+	RoomTunnel m_RoomTunnel;
+	Counter m_Counter;
+	char m_Token[256];
+	int m_iMyIDx;
+	unsigned int m_Tokenlen;
+	NetworkUtil::TMSeqMap m_RDMap;
+	NetInformer m_Informer;
+	std::list<NetworkUtil::MSGINFO> m_requestlist;
+	std::list<int> m_wseq;
+	bool m_bIsAuth;
+	ResponseBase *m_pResponse;    //回调响应基类
 public:
-    unsigned int m_nThreadId;
-//    NetworkUtil::CHttpDownloadMgr m_gMgr;
+	unsigned int m_nThreadId;
+	//    NetworkUtil::CHttpDownloadMgr m_gMgr;
 };
 
 #endif//NETAPP__H__
