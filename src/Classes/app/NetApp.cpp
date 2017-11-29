@@ -155,11 +155,16 @@ int NetApp::postMessage(int serverId, NetworkUtil::ClientSocket *conn, int cmd, 
     if (m_requestlist.size() > 1000)//请求队列最多1000
         return -1;
 
+	void* data = malloc(len);
+	if (!data)
+		return -1;
+	memcpy(data, v, len);//拷贝数据
+
     NetworkUtil::MSGINFO msg = {0};
 	msg.server = serverId;
     msg.con = conn;
     msg.cmd = cmd;
-    msg.v = v;
+	msg.v = data;
     msg.len = len;
     msg.back = back;
     msg.wseq = seq;// m_Counter.Get();

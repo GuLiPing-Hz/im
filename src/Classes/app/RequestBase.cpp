@@ -184,16 +184,8 @@ int RequestBase::sendMsgToLobby(const char* msg, unsigned int len, int seq, bool
 	if (seq < 0)
 		return -1;
 
-	char *data = (char*)malloc(len);
-	if (!data)
-		return -1;
-	memcpy(data, msg, len);
 	int ret = NetApp::GetInstance()->postMessage(eServerID::lobby, NetApp::GetInstance()->getLobbyTunnel()
-		, NetworkUtil::MSG_SEND_DATA, data, len, seq, needBack);
-	if (ret == -1){
-		free(data);
-		return -1;
-	}
+		, NetworkUtil::MSG_SEND_DATA, (void*)msg, len, seq, needBack);
 	return ret;
 }
 
