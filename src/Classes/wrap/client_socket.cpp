@@ -5,7 +5,7 @@ namespace NetworkUtil {
     void ClientSocketBase::onFDRead() {
         char buf[65535] = {0};/* 16*1024 */
         int len = (int) ::recv(mFD, buf, sizeof(buf), 0);//接收网络数据
-
+		
         if (len == 0) {
             closeSocket();
             onSocketClose();
@@ -220,7 +220,8 @@ namespace NetworkUtil {
                     break;
                 }
                 svraddr_4.sin_family = AF_INET;
-                svraddr_4.sin_addr.s_addr = inet_addr(mHost);
+                //svraddr_4.sin_addr.s_addr = inet_addr(mHost);
+				inet_pton(AF_INET, mHost, &svraddr_4.sin_addr);
                 svraddr_4.sin_port = htons(mPort);
                 svraddr_len = sizeof(svraddr_4);
                 svraddr = &svraddr_4;
