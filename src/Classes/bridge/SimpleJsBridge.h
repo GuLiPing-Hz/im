@@ -66,28 +66,62 @@ public:
 	void setRequest(RequestBase* req){ mReq = req; }
 
 	//ResponseBase
-	virtual void onLobbyTunnelConnectSuccess();		//成功连接大厅服务器
-	virtual void onRoomTunnelConnectSuccess(){}		//成功连接房间服务器
-
-	//连接超时
-	virtual void onLobbyTunnelConnectTimeout();		//连接大厅服务器超时
-	virtual void onRoomTunnelConnectTimeout(){}		//连接房间服务器超时
-
-	//连接错误
-	virtual void onLobbyTunnelConnectError(int code);
-	virtual void onRoomTunnelConnectError(int code){}
-
-	//服务器主动断开的连接,客户端recv == 0的时候,回调到以下的接口
-	virtual void onLobbyTunnelClose();	//断开大厅服务器
-	virtual void onRoomTunnelClose(){}	//断开房间服务器
-
-	//客户端recv异常,send异常,网络层buf溢出,select出现问题,都会回调到这个以下接口
-	virtual void onLobbyTunnelError(int code);
-	virtual void onRoomTunnelError(int code){}
+	/*
+	成功连接大厅服务器
+	*/
+	virtual void onLobbyTunnelConnectSuccess();
+	/*
+	成功连接房间服务器
+	*/
+	virtual void onRoomTunnelConnectSuccess(){};
 
 	/*
-		@param code: 0 正常返回，-9999超时
-		@param cmd: 如果请求超时，那么对应的请求seq会传过来
+	连接大厅服务器超时
+	*/
+	virtual void onLobbyTunnelConnectTimeout();
+	/*
+	连接房间服务器超时
+	*/
+	virtual void onRoomTunnelConnectTimeout(){};
+
+	/*
+	连接大厅服务器错误
+	@param code 错误码
+	*/
+	virtual void onLobbyTunnelConnectError(const int code);
+	/*
+	连接房间服务器错误
+	@param code 错误码
+	*/
+	virtual void onRoomTunnelConnectError(const int code){};
+
+	//服务器主动断开的连接,客户端recv == 0的时候,回调到以下的接口
+	/*
+	大厅服务器断开
+	*/
+	virtual void onLobbyTunnelClose();	//
+	/*
+	房间服务器断开
+	*/
+	virtual void onRoomTunnelClose(){};	//
+
+	//客户端recv异常,send异常,网络层buf溢出,select出现问题,都会回调到这个以下接口
+	/*
+	大厅服务器异常
+	@param code 错误码
+	*/
+	virtual void onLobbyTunnelError(const int code);
+	/*
+	房间服务器异常
+	@param code 错误码
+	*/
+	virtual void onRoomTunnelError(const int code){};
+
+	/*
+	收到来自大厅服务器的信息
+	@param code 0 正常, OPTION_TIMEOUT 超时
+	@param msg 信息内容
+	@param len 信息长度
 	*/
 	virtual void onLobbyMsg(const int code, const char* msg, const unsigned int len, const int seq = 0);
 

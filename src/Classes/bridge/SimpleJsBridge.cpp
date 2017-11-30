@@ -1,12 +1,13 @@
-#include "SimpleJsBridge.h"
+﻿#include "SimpleJsBridge.h"
 #include "external/json/document.h"
 #include "external/json/writer.h"
 #include "external/json/stringbuffer.h"
 #include "network/HttpClient.h"
-#include "../wrap/md5.h"
+#include "../crypto/md5.h"
 #include "../app/NetApp.h"
 #include "network/Uri.h"
-#include "NativeBuffer.h"
+#include "../wrap/native_buffer.h"
+#include "../wrap/funcs.h"
 
 using namespace cocos2d::network;
 
@@ -649,8 +650,7 @@ bool Def_Native_Xor_String(JSContext *cx, unsigned int argc, jsval *vp)
 		std::string data = jsval_to_std_string_len(cx, args.get(0));
 		std::string key = jsval_to_std_string_len(cx, args.get(1));
 
-		std::string ret = XorString((const unsigned char*)data.c_str(), data.length()
-			, (const unsigned char*)key.c_str(), key.length());
+		std::string ret = XorString(data.c_str(), data.length(), key.c_str(), key.length());
 
 		JS::RootedValue jsret(cx);
 		jsret = STRING_TO_JSVAL(JS_NewStringCopyN(cx, ret.c_str(), ret.size()));
