@@ -3,6 +3,11 @@
 #include "ext/event.h"
 #include <assert.h>
 #include <memory>
+#include <memory.h>
+
+#ifndef WIN32
+#include <tr1/memory>
+#endif
 
 namespace Wrap{
 
@@ -94,8 +99,11 @@ namespace Wrap{
 		MSGINFO _msg = { 0 };
 		while (mMsgCenter->getMessage(_msg) == 0)
 		{
+#ifdef WIN32
 			std::shared_ptr<void> g(_msg.v);
-
+#else
+			std::tr1::shared_ptr<void> lock(_msg.v);
+#endif // WIN32
 			if (_msg.cmd > MSG_SEND_DATA){
 				dealCustomMsg(&_msg);
 			}
