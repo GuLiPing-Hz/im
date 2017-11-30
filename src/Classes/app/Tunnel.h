@@ -3,19 +3,16 @@
 
 #include "../wrap/client_socket.h"
 
-class Tunnel : public NetworkUtil::ClientSocket
+class Tunnel : public Wrap::ClientSocket
 {
 public:
 	virtual ~Tunnel(){}
-	Tunnel(NetworkUtil::Reactor *pReactor) : NetworkUtil::ClientSocket(pReactor)
+	Tunnel(Wrap::Reactor *pReactor) : Wrap::ClientSocket(pReactor)
 	{
 		m_bIsTokenLogin = false;
 		memset(m_Sessionkey, 0, sizeof(m_Sessionkey));
 	}
 
-	bool SendRightBuf(NetworkUtil::BinaryWriteStream &stream);
-	bool SendTEABuf(NetworkUtil::BinaryWriteStream &stream);
-	bool SendCompressBuf(NetworkUtil::BinaryWriteStream &stream);
 	virtual void closeSocket();
 	void closeConnect(){ closeSocket(); }
 	inline bool IsTokenLogin(){
@@ -42,7 +39,7 @@ public:
 class RoomTunnel: public Tunnel
 {
 public:
-	RoomTunnel(NetworkUtil::Reactor * pReactor):Tunnel(pReactor), m_connect_type(0){}
+	RoomTunnel(Wrap::Reactor * pReactor):Tunnel(pReactor), m_connect_type(0){}
 
 public:
 	int m_connect_type;

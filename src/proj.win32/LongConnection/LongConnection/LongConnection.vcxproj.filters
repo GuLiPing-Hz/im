@@ -40,9 +40,18 @@
     <Filter Include="Classes\rapidjson">
       <UniqueIdentifier>{a9c382f3-5af4-4196-ad20-d535ea18dc5f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Classes\wrap\ext">
+      <UniqueIdentifier>{bbee828c-d3a8-4414-92c7-64c1b8e88939}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\crypto">
+      <UniqueIdentifier>{dc4acbca-c86f-48da-a438-99e34c2277cc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
+    <Text Include="..\..\..\Classes\wrap\ReadMe.txt">
+      <Filter>Classes\wrap</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -74,9 +83,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Classes\app\DataDecoderRoom.h">
       <Filter>Classes\app</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Classes\bridge\NativeBuffer.h">
-      <Filter>Classes\bridge</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Classes\bridge\SimpleJsBridge.h">
       <Filter>Classes\bridge</Filter>
@@ -137,54 +143,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Classes\zip\ioapi.h">
       <Filter>Classes\zip</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Classes\wrap\config.h">
-      <Filter>Classes\wrap</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Classes\wrap\crypt.h">
-      <Filter>Classes\wrap</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Classes\wrap\event_posix.h">
-      <Filter>Classes\wrap</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Classes\wrap\event_win.h">
-      <Filter>Classes\wrap</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Classes\wrap\event_wrapper.h">
-      <Filter>Classes\wrap</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Classes\wrap\httpcontent.h">
-      <Filter>Classes\wrap</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Classes\wrap\jniloghelp.h">
-      <Filter>Classes\wrap</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Classes\wrap\md5.h">
-      <Filter>Classes\wrap</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Classes\wrap\reactor.h">
-      <Filter>Classes\wrap</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Classes\wrap\set_thread_name_win.h">
-      <Filter>Classes\wrap</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Classes\wrap\sleep.h">
-      <Filter>Classes\wrap</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Classes\wrap\thread_posix.h">
-      <Filter>Classes\wrap</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Classes\wrap\thread_win.h">
-      <Filter>Classes\wrap</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Classes\wrap\thread_wrapper.h">
-      <Filter>Classes\wrap</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Classes\wrap\typedefs.h">
-      <Filter>Classes\wrap</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Classes\wrap\aes.h">
-      <Filter>Classes\wrap</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Classes\LongConnection.h">
       <Filter>Classes</Filter>
@@ -306,16 +264,13 @@
     <ClInclude Include="..\..\..\Classes\rapidjson\writer.h">
       <Filter>Classes\rapidjson</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Classes\wrap\mutex_wrapper.h">
-      <Filter>Classes\wrap</Filter>
+    <ClInclude Include="..\..\..\Classes\bridge\SimpleBridge.h">
+      <Filter>Classes\bridge</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Classes\wrap\client_socket.h">
-      <Filter>Classes\wrap</Filter>
+    <ClInclude Include="..\..\..\Classes\bridge\SimpleBridgeIos.h">
+      <Filter>Classes\bridge</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Classes\wrap\file_mgr.h">
-      <Filter>Classes\wrap</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Classes\wrap\byte_order.h">
+    <ClInclude Include="..\..\..\Classes\wrap\config.h">
       <Filter>Classes\wrap</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Classes\wrap\counter.h">
@@ -330,13 +285,34 @@
     <ClInclude Include="..\..\..\Classes\wrap\event_handler.h">
       <Filter>Classes\wrap</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Classes\wrap\file_mgr.h">
+      <Filter>Classes\wrap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\wrap\funcs.h">
+      <Filter>Classes\wrap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\wrap\http_download.h">
+      <Filter>Classes\wrap</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\..\Classes\wrap\http_download_mgr.h">
       <Filter>Classes\wrap</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Classes\wrap\http_downtype.h">
       <Filter>Classes\wrap</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Classes\wrap\rw_stream.h">
+    <ClInclude Include="..\..\..\Classes\wrap\httpcontent.h">
+      <Filter>Classes\wrap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\wrap\mutex.h">
+      <Filter>Classes\wrap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\wrap\native_buffer.h">
+      <Filter>Classes\wrap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\wrap\pool.h">
+      <Filter>Classes\wrap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\wrap\reactor.h">
       <Filter>Classes\wrap</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Classes\wrap\seq_map.h">
@@ -348,23 +324,32 @@
     <ClInclude Include="..\..\..\Classes\wrap\thread_mgr.h">
       <Filter>Classes\wrap</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Classes\wrap\http_download.h">
+    <ClInclude Include="..\..\..\Classes\wrap\typedefs.h">
       <Filter>Classes\wrap</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Classes\wrap\tm_seqmap.h">
+    <ClInclude Include="..\..\..\Classes\wrap\buffer_value.h">
       <Filter>Classes\wrap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\wrap\client_socket.h">
+      <Filter>Classes\wrap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\wrap\ext\set_thread_name_win.h">
+      <Filter>Classes\wrap\ext</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\app\TmSeqMap.h">
+      <Filter>Classes\app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\wrap\ext\thread.h">
+      <Filter>Classes\wrap\ext</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\wrap\ext\event.h">
+      <Filter>Classes\wrap\ext</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Classes\wrap\timer.h">
       <Filter>Classes\wrap</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Classes\bridge\SimpleBridge.h">
-      <Filter>Classes\bridge</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Classes\bridge\SimpleBridgeIos.h">
-      <Filter>Classes\bridge</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Classes\wrap\pool.h">
-      <Filter>Classes\wrap</Filter>
+    <ClInclude Include="..\..\..\Classes\crypto\md5.h">
+      <Filter>Classes\crypto</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -391,9 +376,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\Classes\app\NetApp.cpp">
       <Filter>Classes\app</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Classes\bridge\NativeBuffer.cpp">
-      <Filter>Classes\bridge</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Classes\bridge\SimpleJsBridge.cpp">
       <Filter>Classes\bridge</Filter>
@@ -461,33 +443,6 @@
     <ClCompile Include="..\..\..\Classes\zip\ioapi.c">
       <Filter>Classes\zip</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Classes\wrap\crypt.cpp">
-      <Filter>Classes\wrap</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Classes\wrap\event.cpp">
-      <Filter>Classes\wrap</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Classes\wrap\httpcontent.cpp">
-      <Filter>Classes\wrap</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Classes\wrap\jniloghelp.cpp">
-      <Filter>Classes\wrap</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Classes\wrap\md5.cpp">
-      <Filter>Classes\wrap</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Classes\wrap\reactor.cpp">
-      <Filter>Classes\wrap</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Classes\wrap\sleep.cpp">
-      <Filter>Classes\wrap</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Classes\wrap\thread.cpp">
-      <Filter>Classes\wrap</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Classes\wrap\aes.cpp">
-      <Filter>Classes\wrap</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Classes\LongConnection.cpp">
       <Filter>Classes</Filter>
     </ClCompile>
@@ -500,17 +455,11 @@
     <ClCompile Include="..\..\..\Classes\bridge\SimpleBridgeAndroid.cpp">
       <Filter>Classes\bridge</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Classes\wrap\mutex_wrapper.cpp">
-      <Filter>Classes\wrap</Filter>
+    <ClCompile Include="..\..\..\Classes\bridge\SimpleBridge.cpp">
+      <Filter>Classes\bridge</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Classes\wrap\client_socket.cpp">
-      <Filter>Classes\wrap</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Classes\wrap\file_mgr.cpp">
-      <Filter>Classes\wrap</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Classes\wrap\byte_order.cpp">
-      <Filter>Classes\wrap</Filter>
+    <ClCompile Include="..\..\..\Classes\bridge\SimpleBridgeIos.cpp">
+      <Filter>Classes\bridge</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Classes\wrap\data_decoder.cpp">
       <Filter>Classes\wrap</Filter>
@@ -518,13 +467,25 @@
     <ClCompile Include="..\..\..\Classes\wrap\event_handler.cpp">
       <Filter>Classes\wrap</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Classes\wrap\file_mgr.cpp">
+      <Filter>Classes\wrap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\wrap\funcs.cpp">
+      <Filter>Classes\wrap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\wrap\http_download.cpp">
+      <Filter>Classes\wrap</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\Classes\wrap\http_download_mgr.cpp">
       <Filter>Classes\wrap</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Classes\wrap\rw_stream.cpp">
+    <ClCompile Include="..\..\..\Classes\wrap\httpcontent.cpp">
       <Filter>Classes\wrap</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Classes\wrap\seq_map.cpp">
+    <ClCompile Include="..\..\..\Classes\wrap\native_buffer.cpp">
+      <Filter>Classes\wrap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\wrap\reactor.cpp">
       <Filter>Classes\wrap</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Classes\wrap\thread_informer.cpp">
@@ -533,20 +494,23 @@
     <ClCompile Include="..\..\..\Classes\wrap\thread_mgr.cpp">
       <Filter>Classes\wrap</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Classes\wrap\http_download.cpp">
+    <ClCompile Include="..\..\..\Classes\wrap\buffer_value.cpp">
       <Filter>Classes\wrap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\wrap\client_socket.cpp">
+      <Filter>Classes\wrap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\wrap\ext\thread.cpp">
+      <Filter>Classes\wrap\ext</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\wrap\ext\event.cpp">
+      <Filter>Classes\wrap\ext</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Classes\wrap\timer.cpp">
       <Filter>Classes\wrap</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Classes\bridge\SimpleBridge.cpp">
-      <Filter>Classes\bridge</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Classes\bridge\SimpleBridgeIos.cpp">
-      <Filter>Classes\bridge</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Classes\wrap\pool.cpp">
-      <Filter>Classes\wrap</Filter>
+    <ClCompile Include="..\..\..\Classes\crypto\md5.cpp">
+      <Filter>Classes\crypto</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

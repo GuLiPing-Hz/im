@@ -78,6 +78,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <Text Include="..\..\..\Classes\wrap\ReadMe.txt" />
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -88,9 +89,9 @@
     <ClInclude Include="..\..\..\Classes\app\RequestBase.h" />
     <ClInclude Include="..\..\..\Classes\app\ReserveData.h" />
     <ClInclude Include="..\..\..\Classes\app\ResponseBase.h" />
+    <ClInclude Include="..\..\..\Classes\app\TmSeqMap.h" />
     <ClInclude Include="..\..\..\Classes\app\Tunnel.h" />
     <ClInclude Include="..\..\..\Classes\bridge\IIosBridge.h" />
-    <ClInclude Include="..\..\..\Classes\bridge\NativeBuffer.h" />
     <ClInclude Include="..\..\..\Classes\bridge\SimpleBridge.h" />
     <ClInclude Include="..\..\..\Classes\bridge\SimpleBridgeAndroid.h" />
     <ClInclude Include="..\..\..\Classes\bridge\SimpleBridgeIos.h" />
@@ -98,6 +99,7 @@
     <ClInclude Include="..\..\..\Classes\charset\CharsetCodec.h" />
     <ClInclude Include="..\..\..\Classes\charset\Chinese.h" />
     <ClInclude Include="..\..\..\Classes\charset\Utf.h" />
+    <ClInclude Include="..\..\..\Classes\crypto\md5.h" />
     <ClInclude Include="..\..\..\Classes\jni\JniHelper.h" />
     <ClInclude Include="..\..\..\Classes\LongConnection.h" />
     <ClInclude Include="..\..\..\Classes\protocol.h" />
@@ -137,39 +139,30 @@
     <ClInclude Include="..\..\..\Classes\rapidjson\stringbuffer.h" />
     <ClInclude Include="..\..\..\Classes\rapidjson\writer.h" />
     <ClInclude Include="..\..\..\Classes\simple_util_bridge_JsAndroidBridge.h" />
-    <ClInclude Include="..\..\..\Classes\wrap\aes.h" />
-    <ClInclude Include="..\..\..\Classes\wrap\byte_order.h" />
-    <ClInclude Include="..\..\..\Classes\wrap\file_mgr.h" />
+    <ClInclude Include="..\..\..\Classes\wrap\buffer_value.h" />
     <ClInclude Include="..\..\..\Classes\wrap\client_socket.h" />
     <ClInclude Include="..\..\..\Classes\wrap\config.h" />
     <ClInclude Include="..\..\..\Classes\wrap\counter.h" />
-    <ClInclude Include="..\..\..\Classes\wrap\crypt.h" />
     <ClInclude Include="..\..\..\Classes\wrap\data_block.h" />
     <ClInclude Include="..\..\..\Classes\wrap\data_decoder.h" />
     <ClInclude Include="..\..\..\Classes\wrap\event_handler.h" />
-    <ClInclude Include="..\..\..\Classes\wrap\event_posix.h" />
-    <ClInclude Include="..\..\..\Classes\wrap\event_win.h" />
-    <ClInclude Include="..\..\..\Classes\wrap\event_wrapper.h" />
+    <ClInclude Include="..\..\..\Classes\wrap\ext\event.h" />
+    <ClInclude Include="..\..\..\Classes\wrap\ext\set_thread_name_win.h" />
+    <ClInclude Include="..\..\..\Classes\wrap\ext\thread.h" />
+    <ClInclude Include="..\..\..\Classes\wrap\file_mgr.h" />
+    <ClInclude Include="..\..\..\Classes\wrap\funcs.h" />
     <ClInclude Include="..\..\..\Classes\wrap\httpcontent.h" />
     <ClInclude Include="..\..\..\Classes\wrap\http_download.h" />
     <ClInclude Include="..\..\..\Classes\wrap\http_download_mgr.h" />
     <ClInclude Include="..\..\..\Classes\wrap\http_downtype.h" />
-    <ClInclude Include="..\..\..\Classes\wrap\jniloghelp.h" />
-    <ClInclude Include="..\..\..\Classes\wrap\md5.h" />
-    <ClInclude Include="..\..\..\Classes\wrap\mutex_wrapper.h" />
+    <ClInclude Include="..\..\..\Classes\wrap\mutex.h" />
+    <ClInclude Include="..\..\..\Classes\wrap\native_buffer.h" />
     <ClInclude Include="..\..\..\Classes\wrap\pool.h" />
     <ClInclude Include="..\..\..\Classes\wrap\reactor.h" />
-    <ClInclude Include="..\..\..\Classes\wrap\rw_stream.h" />
     <ClInclude Include="..\..\..\Classes\wrap\seq_map.h" />
-    <ClInclude Include="..\..\..\Classes\wrap\set_thread_name_win.h" />
-    <ClInclude Include="..\..\..\Classes\wrap\sleep.h" />
     <ClInclude Include="..\..\..\Classes\wrap\thread_informer.h" />
     <ClInclude Include="..\..\..\Classes\wrap\thread_mgr.h" />
-    <ClInclude Include="..\..\..\Classes\wrap\thread_posix.h" />
-    <ClInclude Include="..\..\..\Classes\wrap\thread_win.h" />
-    <ClInclude Include="..\..\..\Classes\wrap\thread_wrapper.h" />
     <ClInclude Include="..\..\..\Classes\wrap\timer.h" />
-    <ClInclude Include="..\..\..\Classes\wrap\tm_seqmap.h" />
     <ClInclude Include="..\..\..\Classes\wrap\typedefs.h" />
     <ClInclude Include="..\..\..\Classes\zip\crypt.h" />
     <ClInclude Include="..\..\..\Classes\zip\ioapi.h" />
@@ -196,9 +189,6 @@
     <ClCompile Include="..\..\..\Classes\app\NetInformer.cpp" />
     <ClCompile Include="..\..\..\Classes\app\RequestBase.cpp" />
     <ClCompile Include="..\..\..\Classes\app\Tunnel.cpp" />
-    <ClCompile Include="..\..\..\Classes\bridge\NativeBuffer.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="..\..\..\Classes\bridge\SimpleBridge.cpp" />
     <ClCompile Include="..\..\..\Classes\bridge\SimpleBridgeAndroid.cpp" />
     <ClCompile Include="..\..\..\Classes\bridge\SimpleBridgeIos.cpp">
@@ -210,32 +200,26 @@
     <ClCompile Include="..\..\..\Classes\charset\CharsetCodec.cpp" />
     <ClCompile Include="..\..\..\Classes\charset\Chinese.cpp" />
     <ClCompile Include="..\..\..\Classes\charset\Utf.cpp" />
+    <ClCompile Include="..\..\..\Classes\crypto\md5.cpp" />
     <ClCompile Include="..\..\..\Classes\jni\JniHelper.cpp" />
     <ClCompile Include="..\..\..\Classes\LongConnection.cpp" />
     <ClCompile Include="..\..\..\Classes\simple_util_bridge_JsAndroidBridge.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\..\..\Classes\wrap\aes.cpp" />
-    <ClCompile Include="..\..\..\Classes\wrap\byte_order.cpp" />
-    <ClCompile Include="..\..\..\Classes\wrap\file_mgr.cpp" />
+    <ClCompile Include="..\..\..\Classes\wrap\buffer_value.cpp" />
     <ClCompile Include="..\..\..\Classes\wrap\client_socket.cpp" />
-    <ClCompile Include="..\..\..\Classes\wrap\crypt.cpp" />
     <ClCompile Include="..\..\..\Classes\wrap\data_decoder.cpp" />
-    <ClCompile Include="..\..\..\Classes\wrap\event.cpp" />
     <ClCompile Include="..\..\..\Classes\wrap\event_handler.cpp" />
+    <ClCompile Include="..\..\..\Classes\wrap\ext\event.cpp" />
+    <ClCompile Include="..\..\..\Classes\wrap\ext\thread.cpp" />
+    <ClCompile Include="..\..\..\Classes\wrap\file_mgr.cpp" />
+    <ClCompile Include="..\..\..\Classes\wrap\funcs.cpp" />
     <ClCompile Include="..\..\..\Classes\wrap\httpcontent.cpp" />
     <ClCompile Include="..\..\..\Classes\wrap\http_download.cpp" />
     <ClCompile Include="..\..\..\Classes\wrap\http_download_mgr.cpp" />
-    <ClCompile Include="..\..\..\Classes\wrap\jniloghelp.cpp" />
-    <ClCompile Include="..\..\..\Classes\wrap\md5.cpp" />
-    <ClCompile Include="..\..\..\Classes\wrap\mutex_wrapper.cpp" />
-    <ClCompile Include="..\..\..\Classes\wrap\pool.cpp" />
+    <ClCompile Include="..\..\..\Classes\wrap\native_buffer.cpp" />
     <ClCompile Include="..\..\..\Classes\wrap\reactor.cpp" />
-    <ClCompile Include="..\..\..\Classes\wrap\rw_stream.cpp" />
-    <ClCompile Include="..\..\..\Classes\wrap\seq_map.cpp" />
-    <ClCompile Include="..\..\..\Classes\wrap\sleep.cpp" />
-    <ClCompile Include="..\..\..\Classes\wrap\thread.cpp" />
     <ClCompile Include="..\..\..\Classes\wrap\thread_informer.cpp" />
     <ClCompile Include="..\..\..\Classes\wrap\thread_mgr.cpp" />
     <ClCompile Include="..\..\..\Classes\wrap\timer.cpp" />

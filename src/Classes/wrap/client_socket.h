@@ -26,10 +26,9 @@
 
 #include "event_handler.h"
 #include "data_block.h"
-#include "rw_stream.h"
-#include "mutex_wrapper.h"
+#include "mutex.h"
 
-namespace NetworkUtil
+namespace Wrap
 {
 	enum eErrorcode{
 		//网络接受Buf异常
@@ -63,7 +62,8 @@ namespace NetworkUtil
 				struct sockaddr_in local={0};
 				local.sin_family = AF_INET;
 				local.sin_port = htons(mPort); ///监听端口
-				local.sin_addr.s_addr = inet_addr("127.0.0.1"); ///本机
+				//local.sin_addr.s_addr = inet_addr("127.0.0.1"); ///本机
+				inet_pton(AF_INET, "127.0.0.1", &local.sin_addr);
 				if(::bind(mFD,(struct sockaddr*)&local,sizeof(local)) == SOCKET_ERROR)
 				{
 					mPort++;
@@ -91,14 +91,9 @@ namespace NetworkUtil
 	class ClientSocketBase : public FDEventHandler
 	{
 	public:
-		virtual ~ClientSocketBase(){if(mCS)delete mCS;}
-        
-		ClientSocketBase() : mDecoder(NULL),mCS(NULL),mIsClosed(true){
-            mCS = CriticalSectionWrapper::CreateCriticalSection();
-        }
-		ClientSocketBase(Reactor *pReactor) : FDEventHandler(pReactor),mDecoder(NULL),mIsClosed(true){
-            mCS = CriticalSectionWrapper::CreateCriticalSection();
-        }
+		ClientSocketBase() : mDecoder(NULL),mIsClosed(true){}
+		ClientSocketBase(Reactor *pReactor) : FDEventHandler(pReactor),mDecoder(NULL),mIsClosed(true){}
+
 		void setDecoder(DataDecoderBase* pDecoder){mDecoder = pDecoder;}
 		//网络可读的时候，recv数据
 		virtual void onFDRead();
@@ -114,6 +109,7 @@ namespace NetworkUtil
 		virtual int addBuf(const char* buf,unsigned int buflen);
 		char* getPeerIp();
 
+		static const char* GetIpFromHost(const char* host, bool is_ipv6 = false);
 		//从域名中解析出Ip地址,只返回第一个解析出来的,字符串保存在静态空间中，返回值不需要释放！
 		static const char* GetIpv4FromHostName(const char* name);
 	protected:
@@ -138,7 +134,7 @@ namespace NetworkUtil
 		DataDecoderBase *mDecoder;
 		bool mIsClosed;
     public:
-        CriticalSectionWrapper* mCS;
+		Mutex mMutex;
 	};
 	class ClientSocket : public ClientSocketBase ,public TMEventHandler
 	{
@@ -156,7 +152,6 @@ namespace NetworkUtil
 		int connectTo(const char* host,short port,int to = 10);
 		bool isConnected(){return mIsConnected;}
 		//添加的sendbuf中，并注册到写fd_set中
-		bool sendBuf(BinaryWriteStream &stream);
 		bool sendBuf(const char* buf,unsigned int buflen);
 
 		inline const char* gethost(){return mHost;}

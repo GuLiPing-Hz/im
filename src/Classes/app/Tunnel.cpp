@@ -1,6 +1,4 @@
 ﻿#include "Tunnel.h"
-#include "../wrap/crypt.h"
-#include "../wrap/rw_stream.h"
 #include "NetApp.h"
 
 #include "../wrap/config.h"
@@ -12,35 +10,6 @@ void Tunnel::closeSocket()
 	m_bIsTokenLogin = false;
 	memset(m_Sessionkey,0,sizeof(m_Sessionkey));
 	ClientSocket::closeSocket();
-}
-
-bool Tunnel::SendRightBuf(NetworkUtil::BinaryWriteStream &stream)
-{
-	if(stream.getSize() < MAXBUFSIZETEA)
-		return SendTEABuf(stream);
-	return SendCompressBuf(stream);
-}
-
-bool Tunnel::SendTEABuf(NetworkUtil::BinaryWriteStream &stream)
-{
-	char outbuf[65535];                     
-	int outbuflen = sizeof(outbuf);                 
-	if(NetworkUtil::StreamEncrypt(stream.getData(),(int)stream.getSize(),outbuf,outbuflen,m_Sessionkey,1))
-	{
-		return sendBuf(outbuf,outbuflen);                                    
-	}
-	return false;
-}
-
-bool Tunnel::SendCompressBuf(NetworkUtil::BinaryWriteStream &stream)
-{
-	char outbuf[65535];                     
-	int outbuflen = sizeof(outbuf);                 
-	if(NetworkUtil::StreamCompress(stream.getData(),(int)stream.getSize(),outbuf,outbuflen))
-	{
-		return sendBuf(outbuf,outbuflen);                                     
-	}
-	return false;
 }
 
 bool Tunnel::onSocketConnect()

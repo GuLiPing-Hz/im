@@ -1,9 +1,10 @@
 ﻿#include "config.h"
 #include "thread_informer.h"
-#include "event_wrapper.h"
+#include "ext/event.h"
 #include <assert.h>
+#include <memory>
 
-namespace NetworkUtil{
+namespace Wrap{
 
 	bool ThreadInformer::sIsInit = false;
 
@@ -15,8 +16,8 @@ namespace NetworkUtil{
 		mtEventInform = EventWrapper::Create();
 	}
 #else
-	ThreadInformer::ThreadInformer(NetworkUtil::Reactor *pReactor, const char *host, short port)
-		: NetworkUtil::UdpSocket(pReactor, host, port)
+	ThreadInformer::ThreadInformer(Wrap::Reactor *pReactor, const char *host, short port)
+		: Wrap::UdpSocket(pReactor, host, port)
 		, mtEventInform(NULL)
 	{
 		mtEventInform = EventWrapper::Create();
@@ -87,14 +88,13 @@ namespace NetworkUtil{
 	{
 		//从队列中读出数据处理
 		//LOGI("ThreadInformer::dealMessageInner\n");
-
 		if (!mMsgCenter)
 			return;
 
 		MSGINFO _msg = { 0 };
 		while (mMsgCenter->getMessage(_msg) == 0)
 		{
-			VoidGuard g(_msg.v);
+			std::shared_ptr<void> g(_msg.v);
 
 			if (_msg.cmd > MSG_SEND_DATA){
 				dealCustomMsg(&_msg);

@@ -1,7 +1,7 @@
 ﻿#include "client_socket.h"
 #include "data_decoder.h"
 
-namespace NetworkUtil {
+namespace Wrap {
     void ClientSocketBase::onFDRead() {
         char buf[65535] = {0};/* 16*1024 */
         int len = (int) ::recv(mFD, buf, sizeof(buf), 0);//接收网络数据
@@ -47,7 +47,7 @@ namespace NetworkUtil {
     }
 
     void ClientSocketBase::onFDWrite() {
-        CriticalSectionScoped lock(mCS);
+		Guard lock(mMutex);
         unsigned int buflen = mSenddata.getPos();
         int len = (int)::send(mFD, mSenddata.getBuf(), (int) buflen, 0);
         //LOGI("%s len = %d\n", __FUNCTION__, len);
@@ -77,7 +77,7 @@ namespace NetworkUtil {
     }
 
     int ClientSocketBase::addBuf(const char *buf, unsigned int buflen) {
-        CriticalSectionScoped lock(mCS);
+		Guard lock(mMutex);
         if (mSenddata.append(buf, buflen) != buflen) {
             LOGE("%s : SendData Append Failed\n", __FUNCTION__);
             return -1;
@@ -99,32 +99,57 @@ namespace NetworkUtil {
         unsigned int len = sizeof(sockaddr_in);
 #endif
         getpeername(mFD, (struct sockaddr *) &addr, &len);
-        static char ip[32];
-        strncpy(ip, inet_ntoa(addr.sin_addr), sizeof(ip));
+        static char ip[100];
+		//strncpy(ip, inet_ntoa(addr.sin_addr), sizeof(ip));
+		inet_ntop(AF_INET, &addr.sin_addr, ip, sizeof(ip));
         return ip;
     }
 
-    const char *ClientSocketBase::GetIpv4FromHostName(const char *name) {
-        static char sIp[300] = {0};
-        memset(sIp, 0, sizeof(sIp));
-        if (!name)
-            return sIp;
-        // 返回地址信息
-        hostent *host = gethostbyname(name);
-        if (!host) {
-            LOGE("%s : gethostbyname return null[%s], check the internet permission or internet connect.\n",
-                 __FUNCTION__, name);
-            return sIp;
-        }
+	const char* ClientSocketBase::GetIpFromHost(const char* host, bool is_ipv6){
+		static char sIp[100] = { 0 };
+		memset(sIp, 0, sizeof(sIp));
+		if (!host)
+			return sIp;
 
-        // 解析地址信息
-        for (char **p = host->h_addr_list; *p; p++) {
-            char *temp;
-            temp = inet_ntoa(*(struct in_addr *) *p);
-            strcpy(sIp, temp);
-            break;//只解析第一个地址
-        }
-        return sIp;
+		// 返回地址信息 - 废弃
+		//         hostent *host = gethostbyname(host);
+		// 		if (!host) {
+		// 			LOGE("%s : gethostbyname return null[%s], check the internet permission or internet connect.\n",
+		// 				__FUNCTION__, host);
+		// 			return sIp;
+		// 		}
+		// 		// 解析地址信息
+		// 		for (char **p = host->h_addr_list; *p; p++) {
+		// 			char *temp;
+		// 			temp = inet_ntoa(*(struct in_addr *) *p);
+		// 			strcpy(sIp, temp);
+		// 			break;//只解析第一个地址
+		// 		}
+
+		int net_family = is_ipv6 ? AF_INET6 : AF_INET;
+		struct addrinfo *answer, hint, *curr;
+		memset(&hint, 0, sizeof(hint));
+		hint.ai_family = net_family;
+		hint.ai_socktype = SOCK_STREAM;
+
+		int ret = getaddrinfo(host, NULL, &hint, &answer);
+		if (ret != 0) {
+			LOGE("%s : gethostbyname return null[%s], check the internet permission or internet connect.\n",
+				__FUNCTION__, host);
+			return sIp;
+		}
+
+		for (curr = answer; curr != NULL; curr = curr->ai_next) {
+			inet_ntop(net_family, &(((struct sockaddr_in *)(curr->ai_addr))->sin_addr), sIp, sizeof(sIp));
+			break;//只解析第一个地址
+		}
+		freeaddrinfo(answer);
+
+		return sIp;
+	}
+
+    const char *ClientSocketBase::GetIpv4FromHostName(const char *name) {
+		return GetIpFromHost(name);
     }
 
     void ClientSocketBase::closeSocket() {
@@ -225,19 +250,6 @@ namespace NetworkUtil {
                 svraddr_4.sin_port = htons(mPort);
                 svraddr_len = sizeof(svraddr_4);
                 svraddr = &svraddr_4;
-
-// 			m_fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-// 			if (m_fd == INVALID_SOCKET){
-// 				LOGE("socket create failed");
-// 				ret = false;
-// 				break;
-// 			}
-// 			//定义连接地址IP PORT
-// 			svraddr_4.sin_family = AF_INET;
-// 			svraddr_4.sin_addr.s_addr = inet_addr(host);
-// 			svraddr_4.sin_port = htons(port);
-// 			svraddr_len = sizeof(svraddr_4);
-// 			svraddr = &svraddr_4;
                 break;
             }
             case AF_INET6://ipv6
@@ -303,10 +315,6 @@ namespace NetworkUtil {
         mIsWaitingConnectComplete = true;
 
         return 0;
-    }
-
-    bool ClientSocket::sendBuf(BinaryWriteStream &stream) {
-		return sendBuf(stream.getData(), stream.getSize());
     }
 
     bool ClientSocket::sendBuf(const char *buf, unsigned int buflen) {

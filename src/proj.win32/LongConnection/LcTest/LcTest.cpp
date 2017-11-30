@@ -9,8 +9,8 @@
 #include "wrap/timer.h"
 #include <memory>
 #include "wrap/seq_map.h"
-#include "wrap/thread_wrapper.h"
-#include "wrap/sleep.h"
+#include "wrap/ext/thread.h"
+#include "wrap/funcs.h"
 
 std::string HOST = "123.206.229.213";
 short PORT = 27710;
@@ -19,17 +19,17 @@ void testXN(){
 	//比较DataBlock和DataBlockLocal的性能差异
 	std::shared_ptr<char> pBuf(new char[65535]);
 	memset(pBuf.get(), '9', 65535);
-	PreciseTimer timer;
+	Wrap::PreciseTimer timer;
 	printf("测试开始！！！\n");
 
 	timer.start();
-	NetworkUtil::DataBlock data1(65535);
+	Wrap::DataBlock data1(65535);
 	timer.stop();
 	printf("DataBlock 构造函数执行 %lf 微秒\n", timer.getElapsedTimeInMicroSec());
 
 	timer.start();
-	NetworkUtil::DataBlockLocal<> data2;//需要有参数()
-	NetworkUtil::DataBlockLocal65535 data3;
+	Wrap::DataBlockLocal<> data2;//需要有参数()
+	Wrap::DataBlockLocal65535 data3;
 	timer.stop();
 	printf("DataBlockLocal 构造函数执行 %lf 微秒\n", timer.getElapsedTimeInMicroSec());
 
@@ -54,7 +54,7 @@ int g_Int = 11;
 
 bool Fun1(ThreadObj obj)
 {
-	NetworkUtil::SeqMap_ThreadSafe<int>& map1 = *((NetworkUtil::SeqMap_ThreadSafe<int>*)obj);
+	Wrap::SeqMap_ThreadSafe<int>& map1 = *((Wrap::SeqMap_ThreadSafe<int>*)obj);
 
 	while (true)
 	{
@@ -63,7 +63,7 @@ bool Fun1(ThreadObj obj)
 
 		printf("************************************************************************\nFun1");
 		map1.lock();
-		NetworkUtil::SeqMap<int>::iterator it = map1.begin();
+		Wrap::SeqMap<int>::iterator it = map1.begin();
 		for (it; it != map1.end(); it++)
 			printf("cur [%d] = %d\n", it->first, it->second);
 		printf("\n");
@@ -75,7 +75,7 @@ bool Fun1(ThreadObj obj)
 
 bool Fun2(ThreadObj obj)
 {
-	NetworkUtil::SeqMap_ThreadSafe<int>& map1 = *((NetworkUtil::SeqMap_ThreadSafe<int>*)obj);
+	Wrap::SeqMap_ThreadSafe<int>& map1 = *((Wrap::SeqMap_ThreadSafe<int>*)obj);
 
 	while (true)
 	{
@@ -84,7 +84,7 @@ bool Fun2(ThreadObj obj)
 		printf("************************************************************************\nFun2");
 		map1.lock();
 		map1.lock();
-		NetworkUtil::SeqMap<int>::iterator it = map1.begin();
+		Wrap::SeqMap<int>::iterator it = map1.begin();
 		for (it; it != map1.end(); it++)
 			printf("cur [%d] = %d;", it->first, it->second);
 		printf("\n");
@@ -98,7 +98,7 @@ bool Fun2(ThreadObj obj)
 
 void testMap(){
 
-	static NetworkUtil::SeqMap_ThreadSafe<int> map1;//NetworkUtil::SeqMap<int> map1;
+	static Wrap::SeqMap_ThreadSafe<int> map1;//Wrap::SeqMap<int> map1;
 	for (int i = 1; i < 10; i++){
 		if (i != 1)
 			map1.put(i, i * 2);
@@ -110,7 +110,7 @@ void testMap(){
 
 	int* d1 = map1.get(1);
 	map1.del(1);
-	NetworkUtil::SeqMap<int>::iterator it = map1.del(map1.begin());
+	Wrap::SeqMap<int>::iterator it = map1.del(map1.begin());
 	int size = map1.size();
 	//map1.clear();
 

@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
     LOGD("JNI_OnLoad");
-    cocos2d::JniHelper::setJavaVM(vm);
+    Wrap::JniHelper::setJavaVM(vm);
 
     return JNI_VERSION_1_4;
 }
@@ -44,9 +44,8 @@ jclass _getClassID(JNIEnv *env, const char *className) {
 
     jstring _jstrClassName = env->NewStringUTF(className);
 
-    jclass _clazz = (jclass) env->CallObjectMethod(cocos2d::JniHelper::classloader,
-                                                   cocos2d::JniHelper::loadclassMethod_methodID,
-                                                   _jstrClassName);
+    jclass _clazz = (jclass) env->CallObjectMethod(Wrap::JniHelper::classloader,
+		Wrap::JniHelper::loadclassMethod_methodID, _jstrClassName);
 
     if (nullptr == _clazz) {
         LOGE("Classloader failed to find class of %s", className);
@@ -60,10 +59,10 @@ jclass _getClassID(JNIEnv *env, const char *className) {
 
 void _detachCurrentThread(void *a) {
     LOGD("_detachCurrentThread");
-    cocos2d::JniHelper::getJavaVM()->DetachCurrentThread();
+    Wrap::JniHelper::getJavaVM()->DetachCurrentThread();
 }
 
-namespace cocos2d {
+namespace Wrap {
 
     MAPINTJNIENV JniHelper::m_mapEnv;
     JavaVM *JniHelper::_psJavaVM = nullptr;
@@ -318,14 +317,14 @@ namespace cocos2d {
         return strValue;
     }
 
-    jstring JniHelper::convert(cocos2d::JniMethodInfo &t, const char *x) {
+    jstring JniHelper::convert(JniMethodInfo &t, const char *x) {
         //LOGD("%s : x = %s\n", __FUNCTION__, x);
         jstring ret = newStringUTFJNI(t.env, x ? x : "");
         localRefs[t.env].push_back(ret);
         return ret;
     }
 
-    jstring JniHelper::convert(cocos2d::JniMethodInfo &t, const std::string &x) {
+    jstring JniHelper::convert(JniMethodInfo &t, const std::string &x) {
         return convert(t, x.c_str());
     }
 

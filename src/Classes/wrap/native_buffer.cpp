@@ -1,458 +1,316 @@
-ï»¿#include "NativeBuffer.h"
+#include "native_buffer.h"
 #include <memory>
+#include "buffer_value.h"
 
-// BufferJson ReadNativeBufferJson1(NativeBuffer *nativeBuf, int type, int &len) {
-// 	BufferJson ret;
-// 
-// 	ret.type = (BufferJson::eDataType) type;
-// 
-// 	if (type == BufferJson::type_char) {
-// 		nativeBuf->readChar(ret.data.base.c);
-// 		len = 1;
-// 	}
-// 	else if (type == BufferJson::type_short) {
-// 		nativeBuf->readShort(ret.data.base.s);
-// 		len = 2;
-// 	}
-// 	else if (type == BufferJson::type_int) {
-// 		nativeBuf->readInt(ret.data.base.i);
-// 		len = 4;
-// 	}
-// 	else if (type == BufferJson::type_int64) {
-// 		//è¿™é‡Œ jså¼•æ“é»˜è®¤æŠŠlong long å‹æ•°æ®è½¬æ¢ä¸ºstirngï¼Œæ‰€ä»¥éœ€è¦æ•°å­—æ¯”è¾ƒçš„æ—¶å€™è®°å¾—è½¬int
-// 		nativeBuf->readInt64(ret.data.base.ll);//ç›´æ¥æˆ‘è¿™é‡ŒæŠŠå®ƒè½¬äº†
-// 		len = 8;
-// 	}
-// 	else if (type == BufferJson::type_float) {
-// 		nativeBuf->readFloat(ret.data.base.f);
-// 		len = 4;
-// 	}
-// 	else if (type == BufferJson::type_str) {
-// 		ret.data.str = nativeBuf->readString();
-// 		len = 2 + (int)ret.data.str.length();//å­—ç¬¦ä¸²é•¿åº¦+å­—ç¬¦ä¸²
-// 	}
-// 	else {
-// 		ret.type = BufferJson::type_unknow;
-// 		LOGE("readNativeBufferSingle unknown type= %d\n", type);
-// 	}
-// 
-// 	// Log.i("readNativeBufferSingle type=" + typeof ret.value + ",value = " + ret.value);
-// 	return ret;
-// }
-// 
-// BufferJson* AutoParseNativeBufferEx1(NativeBuffer *nativeBuf){
-// 	static BufferJson ret;
-// 	ret.type = BufferJson::type_unknow;
-// 	ret.list.clear();
-// 	do {
-// 		char type;
-// 		nativeBuf->readChar(type);//è¯»å–æ ‡å¿—ä½
-// 
-// 		if (type > 22)//å¼‚å¸¸type
-// 			break;
-// 
-// 		if (type > BufferJson::type_array + 1) {//å­—ç¬¦ä¸²è§£æä¸èƒ½æ”¾åœ¨è¿™é‡Œ
-// 			char realType = type & 0xf;//æ•°æ®å…·ä½“ç±»å‹
-// 			short arraLen;
-// 			nativeBuf->readShort(arraLen);
-// 			// Log.i("readNativeBufferData realType=" + realType + ",arraLen=" + arraLen);
-// 
-// 			BufferJson arra;//æ•°ç»„å­˜å‚¨
-// 			arra.type = (BufferJson::eDataType) realType;//æ•°ç»„çš„å…·ä½“ç±»å‹
-// 			if (realType == 6) {//è‡ªå®šä¹‰ç»“æ„æ•°æ®
-// 				//arra->isInner = true;
-// 				if (arraLen > 0) {//ä¸æ˜¯ç©ºæ•°ç»„
-// 					for (int i = 0; i < arraLen; i++) {
-// 						//è¯»å–æ•°æ®ç»“æ„é•¿åº¦
-// 						short structLen;
-// 						nativeBuf->readShort(structLen);
-// 						// Log.i("readNativeBufferData structLen = " + structLen);
-// 
-// 						int tempLen = 0;
-// 						BufferJson struc;//æ•°æ®ç»“æ„
-// 						//struc->isInner = false;
-// 						struc.type = BufferJson::type_custom;
-// 						while (tempLen < structLen) {
-// 							char tempType;
-// 							nativeBuf->readChar(tempType);
-// 							tempLen += 1;//1å­—èŠ‚
-// 
-// 							int inLen = 0;
-// 							BufferJson tempRet = ReadNativeBufferJson1(nativeBuf, tempType, inLen);
-// 							struc.list.push_back(tempRet);//æŠŠå€¼è®°å½•ä¸‹æ¥
-// 
-// 							if (inLen == 0) {//å‡ºç°å¼‚å¸¸äº†ï¼ï¼ï¼ï¼Œ
-// 								int remainLen = structLen - tempLen;
-// 								if (remainLen > 0) {
-// 									//æŠŠå¤šä½™çš„æ•°æ®è·³è¿‡ä¸€ä¸‹
-// 									nativeBuf->skipBuffer(remainLen);
-// 								}
-// 								break;
-// 							}
-// 
-// 							tempLen += inLen;
-// 						}
-// 						arra.list.push_back(struc);//æ”¾å…¥ç»“æ„æ•°æ®
-// 					}
-// 				}
-// 			}
-// 			else {
-// 				//arra->isInner = false;
-// 				for (int i = 0; i < arraLen; i++) {
-// 					int inLen = 0;
-// 					BufferJson tempRet = ReadNativeBufferJson1(nativeBuf, realType, inLen);
-// 					arra.list.push_back(tempRet);//æŠŠå€¼è®°å½•ä¸‹æ¥
-// 				}
-// 			}
-// 			ret.list.push_back(arra);
-// 		}
-// 		else {
-// 			int inLen = 0;
-// 			BufferJson tempRet = ReadNativeBufferJson1(nativeBuf, type, inLen);
-// 			ret.list.push_back(tempRet);//æŠŠå€¼è®°å½•ä¸‹æ¥
-// 		}
-// 
-// 	} while (nativeBuf->hasData());
-// 
-// 	return &ret;
-// }
+namespace Wrap{
 
-BufferJson *ReadNativeBufferJson(NativeBuffer *nativeBuf, int type, int &len) {
-	BufferJson *ret =  new BufferJson(); //PoolMgr::GetIns()->getFromPool<BufferJson>("BufferJson");
-	if (!ret)
-		return ret;
+	BufferValue *ReadNativeBufferValue(NativeBuffer *nativeBuf, int type, int &len) {
+		BufferValue *ret = new BufferValue(); //PoolMgr::GetIns()->getFromPool<BufferValue>("BufferValue");
+		if (!ret)
+			return ret;
 
-	ret->type = (BufferJson::eDataType) type;
+		ret->type = (BufferValue::eDataType) type;
 
-	if (type == BufferJson::type_char) {
-		nativeBuf->readChar(ret->data.base.c);
-		len = 1;
-	}
-	else if (type == BufferJson::type_short) {
-		nativeBuf->readShort(ret->data.base.s);
-		len = 2;
-	}
-	else if (type == BufferJson::type_int) {
-		nativeBuf->readInt(ret->data.base.i);
-		len = 4;
-	}
-	else if (type == BufferJson::type_int64) {
-		//è¿™é‡Œ jså¼•æ“é»˜è®¤æŠŠlong long å‹æ•°æ®è½¬æ¢ä¸ºstirngï¼Œæ‰€ä»¥éœ€è¦æ•°å­—æ¯”è¾ƒçš„æ—¶å€™è®°å¾—è½¬int
-		nativeBuf->readInt64(ret->data.base.ll);//ç›´æ¥æˆ‘è¿™é‡ŒæŠŠå®ƒè½¬äº†
-		len = 8;
-	}
-	else if (type == BufferJson::type_float) {
-		nativeBuf->readFloat(ret->data.base.f);
-		len = 4;
-	}
-	else if (type == BufferJson::type_str) {
-		ret->data.str = nativeBuf->readString();
-		len = 2 + (int)ret->data.str.length();//å­—ç¬¦ä¸²é•¿åº¦+å­—ç¬¦ä¸²
-	}
-	else {
-		ret->type = BufferJson::type_unknow;
-		LOGE("readNativeBufferSingle unknown type= %d\n", type);
-	}
-
-	// Log.i("readNativeBufferSingle type=" + typeof ret.value + ",value = " + ret.value);
-	return ret;
-}
-
-BufferJson* AutoParseNativeBufferEx(NativeBuffer *nativeBuf){
-	BufferJson* ret = NULL;
-	if (!nativeBuf)
-		return ret;
-
-	ret =  new BufferJson(); //PoolMgr::GetIns()->getFromPool<BufferJson>("BufferJson");
-	do {
-		char type;
-		nativeBuf->readChar(type);//è¯»å–æ ‡å¿—ä½
-
-		if (type > 22)//å¼‚å¸¸type
-			break;
-
-		if (type > BufferJson::type_array + 1) {//å­—ç¬¦ä¸²è§£æä¸èƒ½æ”¾åœ¨è¿™é‡Œ
-			char realType = type & 0xf;//æ•°æ®å…·ä½“ç±»å‹
-			short arraLen;
-			nativeBuf->readShort(arraLen);
-			// Log.i("readNativeBufferData realType=" + realType + ",arraLen=" + arraLen);
-
-			BufferJson *arra =  new BufferJson(); //PoolMgr::GetIns()->getFromPool<BufferJson>("BufferJson");//æ•°ç»„å­˜å‚¨
-			arra->type = (BufferJson::eDataType) realType;//æ•°ç»„çš„å…·ä½“ç±»å‹
-			if (realType == 6) {//è‡ªå®šä¹‰ç»“æ„æ•°æ®
-				//arra->isInner = true;
-				if (arraLen > 0) {//ä¸æ˜¯ç©ºæ•°ç»„
-					for (int i = 0; i < arraLen; i++) {
-						//è¯»å–æ•°æ®ç»“æ„é•¿åº¦
-						short structLen;
-						nativeBuf->readShort(structLen);
-						// Log.i("readNativeBufferData structLen = " + structLen);
-
-						int tempLen = 0;
-						BufferJson *struc =  new BufferJson(); //PoolMgr::GetIns()->getFromPool<BufferJson>("BufferJson");//æ•°æ®ç»“æ„
-						//struc->isInner = false;
-						struc->type = BufferJson::type_custom;
-						while (tempLen < structLen) {
-							char tempType;
-							nativeBuf->readChar(tempType);
-							tempLen += 1;//1å­—èŠ‚
-
-							int inLen = 0;
-							BufferJson *tempRet = ReadNativeBufferJson(nativeBuf, tempType ,inLen);
-							struc->list.push_back(tempRet);//æŠŠå€¼è®°å½•ä¸‹æ¥
-
-							if (inLen == 0) {//å‡ºç°å¼‚å¸¸äº†ï¼ï¼ï¼ï¼Œ
-								int remainLen = structLen - tempLen;
-								if (remainLen > 0) {
-									//æŠŠå¤šä½™çš„æ•°æ®è·³è¿‡ä¸€ä¸‹
-									nativeBuf->skipBuffer(remainLen);
-								}
-								break;
-							}
-
-							tempLen += inLen;
-						}
-						arra->list.push_back(struc);//æ”¾å…¥ç»“æ„æ•°æ®
-					}
-				}
-			}
-			else {
-				//arra->isInner = false;
-				for (int i = 0; i < arraLen; i++) {
-					int inLen = 0;
-					BufferJson *tempRet = ReadNativeBufferJson(nativeBuf, realType, inLen);
-					arra->list.push_back(tempRet);//æŠŠå€¼è®°å½•ä¸‹æ¥
-				}
-			}
-			ret->list.push_back(arra);
+		if (type == BufferValue::type_char) {
+			nativeBuf->readChar(ret->data.base.c);
+			len = 1;
+		}
+		else if (type == BufferValue::type_short) {
+			nativeBuf->readShort(ret->data.base.s);
+			len = 2;
+		}
+		else if (type == BufferValue::type_int) {
+			nativeBuf->readInt(ret->data.base.i);
+			len = 4;
+		}
+		else if (type == BufferValue::type_int64) {
+			//ÕâÀï jsÒıÇæÄ¬ÈÏ°Ñlong long ĞÍÊı¾İ×ª»»Îªstirng£¬ËùÒÔĞèÒªÊı×Ö±È½ÏµÄÊ±ºò¼ÇµÃ×ªint
+			nativeBuf->readInt64(ret->data.base.ll);//Ö±½ÓÎÒÕâÀï°ÑËü×ªÁË
+			len = 8;
+		}
+		else if (type == BufferValue::type_float) {
+			nativeBuf->readFloat(ret->data.base.f);
+			len = 4;
+		}
+		else if (type == BufferValue::type_str) {
+			ret->data.str = nativeBuf->readString();
+			len = 2 + (int)ret->data.str.length();//×Ö·û´®³¤¶È+×Ö·û´®
 		}
 		else {
-			int inLen = 0;
-			BufferJson *tempRet = ReadNativeBufferJson(nativeBuf, type, inLen);
-			ret->list.push_back(tempRet);//æŠŠå€¼è®°å½•ä¸‹æ¥
+			ret->type = BufferValue::type_unknow;
+			LOGE("readNativeBufferSingle unknown type= %d\n", type);
 		}
 
-	} while (nativeBuf->hasData());
-
-	return ret;
-}
-
-void RecycleBufferList(BufferJson* &bj){
-	if (bj){
-		if (bj->list.empty()){
-			//PoolMgr::GetIns()->addToPool(bj);
-			delete bj;
-			bj = nullptr;
-		}
-		else{
-			BufferJson::VECTORBJ::iterator it = bj->list.begin();
-			for (it; it != bj->list.end(); it++){
-				BufferJson* item = *it;
-				RecycleBufferList(item);
-			}
-		}
-	}
-}
-
-std::string XorString(const char *data, int datalen, const char *key, int len) {
-	char *pBuf = new char[datalen];
-	if (!pBuf)
-		return "oom";
-
-	for (int i = 0; i < datalen; i++) {
-		pBuf[i] = data[i] ^ key[i % len];
-	}
-
-	std::string ret(pBuf, datalen);
-	delete[] pBuf;
-	return ret;
-}
-
-#ifdef COCOS_PROJECT
-NativeBuffer *NativeBuffer::Create() {
-	NativeBuffer *buf = new NativeBuffer();
-	if (buf)
-		buf->autorelease();
-	return buf;
-}
-#endif
-
-NativeBuffer::NativeBuffer(char format)
-	:
-#ifdef COCOS_PROJECT
-	cocos2d::Ref(),
-#endif
-	readPos_(0) {
-	swap_ = doendian(format);
-}
-
-NativeBuffer::~NativeBuffer() {
-	//    LOGD("%s", __FUNCTION__);
-	//int glp = 1;
-}
-
-//è¯»å†™ä½ç½®å½’0
-void NativeBuffer::clearBuffer() {
-	readPos_ = 0;
-	data_.initPos();
-}
-
-void NativeBuffer::moveBuffer(char *&data, unsigned int len) {
-	readPos_ = 0;
-	data_.move(data, len);
-}
-
-const NetworkUtil::DataBlockLocal65535* NativeBuffer::getBuffer() const{
-	return &data_;
-}
-
-bool NativeBuffer::hasData() {
-	return readPos_ < data_.getPos();
-}
-
-bool NativeBuffer::skipBuffer(const unsigned int len) {
-	if (readPos_ + len < data_.getPos()) {
-		readPos_ = readPos_ + len;
-		return true;
-	}
-	return false;
-}
-
-bool NativeBuffer::writeChar(const char c) {
-	return data_.append(&c, sizeof(c)) > 0;
-}
-
-bool NativeBuffer::writeUChar(const unsigned char c){
-	return data_.append((char*)&c, sizeof(c)) > 0;
-}
-
-bool NativeBuffer::writeShort(const short c) {
-	return writeType(c);
-}
-
-bool NativeBuffer::writeUShort(const unsigned short c){
-	return writeType(c);
-}
-
-bool NativeBuffer::writeInt(const int c) {
-	return writeType(c);
-}
-
-bool NativeBuffer::writeUInt(const unsigned int c){
-	return writeType(c);
-}
-
-bool NativeBuffer::writeInt64(const long long c) {
-	return writeType(c);
-}
-
-bool NativeBuffer::writeUInt64(const unsigned long long c){
-	return writeType(c);
-}
-
-bool NativeBuffer::writeFloat(const float c) {
-	return writeType(c);
-}
-
-bool NativeBuffer::writeString(const unsigned short len, const char *c) {
-	if (writeType(len))//å†™å…¥å­—ç¬¦ä¸²é•¿åº¦
-		return data_.append(c, len) >= 0;//å†™å…¥å­—ç¬¦ä¸²  è¿™é‡Œå¯ä»¥å†™å…¥ä¸€ä¸ªç©ºçš„å­—ç¬¦ä¸²
-	else
-		return false;
-}
-
-bool NativeBuffer::writeStringNoLen(const unsigned short len, const char *c) {
-	return data_.append(c, len) > 0;//å†™å…¥å­—ç¬¦ä¸²
-}
-
-bool NativeBuffer::readBuffer(char *c, unsigned int len) {
-	if (readPos_ + len > data_.getPos())//è¶Šç•Œäº†
-		return false;
-
-	memcpy(c, data_.getBuf() + readPos_, len);
-	readPos_ += len;
-	return true;
-}
-
-bool NativeBuffer::readChar(char &c) {
-	return readBuffer(&c, sizeof(c));
-}
-
-bool NativeBuffer::readUChar(unsigned char &c){
-	return readBuffer((char*)&c, sizeof(c));
-}
-
-bool NativeBuffer::readShort(short &c) {
-	return readType(c);
-}
-
-bool NativeBuffer::readUShort(unsigned short &c){
-	return readType(c);
-}
-
-bool NativeBuffer::readInt(int &c) {
-	return readType(c);
-}
-
-bool NativeBuffer::readUInt(unsigned int &c){
-	return readType(c);
-}
-
-bool NativeBuffer::readInt64(long long &c) {
-	return readType(c);
-}
-
-bool NativeBuffer::readUInt64(unsigned long long &c){
-	return readType(c);
-}
-
-bool NativeBuffer::readFloat(float &c) {
-	return readType(c);
-}
-
-bool NativeBuffer::readString(unsigned short &len, char *c) {
-	bool ret = readType(len);
-	if (c && ret)
-		return readBuffer(c, len);
-	else {
-		readPos_ -= 2;//æŠŠ2å­—èŠ‚è¿˜å›å»
+		// Log.i("readNativeBufferSingle type=" + typeof ret.value + ",value = " + ret.value);
 		return ret;
 	}
-}
 
-template<typename T>
-bool NativeBuffer::writeType(T c) {
-	int size = sizeof(c);
-	doswap(swap_, (char *)&c, size);
-	return data_.append((const char *)&c, size) > 0;
-}
+	BufferValue* AutoParseNativeBufferEx(NativeBuffer *nativeBuf){
+		BufferValue* ret = NULL;
+		if (!nativeBuf)
+			return ret;
 
-template<typename T>
-bool NativeBuffer::readType(T &c) {
-	bool ret = readBuffer((char *)&c, sizeof(c));
-	if (ret) {
-		doswap(swap_, &c, sizeof(c));
+		ret = new BufferValue(); //PoolMgr::GetIns()->getFromPool<BufferValue>("BufferValue");
+		do {
+			char type;
+			nativeBuf->readChar(type);//¶ÁÈ¡±êÖ¾Î»
+
+			if (type > 22)//Òì³£type
+				break;
+
+			if (type > BufferValue::type_array + 1) {//×Ö·û´®½âÎö²»ÄÜ·ÅÔÚÕâÀï
+				char realType = type & 0xf;//Êı¾İ¾ßÌåÀàĞÍ
+				short arraLen;
+				nativeBuf->readShort(arraLen);
+				// Log.i("readNativeBufferData realType=" + realType + ",arraLen=" + arraLen);
+
+				BufferValue *arra = new BufferValue(); //PoolMgr::GetIns()->getFromPool<BufferValue>("BufferValue");//Êı×é´æ´¢
+				arra->type = (BufferValue::eDataType) realType;//Êı×éµÄ¾ßÌåÀàĞÍ
+				if (realType == 6) {//×Ô¶¨Òå½á¹¹Êı¾İ
+					//arra->isInner = true;
+					if (arraLen > 0) {//²»ÊÇ¿ÕÊı×é
+						for (int i = 0; i < arraLen; i++) {
+							//¶ÁÈ¡Êı¾İ½á¹¹³¤¶È
+							short structLen;
+							nativeBuf->readShort(structLen);
+							// Log.i("readNativeBufferData structLen = " + structLen);
+
+							int tempLen = 0;
+							BufferValue *struc = new BufferValue(); //PoolMgr::GetIns()->getFromPool<BufferValue>("BufferValue");//Êı¾İ½á¹¹
+							//struc->isInner = false;
+							struc->type = BufferValue::type_custom;
+							while (tempLen < structLen) {
+								char tempType;
+								nativeBuf->readChar(tempType);
+								tempLen += 1;//1×Ö½Ú
+
+								int inLen = 0;
+								BufferValue *tempRet = ReadNativeBufferValue(nativeBuf, tempType, inLen);
+								struc->list.push_back(tempRet);//°ÑÖµ¼ÇÂ¼ÏÂÀ´
+
+								if (inLen == 0) {//³öÏÖÒì³£ÁË£¡£¡£¡£¬
+									int remainLen = structLen - tempLen;
+									if (remainLen > 0) {
+										//°Ñ¶àÓàµÄÊı¾İÌø¹ıÒ»ÏÂ
+										nativeBuf->skipBuffer(remainLen);
+									}
+									break;
+								}
+
+								tempLen += inLen;
+							}
+							arra->list.push_back(struc);//·ÅÈë½á¹¹Êı¾İ
+						}
+					}
+				}
+				else {
+					//arra->isInner = false;
+					for (int i = 0; i < arraLen; i++) {
+						int inLen = 0;
+						BufferValue *tempRet = ReadNativeBufferValue(nativeBuf, realType, inLen);
+						arra->list.push_back(tempRet);//°ÑÖµ¼ÇÂ¼ÏÂÀ´
+					}
+				}
+				ret->list.push_back(arra);
+			}
+			else {
+				int inLen = 0;
+				BufferValue *tempRet = ReadNativeBufferValue(nativeBuf, type, inLen);
+				ret->list.push_back(tempRet);//°ÑÖµ¼ÇÂ¼ÏÂÀ´
+			}
+
+		} while (nativeBuf->hasData());
+
+		return ret;
+	}
+
+#ifdef COCOS_PROJECT
+	NativeBuffer *NativeBuffer::Create() {
+		NativeBuffer *buf = new NativeBuffer();
+		if (buf)
+			buf->autorelease();
+		return buf;
+	}
+#endif
+
+	NativeBuffer::NativeBuffer(char format)
+		:
+#ifdef COCOS_PROJECT
+		cocos2d::Ref(),
+#endif
+		readPos_(0) {
+		swap_ = doendian(format);
+	}
+
+	NativeBuffer::~NativeBuffer() {
+		//    LOGD("%s", __FUNCTION__);
+		//int glp = 1;
+	}
+
+	//¶ÁĞ´Î»ÖÃ¹é0
+	void NativeBuffer::clearBuffer() {
+		readPos_ = 0;
+		data_.initPos();
+	}
+
+	void NativeBuffer::moveBuffer(char *&data, unsigned int len) {
+		readPos_ = 0;
+		data_.move(data, len);
+	}
+
+	const DataBlockLocal65535* NativeBuffer::getBuffer() const{
+		return &data_;
+	}
+
+	bool NativeBuffer::hasData() {
+		return readPos_ < data_.getPos();
+	}
+
+	bool NativeBuffer::skipBuffer(const unsigned int len) {
+		if (readPos_ + len < data_.getPos()) {
+			readPos_ = readPos_ + len;
+			return true;
+		}
+		return false;
+	}
+
+	bool NativeBuffer::writeChar(const char c) {
+		return data_.append(&c, sizeof(c)) > 0;
+	}
+
+	bool NativeBuffer::writeUChar(const unsigned char c){
+		return data_.append((char*)&c, sizeof(c)) > 0;
+	}
+
+	bool NativeBuffer::writeShort(const short c) {
+		return writeType(c);
+	}
+
+	bool NativeBuffer::writeUShort(const unsigned short c){
+		return writeType(c);
+	}
+
+	bool NativeBuffer::writeInt(const int c) {
+		return writeType(c);
+	}
+
+	bool NativeBuffer::writeUInt(const unsigned int c){
+		return writeType(c);
+	}
+
+	bool NativeBuffer::writeInt64(const long long c) {
+		return writeType(c);
+	}
+
+	bool NativeBuffer::writeUInt64(const unsigned long long c){
+		return writeType(c);
+	}
+
+	bool NativeBuffer::writeFloat(const float c) {
+		return writeType(c);
+	}
+
+	bool NativeBuffer::writeString(const unsigned short len, const char *c) {
+		if (writeType(len))//Ğ´Èë×Ö·û´®³¤¶È
+			return data_.append(c, len) >= 0;//Ğ´Èë×Ö·û´®  ÕâÀï¿ÉÒÔĞ´ÈëÒ»¸ö¿ÕµÄ×Ö·û´®
+		else
+			return false;
+	}
+
+	bool NativeBuffer::writeStringNoLen(const unsigned short len, const char *c) {
+		return data_.append(c, len) > 0;//Ğ´Èë×Ö·û´®
+	}
+
+	bool NativeBuffer::readBuffer(char *c, unsigned int len) {
+		if (readPos_ + len > data_.getPos())//Ô½½çÁË
+			return false;
+
+		memcpy(c, data_.getBuf() + readPos_, len);
+		readPos_ += len;
 		return true;
 	}
-	return false;
-}
 
-std::string NativeBuffer::readString() {
-	unsigned short c = 0;
-	readString(c, nullptr);//è¯»å–å­—ç¬¦ä¸²é•¿åº¦
+	bool NativeBuffer::readChar(char &c) {
+		return readBuffer(&c, sizeof(c));
+	}
 
-	std::string ret;
-	char *p = new char[c];
-	if (p) {
-		std::unique_ptr<char> pAuto(p);//è‡ªåŠ¨æŒ‡é’ˆ
-		std::string str;
-		if (readString(c, p)) {//è¯»å–å­—ç¬¦ä¸²
-			std::string temp(p, c);
-			ret = std::move(temp);
+	bool NativeBuffer::readUChar(unsigned char &c){
+		return readBuffer((char*)&c, sizeof(c));
+	}
+
+	bool NativeBuffer::readShort(short &c) {
+		return readType(c);
+	}
+
+	bool NativeBuffer::readUShort(unsigned short &c){
+		return readType(c);
+	}
+
+	bool NativeBuffer::readInt(int &c) {
+		return readType(c);
+	}
+
+	bool NativeBuffer::readUInt(unsigned int &c){
+		return readType(c);
+	}
+
+	bool NativeBuffer::readInt64(long long &c) {
+		return readType(c);
+	}
+
+	bool NativeBuffer::readUInt64(unsigned long long &c){
+		return readType(c);
+	}
+
+	bool NativeBuffer::readFloat(float &c) {
+		return readType(c);
+	}
+
+	bool NativeBuffer::readString(unsigned short &len, char *c) {
+		bool ret = readType(len);
+		if (c && ret)
+			return readBuffer(c, len);
+		else {
+			readPos_ -= 2;//°Ñ2×Ö½Ú»¹»ØÈ¥
+			return ret;
 		}
 	}
 
-	return ret;
+	template<typename T>
+	bool NativeBuffer::writeType(T c) {
+		int size = sizeof(c);
+		doswap(swap_, (char *)&c, size);
+		return data_.append((const char *)&c, size) > 0;
+	}
+
+	template<typename T>
+	bool NativeBuffer::readType(T &c) {
+		bool ret = readBuffer((char *)&c, sizeof(c));
+		if (ret) {
+			doswap(swap_, &c, sizeof(c));
+			return true;
+		}
+		return false;
+	}
+
+	std::string NativeBuffer::readString() {
+		unsigned short c = 0;
+		readString(c, nullptr);//¶ÁÈ¡×Ö·û´®³¤¶È
+
+		std::string ret;
+		char *p = new char[c];
+		if (p) {
+			std::unique_ptr<char> pAuto(p);//×Ô¶¯Ö¸Õë
+			std::string str;
+			if (readString(c, p)) {//¶ÁÈ¡×Ö·û´®
+				std::string temp(p, c);
+				ret = std::move(temp);
+			}
+		}
+
+		return ret;
+	}
+
 }
 
 #ifdef COCOS_PROJECT
@@ -495,7 +353,7 @@ bool JS_Native_writeChar(JSContext *cx, unsigned int argc, jsval *vp)
 	bool ok = true;
 	JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
 	js_proxy_t *proxy = jsb_get_js_proxy(obj);
-	NativeBuffer *cobj = (NativeBuffer *)(proxy ? proxy->ptr : NULL);
+	Wrap::NativeBuffer *cobj = (Wrap::NativeBuffer *)(proxy ? proxy->ptr : NULL);
 	JSB_PRECONDITION2(cobj, cx, false, "JS_Native_writeChar : Invalid Native Object");
 	if (argc == 1)
 	{
@@ -524,7 +382,7 @@ bool JS_Native_writeShort(JSContext *cx, unsigned int argc, jsval *vp)
 	bool ok = true;
 	JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
 	js_proxy_t *proxy = jsb_get_js_proxy(obj);
-	NativeBuffer *cobj = (NativeBuffer *)(proxy ? proxy->ptr : NULL);
+	Wrap::NativeBuffer *cobj = (Wrap::NativeBuffer *)(proxy ? proxy->ptr : NULL);
 	JSB_PRECONDITION2(cobj, cx, false, "JS_Native_writeShort : Invalid Native Object");
 	if (argc == 1)
 	{
@@ -553,7 +411,7 @@ bool JS_Native_writeInt(JSContext *cx, unsigned int argc, jsval *vp)
 	bool ok = true;
 	JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
 	js_proxy_t *proxy = jsb_get_js_proxy(obj);
-	NativeBuffer *cobj = (NativeBuffer *)(proxy ? proxy->ptr : NULL);
+	Wrap::NativeBuffer *cobj = (Wrap::NativeBuffer *)(proxy ? proxy->ptr : NULL);
 	JSB_PRECONDITION2(cobj, cx, false, "JS_Native_writeInt : Invalid Native Object");
 	if (argc == 1)
 	{
@@ -582,7 +440,7 @@ bool JS_Native_writeInt64(JSContext *cx, unsigned int argc, jsval *vp)
 	bool ok = true;
 	JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
 	js_proxy_t *proxy = jsb_get_js_proxy(obj);
-	NativeBuffer *cobj = (NativeBuffer *)(proxy ? proxy->ptr : NULL);
+	Wrap::NativeBuffer *cobj = (Wrap::NativeBuffer *)(proxy ? proxy->ptr : NULL);
 	JSB_PRECONDITION2(cobj, cx, false, "JS_Native_writeInt64 : Invalid Native Object");
 	if (argc == 1)
 	{
@@ -609,7 +467,7 @@ bool JS_Native_writeFloat(JSContext *cx, unsigned int argc, jsval *vp)
 	bool ok = true;
 	JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
 	js_proxy_t *proxy = jsb_get_js_proxy(obj);
-	NativeBuffer *cobj = (NativeBuffer *)(proxy ? proxy->ptr : NULL);
+	Wrap::NativeBuffer *cobj = (Wrap::NativeBuffer *)(proxy ? proxy->ptr : NULL);
 	JSB_PRECONDITION2(cobj, cx, false, "JS_Native_writeFloat : Invalid Native Object");
 	if (argc == 1)
 	{
@@ -641,7 +499,7 @@ bool JS_Native_writeString(JSContext *cx, unsigned int argc, jsval *vp)
 	bool ok = true;
 	JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
 	js_proxy_t *proxy = jsb_get_js_proxy(obj);
-	NativeBuffer *cobj = (NativeBuffer *)(proxy ? proxy->ptr : NULL);
+	Wrap::NativeBuffer *cobj = (Wrap::NativeBuffer *)(proxy ? proxy->ptr : NULL);
 	JSB_PRECONDITION2(cobj, cx, false, "JS_Native_writeString : Invalid Native Object");
 	if (argc == 1)
 	{
@@ -667,7 +525,7 @@ bool JS_Native_writeStringNoLen(JSContext *cx, unsigned int argc, jsval *vp){
 	bool ok = true;
 	JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
 	js_proxy_t *proxy = jsb_get_js_proxy(obj);
-	NativeBuffer *cobj = (NativeBuffer *)(proxy ? proxy->ptr : NULL);
+	Wrap::NativeBuffer *cobj = (Wrap::NativeBuffer *)(proxy ? proxy->ptr : NULL);
 	JSB_PRECONDITION2(cobj, cx, false, "JS_Native_writeString : Invalid Native Object");
 	if (argc == 1)
 	{
@@ -690,7 +548,7 @@ bool JS_Native_writeStringWithUtf8(JSContext *cx, unsigned int argc, jsval *vp){
 	bool ok = true;
 	JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
 	js_proxy_t *proxy = jsb_get_js_proxy(obj);
-	NativeBuffer *cobj = (NativeBuffer *)(proxy ? proxy->ptr : NULL);
+	Wrap::NativeBuffer *cobj = (Wrap::NativeBuffer *)(proxy ? proxy->ptr : NULL);
 	JSB_PRECONDITION2(cobj, cx, false, "JS_Native_writeStringWithUtf8 : Invalid Native Object");
 	if (argc == 1)
 	{
@@ -714,11 +572,11 @@ bool JS_Native_getBuffer(JSContext *cx, unsigned int argc, jsval *vp){
 	bool ok = true;
 	JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
 	js_proxy_t *proxy = jsb_get_js_proxy(obj);
-	NativeBuffer *cobj = (NativeBuffer *)(proxy ? proxy->ptr : NULL);
+	Wrap::NativeBuffer *cobj = (Wrap::NativeBuffer *)(proxy ? proxy->ptr : NULL);
 	JSB_PRECONDITION2(cobj, cx, false, "JS_Native_getBuffer : Invalid Native Object");
 	if (argc == 0)
 	{
-		const NetworkUtil::DataBlock& block = cobj->getBuffer();
+		const Wrap::DataBlock& block = cobj->getBuffer();
 
 		JS::RootedValue jsret(cx);
 		jsret = STRING_TO_JSVAL(JS_NewStringCopyN(cx, block.getBuf(), block.getPos()));
@@ -736,7 +594,7 @@ bool JS_Native_getBufferLen(JSContext *cx, unsigned int argc, jsval *vp){
 	bool ok = true;
 	JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
 	js_proxy_t *proxy = jsb_get_js_proxy(obj);
-	NativeBuffer *cobj = (NativeBuffer *)(proxy ? proxy->ptr : NULL);
+	Wrap::NativeBuffer *cobj = (Wrap::NativeBuffer *)(proxy ? proxy->ptr : NULL);
 	JSB_PRECONDITION2(cobj, cx, false, "JS_Native_getBufferLen : Invalid Native Object");
 	if (argc == 0)
 	{
@@ -758,11 +616,11 @@ bool JS_Native_clearBuffer(JSContext *cx, unsigned int argc, jsval *vp){
 	bool ok = true;
 	JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
 	js_proxy_t *proxy = jsb_get_js_proxy(obj);
-	NativeBuffer *cobj = (NativeBuffer *)(proxy ? proxy->ptr : NULL);
+	Wrap::NativeBuffer *cobj = (Wrap::NativeBuffer *)(proxy ? proxy->ptr : NULL);
 	JSB_PRECONDITION2(cobj, cx, false, "JS_Native_clearBuffer : Invalid Native Object");
 	if (argc == 0)
 	{
-		cobj->clearBuffer();//æ¸…ç©ºbuffer
+		cobj->clearBuffer();//Çå¿Õbuffer
 		args.rval().setUndefined();
 
 		return true;
@@ -778,7 +636,7 @@ bool JS_Native_readChar(JSContext *cx, unsigned int argc, jsval *vp)
 	bool ok = true;
 	JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
 	js_proxy_t *proxy = jsb_get_js_proxy(obj);
-	NativeBuffer *cobj = (NativeBuffer *)(proxy ? proxy->ptr : NULL);
+	Wrap::NativeBuffer *cobj = (Wrap::NativeBuffer *)(proxy ? proxy->ptr : NULL);
 	JSB_PRECONDITION2(cobj, cx, false, "JS_Native_readChar : Invalid Native Object");
 	if (argc == 0)
 	{
@@ -803,7 +661,7 @@ bool JS_Native_readShort(JSContext *cx, unsigned int argc, jsval *vp)
 	bool ok = true;
 	JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
 	js_proxy_t *proxy = jsb_get_js_proxy(obj);
-	NativeBuffer *cobj = (NativeBuffer *)(proxy ? proxy->ptr : NULL);
+	Wrap::NativeBuffer *cobj = (Wrap::NativeBuffer *)(proxy ? proxy->ptr : NULL);
 	JSB_PRECONDITION2(cobj, cx, false, "JS_Native_readShort : Invalid Native Object");
 	if (argc == 0)
 	{
@@ -828,7 +686,7 @@ bool JS_Native_readInt(JSContext *cx, unsigned int argc, jsval *vp)
 	bool ok = true;
 	JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
 	js_proxy_t *proxy = jsb_get_js_proxy(obj);
-	NativeBuffer *cobj = (NativeBuffer *)(proxy ? proxy->ptr : NULL);
+	Wrap::NativeBuffer *cobj = (Wrap::NativeBuffer *)(proxy ? proxy->ptr : NULL);
 	JSB_PRECONDITION2(cobj, cx, false, "JS_Native_readInt : Invalid Native Object");
 	if (argc == 0)
 	{
@@ -853,7 +711,7 @@ bool JS_Native_readInt64(JSContext *cx, unsigned int argc, jsval *vp)
 	bool ok = true;
 	JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
 	js_proxy_t *proxy = jsb_get_js_proxy(obj);
-	NativeBuffer *cobj = (NativeBuffer *)(proxy ? proxy->ptr : NULL);
+	Wrap::NativeBuffer *cobj = (Wrap::NativeBuffer *)(proxy ? proxy->ptr : NULL);
 	JSB_PRECONDITION2(cobj, cx, false, "JS_Native_readInt64 : Invalid Native Object");
 	if (argc == 0)
 	{
@@ -877,7 +735,7 @@ bool JS_Native_readFloat(JSContext *cx, unsigned int argc, jsval *vp)
 	bool ok = true;
 	JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
 	js_proxy_t *proxy = jsb_get_js_proxy(obj);
-	NativeBuffer *cobj = (NativeBuffer *)(proxy ? proxy->ptr : NULL);
+	Wrap::NativeBuffer *cobj = (Wrap::NativeBuffer *)(proxy ? proxy->ptr : NULL);
 	JSB_PRECONDITION2(cobj, cx, false, "JS_Native_readFloat : Invalid Native Object");
 	if (argc == 0)
 	{
@@ -901,18 +759,18 @@ bool JS_Native_readString(JSContext *cx, unsigned int argc, jsval *vp)
 	bool ok = true;
 	JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
 	js_proxy_t *proxy = jsb_get_js_proxy(obj);
-	NativeBuffer *cobj = (NativeBuffer *)(proxy ? proxy->ptr : NULL);
+	Wrap::NativeBuffer *cobj = (Wrap::NativeBuffer *)(proxy ? proxy->ptr : NULL);
 	JSB_PRECONDITION2(cobj, cx, false, "JS_Native_readString : Invalid Native Object");
 	if (argc == 0)
 	{
 		short c = 0;
-		cobj->readString(c, nullptr);//è¯»å–å­—ç¬¦ä¸²é•¿åº¦
+		cobj->readString(c, nullptr);//¶ÁÈ¡×Ö·û´®³¤¶È
 
 		char* p = new char[c];
 		if (p){
-			std::unique_ptr<char> pAuto(p);//è‡ªåŠ¨æŒ‡é’ˆ
+			std::unique_ptr<char> pAuto(p);//×Ô¶¯Ö¸Õë
 			std::string str;
-			if (cobj->readString(c, p)){//è¯»å–å­—ç¬¦ä¸²
+			if (cobj->readString(c, p)){//¶ÁÈ¡×Ö·û´®
 				std::string temp(p, c);
 				str = std::move(temp);
 			}
@@ -942,7 +800,7 @@ bool JS_Native_readStringNoLen(JSContext *cx, unsigned int argc, jsval *vp){
 	bool ok = true;
 	JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
 	js_proxy_t *proxy = jsb_get_js_proxy(obj);
-	NativeBuffer *cobj = (NativeBuffer *)(proxy ? proxy->ptr : NULL);
+	Wrap::NativeBuffer *cobj = (Wrap::NativeBuffer *)(proxy ? proxy->ptr : NULL);
 	JSB_PRECONDITION2(cobj, cx, false, "JS_Native_readStringNoLen : Invalid Native Object");
 	if (argc == 1)
 	{
@@ -952,9 +810,9 @@ bool JS_Native_readStringNoLen(JSContext *cx, unsigned int argc, jsval *vp){
 
 		char* p = new char[len];
 		if (p){
-			std::unique_ptr<char>  pAuto(p);//è‡ªåŠ¨æŒ‡é’ˆ
+			std::unique_ptr<char>  pAuto(p);//×Ô¶¯Ö¸Õë
 			std::string str;
-			if (cobj->readBuffer(p, len)){//è¯»å–å­—ç¬¦ä¸²
+			if (cobj->readBuffer(p, len)){//¶ÁÈ¡×Ö·û´®
 				std::string temp(p, len);
 				str = std::move(temp);
 			}
@@ -984,18 +842,18 @@ bool JS_Native_readStringWithUtf8(JSContext *cx, unsigned int argc, jsval *vp){
 	bool ok = true;
 	JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
 	js_proxy_t *proxy = jsb_get_js_proxy(obj);
-	NativeBuffer *cobj = (NativeBuffer *)(proxy ? proxy->ptr : NULL);
+	Wrap::NativeBuffer *cobj = (Wrap::NativeBuffer *)(proxy ? proxy->ptr : NULL);
 	JSB_PRECONDITION2(cobj, cx, false, "JS_Native_readStringWithUtf8 : Invalid Native Object");
 	if (argc == 0)
 	{
 		short c = 0;
-		cobj->readString(c, nullptr);//è¯»å–å­—ç¬¦ä¸²é•¿åº¦
+		cobj->readString(c, nullptr);//¶ÁÈ¡×Ö·û´®³¤¶È
 
 		char* p = new char[c];
 		if (p){
-			std::unique_ptr<char> pAuto(p);//è‡ªåŠ¨æŒ‡é’ˆ
+			std::unique_ptr<char> pAuto(p);//×Ô¶¯Ö¸Õë
 			std::string str;
-			if (cobj->readString(c, p)){//è¯»å–å­—ç¬¦ä¸²
+			if (cobj->readString(c, p)){//¶ÁÈ¡×Ö·û´®
 				std::string temp(p, c);
 				str = std::move(temp);
 			}
@@ -1025,7 +883,7 @@ bool JS_Native_hasData(JSContext *cx, unsigned int argc, jsval *vp){
 	bool ok = true;
 	JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
 	js_proxy_t *proxy = jsb_get_js_proxy(obj);
-	NativeBuffer *cobj = (NativeBuffer *)(proxy ? proxy->ptr : NULL);
+	Wrap::NativeBuffer *cobj = (Wrap::NativeBuffer *)(proxy ? proxy->ptr : NULL);
 	JSB_PRECONDITION2(cobj, cx, false, "JS_Native_hasData : Invalid Native Object");
 	if (argc == 0)
 	{
@@ -1047,7 +905,7 @@ bool JS_Native_skipBuffer(JSContext *cx, unsigned int argc, jsval *vp){
 	bool ok = true;
 	JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
 	js_proxy_t *proxy = jsb_get_js_proxy(obj);
-	NativeBuffer *cobj = (NativeBuffer *)(proxy ? proxy->ptr : NULL);
+	Wrap::NativeBuffer *cobj = (Wrap::NativeBuffer *)(proxy ? proxy->ptr : NULL);
 	JSB_PRECONDITION2(cobj, cx, false, "JS_Native_skipBuffer : Invalid Native Object");
 	if (argc == 1)
 	{
@@ -1068,14 +926,14 @@ bool JS_Native_skipBuffer(JSContext *cx, unsigned int argc, jsval *vp){
 	return false;
 }
 
-//è‡ªåŠ¨é‡Šæ”¾å¯¹è±¡
+//×Ô¶¯ÊÍ·Å¶ÔÏó
 bool JS_Native_create(JSContext *cx, unsigned int argc, jsval *vp)
 {
 	JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
 	if (argc == 0)
 	{
-		auto ret = NativeBuffer::Create();
-		js_type_class_t *typeClass = js_get_type_from_native<NativeBuffer>(ret);
+		auto ret = Wrap::NativeBuffer::Create();
+		js_type_class_t *typeClass = js_get_type_from_native<Wrap::NativeBuffer>(ret);
 		JS::RootedObject jsret(cx, jsb_ref_autoreleased_create_jsobject(cx, ret, typeClass, "simple::NativeBuffer"));
 		args.rval().set(OBJECT_TO_JSVAL(jsret));
 		return true;
@@ -1156,3 +1014,4 @@ void register_NativeBuffer(JSContext *cx, JS::HandleObject ns)
 }
 
 #endif // COCOS_PROJECT
+

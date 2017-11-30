@@ -19,11 +19,9 @@
 #include <functional>
 
 #include "event_handler.h"
-#include "mutex_wrapper.h"
+#include "mutex.h"
 
-class CriticalSectionWrapper;
-
-namespace NetworkUtil
+namespace Wrap
 {
 	//typedef void (* RUNKEEPLIVE)();
 	typedef std::function<void()> RUNKEEPLIVE;
@@ -123,7 +121,7 @@ namespace NetworkUtil
 		EventHandlerSet mSet;
 		bool mIsRunning;
 		//简单方便就把所有的事件都用一个临界区
-		CriticalSectionWrapper* mCS;
+		Mutex mMutex;
 	};
 }
 #endif//REACTOR__H__

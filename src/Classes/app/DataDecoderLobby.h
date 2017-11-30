@@ -8,12 +8,12 @@
 */
 #include "../wrap/data_decoder.h"
 
-class LobbyDataDecoder : public NetworkUtil::DataDecoder
+class LobbyDataDecoder : public Wrap::DataDecoder
 {
 public:
-	LobbyDataDecoder() : NetworkUtil::DataDecoder(NetworkUtil::PROTOCOLTYPE_BINARY_BIG, NetworkUtil::HEADER_LEN_2){}
+	LobbyDataDecoder() : Wrap::DataDecoder(Wrap::PROTOCOLTYPE_BINARY_BIG, Wrap::HEADER_LEN_2){}
 	virtual ~LobbyDataDecoder(){}
-	virtual int onPackage(NetworkUtil::ClientSocketBase *pClient, const char* buf, unsigned int buflen);
+	virtual int onPackage(Wrap::ClientSocketBase *pClient, const char* buf, unsigned int buflen);
 	static LobbyDataDecoder* Instance()
 	{
 		static LobbyDataDecoder dd;

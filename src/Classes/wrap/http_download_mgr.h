@@ -11,12 +11,12 @@
 
 #include "http_download.h"
 #include "reactor.h"
-#include "thread_wrapper.h"
+#include "ext/thread.h"
 #include <list>
-#include "mutex_wrapper.h"
+#include "mutex.h"
 
 
-namespace NetworkUtil {
+namespace Wrap {
 //只同时下载一个任务
 #define MAX_DOWNLOAD 1
 
@@ -60,10 +60,10 @@ private:
 	TaskDownload				mCurTask;
 
 	CHttpDownload*				mArraHttpDownload[MAX_DOWNLOAD];
-	CriticalSectionWrapper*		mCS;
+	Mutex						mCS;
 public:
 	NetReactor					mReactor;
 };
 
-} /* namespace NetworkUtil */
+} /* namespace Wrap */
 #endif /* HTTPDOWNLOADMGR_H_ */

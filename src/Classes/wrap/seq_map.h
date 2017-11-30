@@ -7,9 +7,9 @@
 	*/
 #include <map>
 #include <assert.h>
-#include "mutex_wrapper.h"
+#include "mutex.h"
 
-namespace NetworkUtil
+namespace Wrap
 {
 	template <class T>
 	class SeqMap : public std::map<int, T>
@@ -52,59 +52,57 @@ namespace NetworkUtil
 		typedef SeqMap<T> _Mybase;
 		typedef typename _Mybase::iterator iterator;
 
-		SeqMap_ThreadSafe() :mCS(NULL)
+		SeqMap_ThreadSafe()
 		{
-			mCS = CriticalSectionWrapper::CreateCriticalSection();
-			assert(mCS != NULL);
 		}
-		virtual ~SeqMap_ThreadSafe(){ if (mCS)delete mCS; }
+		virtual ~SeqMap_ThreadSafe(){ }
 
 		void lock(){
-			mCS->Enter();
+			mCS.lock();
 		}
 		void unlock(){
-			mCS->Leave();
+			mCS.unlock();
 		}
 		void put(int id, T t)
 		{
 			//加入临界区的保护，使之具有线程安全。
-			CriticalSectionScoped g(mCS);
+			Guard g(mCS);
 			_Mybase::put(id, t);
 		}
 		void cover(int id, T t)
 		{
-			CriticalSectionScoped g(mCS);
+			Guard g(mCS);
 			_Mybase::cover(id, t);
 		}
 		T* get(int id)
 		{
-			CriticalSectionScoped g(mCS);
+			Guard g(mCS);
 			return _Mybase::get(id);
 		}
 		unsigned int del(int id)
 		{
-			CriticalSectionScoped g(mCS);
+			Guard g(mCS);
 			return _Mybase::del(id);
 		}
 		/*
 		@注意：想要返回值的时候必须在外面增加安全锁，否则返回值将不可靠
 		*/
 		iterator del(iterator i){
-			CriticalSectionScoped g(mCS);
+			Guard g(mCS);
 			return this->erase(i);
 		}
 		unsigned int size()
 		{
-			CriticalSectionScoped g(mCS);
+			Guard g(mCS);
 			return _Mybase::size();
 		}
 		void clear()
 		{
-			CriticalSectionScoped g(mCS);
+			Guard g(mCS);
 			_Mybase::clear();
 		}
 	protected:
-		CriticalSectionWrapper* mCS;
+		Mutex mCS;
 	};
 };
 

@@ -7,8 +7,8 @@
 #include "../rapidjson/document.h"
 #include "../rapidjson/writer.h"
 
-#include "NativeBuffer.h"
-#include "../wrap/mutex_wrapper.h"
+#include "../wrap/native_buffer.h"
+#include "../wrap/mutex.h"
 #include "../app/RequestBase.h"
 
 #define MACRO_METHOD "method"
@@ -65,7 +65,7 @@ protected:
 	virtual void callNative(const std::string& method, const std::string& param) = 0;
 
 private:
-	CriticalSectionWrapper* mSection;
+	Wrap::Mutex mSection;
 	MAPSEQREQDATA mMapSeq;
 };
 

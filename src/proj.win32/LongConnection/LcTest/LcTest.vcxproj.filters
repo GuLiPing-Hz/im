@@ -41,28 +41,19 @@
     <ClCompile Include="VSBridge.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Classes\wrap\mutex_wrapper.cpp">
-      <Filter>源文件\wrap</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Classes\wrap\timer.cpp">
       <Filter>源文件\wrap</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Classes\wrap\thread_mgr.cpp">
       <Filter>源文件\wrap</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Classes\wrap\event.cpp">
+    <ClCompile Include="..\..\..\Classes\wrap\ext\event.cpp">
       <Filter>源文件\wrap</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Classes\wrap\event_handler.cpp">
+    <ClCompile Include="..\..\..\Classes\wrap\funcs.cpp">
       <Filter>源文件\wrap</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Classes\wrap\thread.cpp">
-      <Filter>源文件\wrap</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Classes\wrap\sleep.cpp">
-      <Filter>源文件\wrap</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Classes\wrap\jniloghelp.cpp">
+    <ClCompile Include="..\..\..\Classes\wrap\ext\thread.cpp">
       <Filter>源文件\wrap</Filter>
     </ClCompile>
   </ItemGroup>

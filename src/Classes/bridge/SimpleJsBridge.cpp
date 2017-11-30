@@ -416,7 +416,7 @@ std::string SimpleJsBridge::reqHttp(const std::string& param){
 		std::string sign = md.toString();
 
 		//转义地址一下
-		httpReq->setUrl(NetworkUtil::UrlEncode(httpH + "/" + httpM + "?" + reqParam + "&sign=" + sign));
+		httpReq->setUrl(Wrap::UrlEncode(httpH + "/" + httpM + "?" + reqParam + "&sign=" + sign));
 
 // #if (COCOS2D_DEBUG > 0) 
 // 		cocos2d::log("Http : %s ; md5(%s)", httpReq->getUrl(), plainTxt.c_str());

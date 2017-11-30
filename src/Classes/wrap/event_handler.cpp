@@ -5,7 +5,7 @@
 #else
 #endif
 
-namespace NetworkUtil
+namespace Wrap
 {
 	int TMEventHandler::registerTimer(time_t to)
 	{

@@ -1,11 +1,12 @@
 ﻿#include "LongConnection.h"
 #include "app/RequestBase.h"
 #include "wrap/counter.h"
-#include "bridge/NativeBuffer.h"
+#include "wrap/native_buffer.h"
+#include "wrap/buffer_value.h"
 #include "protocol.h"
 
 static RequestBase gReq;
-static Counter gCounter;
+static Wrap::Counter gCounter;
 
 void LCSetResponse(ResponseBase *resp) {
     gReq.setResponse(resp);
@@ -45,8 +46,8 @@ int LCSendMsg(const char *msg, const unsigned long len, const int seq, const boo
     return gReq.sendMsgToLobby(msg, len, seq, needBack);
 }
 
-NativeBuffer *BuildNativeBuffer(short cmd, short seq) {
-	static NativeBuffer nativeBuf;//静态对象，防止内存抖动厉害
+Wrap::NativeBuffer *BuildNativeBuffer(short cmd, short seq) {
+	static Wrap::NativeBuffer nativeBuf;//静态对象，防止内存抖动厉害
 	nativeBuf.clearBuffer();
 
     nativeBuf.writeShort(cmd);//cmd
@@ -58,9 +59,9 @@ NativeBuffer *BuildNativeBuffer(short cmd, short seq) {
 
 extern char NetXorKey[];
 
-std::string FinishNativeBufferW(NativeBuffer *nativeBuf) {
+std::string FinishNativeBufferW(Wrap::NativeBuffer *nativeBuf) {
     if (nativeBuf) {
-        const NetworkUtil::DataBlockLocal65535* db = nativeBuf->getBuffer();
+        const Wrap::DataBlockLocal65535* db = nativeBuf->getBuffer();
         std::string xorStr = XorString(db->getBuf(), db->getPos(), NetXorKey, strlen(NetXorKey));
 
         nativeBuf->clearBuffer();//清空数据
@@ -84,12 +85,12 @@ int LCLogin(const int seq, const char *uid, const char *token, const char *appke
     if (!uid || !token || !appkey)
         return -1;
 
-    NativeBuffer *nativeBuf = BuildNativeBuffer(CMD_LOGIN_C2S2C, seq);
-	bool ok = nativeBuf->writeChar(BufferJson::type_array + BufferJson::type_char);
+    Wrap::NativeBuffer *nativeBuf = BuildNativeBuffer(CMD_LOGIN_C2S2C, seq);
+	bool ok = nativeBuf->writeChar(Wrap::BufferValue::type_array + Wrap::BufferValue::type_char);
     ok &= nativeBuf->writeString(strlen(uid), uid);
-	ok &= nativeBuf->writeChar(BufferJson::type_array + BufferJson::type_char);
+	ok &= nativeBuf->writeChar(Wrap::BufferValue::type_array + Wrap::BufferValue::type_char);
 	ok &= nativeBuf->writeString(strlen(token), token);
-	ok &= nativeBuf->writeChar(BufferJson::type_array + BufferJson::type_char);
+	ok &= nativeBuf->writeChar(Wrap::BufferValue::type_array + Wrap::BufferValue::type_char);
 	ok &= nativeBuf->writeString(strlen(appkey), appkey);
 	if (!ok)
 		return -1;
@@ -107,7 +108,7 @@ int LCLogin(const int seq, const char *uid, const char *token, const char *appke
 可以不用理会登出的返回
 */
 int LCLogout() {
-    NativeBuffer *nativeBuf = BuildNativeBuffer(CMD_LOGOUT_C2S2C, 0);
+    Wrap::NativeBuffer *nativeBuf = BuildNativeBuffer(CMD_LOGOUT_C2S2C, 0);
     std::string ret = FinishNativeBufferW(nativeBuf);
     if (ret.empty())
         return -1;
@@ -129,16 +130,16 @@ int LCSayTo(const int seq, int type, const char *from, const char *to, const cha
     if (!from || !to || !content)
         return -1;
 
-    NativeBuffer *nativeBuf = BuildNativeBuffer(CMD_SAYTO_C2S2C, seq);
-    bool ok = nativeBuf->writeChar(BufferJson::type_int);
+    Wrap::NativeBuffer *nativeBuf = BuildNativeBuffer(CMD_SAYTO_C2S2C, seq);
+	bool ok = nativeBuf->writeChar(Wrap::BufferValue::type_int);
 	ok &= nativeBuf->writeInt(type);
-	ok &= nativeBuf->writeChar(BufferJson::type_array + BufferJson::type_char);
+	ok &= nativeBuf->writeChar(Wrap::BufferValue::type_array + Wrap::BufferValue::type_char);
 	ok &= nativeBuf->writeString(strlen(from), from);
-	ok &= nativeBuf->writeChar(BufferJson::type_array + BufferJson::type_char);
+	ok &= nativeBuf->writeChar(Wrap::BufferValue::type_array + Wrap::BufferValue::type_char);
 	ok &= nativeBuf->writeString(strlen(to), to);
-	ok &= nativeBuf->writeChar(BufferJson::type_array + BufferJson::type_char);
+	ok &= nativeBuf->writeChar(Wrap::BufferValue::type_array + Wrap::BufferValue::type_char);
 	ok &= nativeBuf->writeString(strlen(content), content);
-	ok &= nativeBuf->writeChar(BufferJson::type_array + BufferJson::type_char);
+	ok &= nativeBuf->writeChar(Wrap::BufferValue::type_array + Wrap::BufferValue::type_char);
 	ok &= nativeBuf->writeString(ext ? strlen(ext) : 0, ext);
 	if (!ok)
 		return -1;
@@ -160,8 +161,8 @@ int LCEnterRoom(const int seq, const char *room_id) {
     if (!room_id)
         return -1;
 
-    NativeBuffer *nativeBuf = BuildNativeBuffer(CMD_ENTERROOM_C2S2C, seq);
-	bool ok = nativeBuf->writeChar(BufferJson::type_array + BufferJson::type_char);
+	Wrap::NativeBuffer *nativeBuf = BuildNativeBuffer(CMD_ENTERROOM_C2S2C, seq);
+	bool ok = nativeBuf->writeChar(Wrap::BufferValue::type_array + Wrap::BufferValue::type_char);
     ok &= nativeBuf->writeString(strlen(room_id), room_id);
 	if (!ok)
 		return -1;
@@ -176,7 +177,7 @@ int LCEnterRoom(const int seq, const char *room_id) {
 离开房间
 */
 int LCExitRoom() {
-    NativeBuffer *nativeBuf = BuildNativeBuffer(CMD_EXITROOM_C2S2C, 0);
+	Wrap::NativeBuffer *nativeBuf = BuildNativeBuffer(CMD_EXITROOM_C2S2C, 0);
     std::string ret = FinishNativeBufferW(nativeBuf);
     if (ret.empty())
         return -1;
@@ -185,7 +186,7 @@ int LCExitRoom() {
 
 int LCHeartbeat() {
     LOGI("%s\n", __FUNCTION__);
-    NativeBuffer *nativeBuf = BuildNativeBuffer(CMD_KEEPALIVE_C2S, 0);
+    Wrap::NativeBuffer *nativeBuf = BuildNativeBuffer(CMD_KEEPALIVE_C2S, 0);
     std::string ret = FinishNativeBufferW(nativeBuf);
     if (ret.empty())
         return -1;

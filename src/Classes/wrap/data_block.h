@@ -6,15 +6,16 @@
 #include "config.h"
 
 /*
-	注释添加以及修改于 2014-4-2 
+	注释添加以及修改于 2014-4-2
 
 	封装一个对数据存储处理的类 DataBlock
 	每个函数已经给出简单的释义。
-*/
-namespace NetworkUtil {
+	*/
+namespace Wrap {
 
 #define    DEFAULT_BLOCK_SIZE  1024
-#define    MAX_BLOCK_SIZE  1048576/*1024*1024*/
+	/*1024*1024*/
+#define    MAX_BLOCK_SIZE  1048576
 
 	class DataBlockBase{
 	public:
@@ -60,87 +61,88 @@ namespace NetworkUtil {
 	优先推荐使用 DataBlockLocal；
 	*/
 	class DataBlock : public DataBlockBase {
-        DISABLE_COPY_CTOR(DataBlock);
-    public:
-        DataBlock(unsigned int size = DEFAULT_BLOCK_SIZE) {
+		DISABLE_COPY_CTOR(DataBlock);
+	public:
+		DataBlock(unsigned int size = DEFAULT_BLOCK_SIZE) {
 			m_pos = 0;
-            if (size <= 0) {
-                size = 1;
-            }
+			if (size <= 0) {
+				size = 1;
+			}
 
-            m_size = size;
-            //m_buf = new char[m_size];
+			m_size = size;
+			//m_buf = new char[m_size];
 			m_buf = (char*)malloc(m_size);
 			//memset(m_buf, 0, m_size);//先置为空
-        }
+		}
 
-        virtual ~DataBlock() {
-//            LOGD("%s", __FUNCTION__);
-            if (m_buf) {
-                //delete[]  m_buf;
+		virtual ~DataBlock() {
+			//            LOGD("%s", __FUNCTION__);
+			if (m_buf) {
+				//delete[]  m_buf;
 				free(m_buf);
-                m_buf = nullptr;
-            }
-        }
-        //拷贝数据到指定位置
-        /*返回当前拷贝进去的字节数*/
+				m_buf = nullptr;
+			}
+		}
+		//拷贝数据到指定位置
+		/*返回当前拷贝进去的字节数*/
 		virtual int copy(unsigned int pos, const char *buf, unsigned int buflen) {
-            if (!buf || !buflen)
-                return 0;
+			if (!buf || !buflen)
+				return 0;
 
-            unsigned int tmppos = pos + buflen;
-            //未超出容量
-            if (tmppos <= m_size) {
-                memcpy(m_buf + pos, buf, buflen);
-                m_pos = tmppos;
-            } else {
-                unsigned int newSize = m_size;
-                while (newSize < tmppos)
-                    newSize = newSize << 2;
+			unsigned int tmppos = pos + buflen;
+			//未超出容量
+			if (tmppos <= m_size) {
+				memcpy(m_buf + pos, buf, buflen);
+				m_pos = tmppos;
+			}
+			else {
+				unsigned int newSize = m_size;
+				while (newSize < tmppos)
+					newSize = newSize << 2;
 
-                //char *tmpbuf = new char[newSize];
+				//char *tmpbuf = new char[newSize];
 				char *tmpbuf = (char*)malloc(newSize);
-                if (!tmpbuf)
-                    return -1;
+				if (!tmpbuf)
+					return -1;
 
-                //memset(tmpbuf, 0, newSize);//先置为空
+				//memset(tmpbuf, 0, newSize);//先置为空
 
-                if (m_buf) {
-                    if (m_pos > 0)
-                        memcpy(tmpbuf, m_buf, m_pos);
-                    //delete[]m_buf;
+				if (m_buf) {
+					if (m_pos > 0)
+						memcpy(tmpbuf, m_buf, m_pos);
+					//delete[]m_buf;
 					free(m_buf);
-                }
+				}
 
-                memcpy(tmpbuf + pos, buf, buflen);
+				memcpy(tmpbuf + pos, buf, buflen);
 
-                m_buf = tmpbuf;
-                m_pos = tmppos;
-                m_size = newSize;
-            }
+				m_buf = tmpbuf;
+				m_pos = tmppos;
+				m_size = newSize;
+			}
 
-            return buflen;
-        }
-        /*
-        移动buf到DataBlock
-        */
+			return buflen;
+		}
+		/*
+		移动buf到DataBlock
+		*/
 		virtual void move(char *&buf, unsigned int buflen) {
-            if (m_buf) {//释放之前的内容
-                //delete m_buf;
+			if (m_buf) {//释放之前的内容
+				//delete m_buf;
 				free(m_buf);
-            }
-            m_buf = buf;
-            m_pos = buflen;
-            m_size = buflen;
+			}
+			m_buf = buf;
+			m_pos = buflen;
+			m_size = buflen;
 
-            buf = NULL;//置为空
-        }
+			buf = NULL;//置为空
+		}
 		//获取整个buffer
 		virtual const char *getBuf() const { return m_buf; };
 
 	protected:
-        char *m_buf;
-    };
+		char *m_buf;
+	};
 
 	/*
 	下面这个Data使用的内部数组的形式，但是构造函数的执行速度是DataBlock 的10倍到20倍之间

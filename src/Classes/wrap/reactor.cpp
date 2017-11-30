@@ -1,11 +1,11 @@
 ﻿#include "reactor.h"
-#include "mutex_wrapper.h"
-#include "sleep.h"
+#include "mutex.h"
+#include "funcs.h"
 #include "config.h"
 
 #include "config.h"
 
-namespace NetworkUtil
+namespace Wrap
 {
 //////////////////////////EventHandlerSet 的实现////////////////////////////////////////////////
 	void NetReactor::EventHandlerSet::addTMEventHandler(TMEventHandler *pHandler, time_t to)
@@ -77,38 +77,35 @@ namespace NetworkUtil
 	}
 
 ///////////////////////NetReactor 的实现///////////////////////////////////////////////////
-    NetReactor::NetReactor():mIsRunning(true),mCS(NULL)
+    NetReactor::NetReactor():mIsRunning(true)
     {
         FD_ZERO(&mReadSet);
         FD_ZERO(&mWriteSet);
-        mCS = CriticalSectionWrapper::CreateCriticalSection();
     }
     NetReactor::~NetReactor()
     {
-        if (mCS)
-            delete mCS;
     }
 	int NetReactor::registerIdle(IdleEventHandler *pHandler)
 	{
-        CriticalSectionScoped lock(mCS);
+		Guard lock(mMutex);
 		mSet.addIdleEventHandler(pHandler);
 		return 0;
 	}
 	int NetReactor::unRegisterIdle(IdleEventHandler *pHandler)
 	{
-        CriticalSectionScoped lock(mCS);
+		Guard lock(mMutex);
 		mSet.delIdleEventHandler(pHandler);
 		return 0;
 	}
 	int NetReactor::registerTimer(TMEventHandler *pHandler,time_t to)
 	{
-        CriticalSectionScoped lock(mCS);
+		Guard lock(mMutex);
 		mSet.addTMEventHandler(pHandler,to);
 		return 0;
 	}
 	int NetReactor::registerReadEvent(FDEventHandler *pHandler)
 	{
-        CriticalSectionScoped lock(mCS);
+		Guard lock(mMutex);
         //还没加入读fd_set
 		if(FD_ISSET(pHandler->getFD(),&mReadSet) == 0)
 			FD_SET(pHandler->getFD(),&mReadSet);//加入写fd_set
@@ -117,7 +114,7 @@ namespace NetworkUtil
 	}
 	int NetReactor::registerWriteEvent(FDEventHandler *pHandler)
 	{
-        CriticalSectionScoped lock(mCS);
+		Guard lock(mMutex);
 		//如果不在写fd_set中
 		if(FD_ISSET(pHandler->getFD(),&mWriteSet) == 0)
 			FD_SET(pHandler->getFD(),&mWriteSet);//加入写fd_set
@@ -127,13 +124,13 @@ namespace NetworkUtil
 	
 	int NetReactor::unRegisterTimer(TMEventHandler *pHandler)
 	{
-        CriticalSectionScoped lock(mCS);
+		Guard lock(mMutex);
 		mSet.delTMEventHandler(pHandler);
 		return 0;
 	}
 	int NetReactor::unRegisterReadEvent(FDEventHandler *pHandler)
 	{
-        CriticalSectionScoped lock(mCS);
+		Guard lock(mMutex);
         if(FD_ISSET(pHandler->getFD(),&mReadSet))
            FD_CLR(pHandler->getFD(),&mReadSet);
 		if(FD_ISSET(pHandler->getFD(),&mWriteSet) == 0)
@@ -142,7 +139,7 @@ namespace NetworkUtil
 	}
 	int NetReactor::unRegisterWriteEvent(FDEventHandler *pHandler)
 	{
-        CriticalSectionScoped lock(mCS);
+		Guard lock(mMutex);
         if(FD_ISSET(pHandler->getFD(),&mWriteSet))
             FD_CLR(pHandler->getFD(),&mWriteSet);
 		if(FD_ISSET(pHandler->getFD(),&mReadSet) == 0)
@@ -151,7 +148,7 @@ namespace NetworkUtil
 	}
 	int NetReactor::unRegisterEvent(FDEventHandler *pHandler)
 	{
-        CriticalSectionScoped lock(mCS);
+		Guard lock(mMutex);
         if (FD_ISSET(pHandler->getFD(),&mWriteSet))
             FD_CLR(pHandler->getFD(),&mWriteSet);
         if (FD_ISSET(pHandler->getFD(),&mReadSet))
@@ -184,7 +181,7 @@ namespace NetworkUtil
             tmpFDMap.clear();
             
             {
-                CriticalSectionScoped lock(mCS);
+				Guard lock(mMutex);
                 
                 readset = mReadSet;
                 writeset = mWriteSet;

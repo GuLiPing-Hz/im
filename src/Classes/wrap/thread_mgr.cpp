@@ -1,29 +1,27 @@
 ﻿#include "thread_mgr.h"
-#include "event_wrapper.h"
-#include "mutex_wrapper.h"
-#include "sleep.h"
+#include "ext/event.h"
+#include "mutex.h"
+#include "funcs.h"
 
-CThreadMgr::CThreadMgr(void)
+namespace Wrap{
+
+ThreadMgr::ThreadMgr(void)
 : mIsStop( false )
-,mCS(NULL)
 ,mEvent(NULL)
 ,mThread(NULL)
 {
-	mCS = CriticalSectionWrapper::CreateCriticalSection();
 	mEvent = EventWrapper::Create();
 }
 
-CThreadMgr::~CThreadMgr(void)
+ThreadMgr::~ThreadMgr(void)
 {
 	if(mThread)
 		delete mThread;
 	if(mEvent)
 		delete mEvent;
-	if(mCS)
-		delete mCS;
 }
 
-bool CThreadMgr::createThread(const char* name, eThreadPriority iPriority)
+bool ThreadMgr::createThread(const char* name, eThreadPriority iPriority)
 {
 	if (mThread){
 		//ReleaseThread();
@@ -41,7 +39,7 @@ bool CThreadMgr::createThread(const char* name, eThreadPriority iPriority)
 	return true;
 }
 
-bool CThreadMgr::releaseThread()
+bool ThreadMgr::releaseThread()
 {
 	mIsStop = true;
 	if (mThread){
@@ -52,22 +50,22 @@ bool CThreadMgr::releaseThread()
 	return true;
 }
 
-void CThreadMgr::postMessageOS( int id, void* pData )
+void ThreadMgr::postMessageOS( int id, void* pData )
 {
 	_tMsg msg = { false, id, pData };
 	
 	{
-		CriticalSectionScoped lock(mCS);
+		Guard lock(mCS);
 		mLstMsg.push_back( msg );
 	}
 }
 
-bool CThreadMgr::sendMessageOS( int id, void* pData )
+bool ThreadMgr::sendMessageOS( int id, void* pData )
 {
 	_tMsg msg = { true, id, pData };
 
 	{
-		CriticalSectionScoped lock(mCS);
+		Guard lock(mCS);
 		mLstMsg.push_front( msg );
 	}
 	
@@ -80,18 +78,18 @@ bool CThreadMgr::sendMessageOS( int id, void* pData )
 	return false;
 }
 
-void CThreadMgr::processIdle()
+void ThreadMgr::processIdle()
 {
 	SleepMs(50);
 }
 
-bool CThreadMgr::ThreadProc(ThreadObj pData)
+bool ThreadMgr::ThreadProc(ThreadObj pData)
 {
-	CThreadMgr * pThis = static_cast<CThreadMgr *>(pData);
+	ThreadMgr * pThis = static_cast<ThreadMgr *>(pData);
 	return pThis->run();
 }
 
-bool CThreadMgr::run()
+bool ThreadMgr::run()
 {
 	while ( !mIsStop )
 	{
@@ -99,7 +97,7 @@ bool CThreadMgr::run()
 		_tMsg msg = { false, MSG_INVALID, 0 };
 		
 		{
-			CriticalSectionScoped lock(mCS);
+			Guard lock(mCS);
 			bIsEmpty = mLstMsg.empty();
 			if ( !bIsEmpty )
 			{
@@ -123,3 +121,6 @@ bool CThreadMgr::run()
 
 	return false;//结束线程
 }
+
+}
+

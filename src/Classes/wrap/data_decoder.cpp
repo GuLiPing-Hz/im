@@ -10,7 +10,7 @@
 #include "data_decoder.h"
 #include "client_socket.h"
 
-namespace NetworkUtil
+namespace Wrap
 {
 	unsigned int DataDecoder::getBuflen(unsigned char *buf)
 	{

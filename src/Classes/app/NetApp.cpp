@@ -1,7 +1,6 @@
 ﻿#include "NetApp.h"
 #include "DataDecoderLobby.h"
 #include "DataDecoderRoom.h"
-#include "../wrap/crypt.h"
 #include "../wrap/pool.h"
 
 #ifdef _WIN32
@@ -39,7 +38,7 @@ NetApp *NetApp::GetInstance() {
 
 void NetApp::ReleaseApp(){
 	CCharsetCodec::UninitCharset();
-	PoolMgr::ReleaseIns();
+	Wrap::PoolMgr::ReleaseIns();
 }
 
 NetApp::NetApp()
@@ -47,7 +46,7 @@ NetApp::NetApp()
           m_RoomTunnel(&m_Reactor),
           m_RDMap(&m_Reactor),
 #ifdef TEST_UDP
-        m_Informer(&m_Reactor),
+          m_Informer(&m_Reactor),
 #else
           m_Informer(this),
 #endif
@@ -58,14 +57,9 @@ NetApp::NetApp()
           m_Tokenlen(0) {
     //注册空闲处理默认心跳包的回调事件。
     m_Reactor.mFuncKeepLive = KeepLiveLobbyAndRoom;
-
-    m_pObjectCS = CriticalSectionWrapper::CreateCriticalSection();
-    assert(m_pObjectCS != NULL);
 }
 
 NetApp::~NetApp() {
-    if (m_pObjectCS)
-        delete m_pObjectCS;
 }
 
 void NetApp::setToken(const char *token, unsigned int tokenlen) {
@@ -76,32 +70,18 @@ void NetApp::setToken(const char *token, unsigned int tokenlen) {
     m_Tokenlen = len;
 }
 
-//NetworkUtil::MessageCenter
-int NetApp::getMessage(NetworkUtil::MSGINFO &msg) {
-    CriticalSectionScoped lock(m_pObjectCS);
-    if (!m_requestlist.empty()) {
-        msg = m_requestlist.front();
-        m_requestlist.pop_front();
-        return 0;
-    }
-    return -1;
+//Wrap::MessageCenter
+Wrap::ThreadInformer* NetApp::getInformer(){
+	return &m_Informer;
 }
-
-int NetApp::sendToSvr(NetworkUtil::ClientSocket *pSvr, const char *buf, int len) {
-    if (pSvr && !pSvr->isConnected())
-        return -1;
-
-    return pSvr->sendBuf(buf, len) ? 0 : -1;
-}
-
 //请求线程
-void NetApp::addTimeout(int seq, NetworkUtil::ReserveData *data) {
+void NetApp::addTimeout(int seq, Wrap::ReserveData *data) {
     m_RDMap.put(seq, data);
 }
 
 //网络线程
 void NetApp::delTimeout(int seq) {
-    NetworkUtil::ReserveData **data = m_RDMap.get(seq);
+    Wrap::ReserveData **data = m_RDMap.get(seq);
 	if (data && *data) {
 		free(*data);//释放内存
 		m_RDMap.del(seq);//移除
@@ -109,17 +89,17 @@ void NetApp::delTimeout(int seq) {
 }
 
 //网络线程
-void NetApp::onTimeout(NetworkUtil::ReserveData *data) {
+void NetApp::onTimeout(Wrap::ReserveData *data) {
     if (data) {
 		int seq = data->seq;
         if (data->serverid == eServerID::lobby) {//给对应的连接构造一条超时回调。
-			getResponseHandler()->onLobbyMsg(data->type == NetworkUtil::ReserveData::TYPE_TIMEOUT
+			getResponseHandler()->onLobbyMsg(data->type == Wrap::ReserveData::TYPE_TIMEOUT
 				? RESULT_TIMEOUT : RESULT_REQ_NOT_SEND, nullptr, 0, seq);
         }
     }
 }
 
-void NetApp::setHeartbeatFunc(NetworkUtil::RUNKEEPLIVE func) {
+void NetApp::setHeartbeatFunc(Wrap::RUNKEEPLIVE func) {
     m_Reactor.mFuncKeepLive = func;
 }
 
@@ -149,29 +129,4 @@ void NetApp::stop() {
     m_Informer.unInit();
 }
 
-int NetApp::postMessage(int serverId, NetworkUtil::ClientSocket *conn, int cmd, void *v, int len,
-                        int seq, bool back) {
-    CriticalSectionScoped lock(m_pObjectCS);
-    if (m_requestlist.size() > 1000)//请求队列最多1000
-        return -1;
-
-	void* data = malloc(len);
-	if (!data)
-		return -1;
-	memcpy(data, v, len);//拷贝数据
-
-    NetworkUtil::MSGINFO msg = {0};
-	msg.server = serverId;
-    msg.con = conn;
-    msg.cmd = cmd;
-	msg.v = data;
-    msg.len = len;
-    msg.back = back;
-    msg.wseq = seq;// m_Counter.Get();
-    m_requestlist.push_back(msg);
-
-    //通知消息处理器处理
-    m_Informer.inform();
-    return seq;
-}
 

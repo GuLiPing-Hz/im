@@ -88,12 +88,9 @@
     <ClInclude Include="VSBridge.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\Classes\wrap\event.cpp" />
-    <ClCompile Include="..\..\..\Classes\wrap\event_handler.cpp" />
-    <ClCompile Include="..\..\..\Classes\wrap\jniloghelp.cpp" />
-    <ClCompile Include="..\..\..\Classes\wrap\mutex_wrapper.cpp" />
-    <ClCompile Include="..\..\..\Classes\wrap\sleep.cpp" />
-    <ClCompile Include="..\..\..\Classes\wrap\thread.cpp" />
+    <ClCompile Include="..\..\..\Classes\wrap\ext\event.cpp" />
+    <ClCompile Include="..\..\..\Classes\wrap\ext\thread.cpp" />
+    <ClCompile Include="..\..\..\Classes\wrap\funcs.cpp" />
     <ClCompile Include="..\..\..\Classes\wrap\thread_mgr.cpp" />
     <ClCompile Include="..\..\..\Classes\wrap\timer.cpp" />
     <ClCompile Include="LcTest.cpp" />

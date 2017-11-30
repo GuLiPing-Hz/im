@@ -2,12 +2,12 @@
 #define ROOMDATADECODER__H__
 #include "../wrap/data_decoder.h"
 
-class RoomDataDecoder : public NetworkUtil::DataDecoder
+class RoomDataDecoder : public Wrap::DataDecoder
 {
 public:
-	RoomDataDecoder() : NetworkUtil::DataDecoder(NetworkUtil::PROTOCOLTYPE_BINARY, NetworkUtil::HEADER_LEN_2) {}
+	RoomDataDecoder() : Wrap::DataDecoder(Wrap::PROTOCOLTYPE_BINARY, Wrap::HEADER_LEN_2) {}
 	virtual ~RoomDataDecoder(){}
-	virtual int onPackage(NetworkUtil::ClientSocketBase *pClient, const char* buf, unsigned int buflen);
+	virtual int onPackage(Wrap::ClientSocketBase *pClient, const char* buf, unsigned int buflen);
 	static RoomDataDecoder* Instance()
 	{
 		static RoomDataDecoder dd;

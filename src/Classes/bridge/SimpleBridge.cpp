@@ -3,6 +3,7 @@
 #include "../protocol.h"
 #include <memory>
 #include "../app/NetApp.h"
+#include "../wrap/buffer_value.h"
 
 std::string GetStrFromRoot(const rapidjson::Value &root) {
     rapidjson::StringBuffer buffer;
@@ -21,20 +22,20 @@ std::string GetStrFromRoot(const rapidjson::Value &root) {
     rapidjson::Value paramRoot(rapidjson::kObjectType); \
     paramRoot.AddMember(MACRO_CODE, (MACRO_code), allocator);
 
-rapidjson::Value GetValueFromBufferJson(const BufferJson *data) {
+rapidjson::Value GetValueFromBufferValue(const Wrap::BufferValue *data) {
 	if (data && data->list.empty()) {
 		rapidjson::Value ret;
-		if (data->type == BufferJson::type_char || data->type == BufferJson::type_short
-			|| data->type == BufferJson::type_int) {
+		if (data->type == Wrap::BufferValue::type_char || data->type == Wrap::BufferValue::type_short
+			|| data->type == Wrap::BufferValue::type_int) {
 			ret.SetInt(data->data.base.i);
 		}
-		else if (data->type == BufferJson::type_int64) {
+		else if (data->type == Wrap::BufferValue::type_int64) {
 			ret.SetInt64(data->data.base.ll);
 		}
-		else if (data->type == BufferJson::type_float) {
+		else if (data->type == Wrap::BufferValue::type_float) {
 			ret.SetFloat(data->data.base.f);
 		}
-		else if (data->type == BufferJson::type_str) {
+		else if (data->type == Wrap::BufferValue::type_str) {
 			ret.SetString(data->data.str.c_str(), data->data.str.size());
 		}
 
@@ -46,20 +47,20 @@ rapidjson::Value GetValueFromBufferJson(const BufferJson *data) {
 }
 
 void AddParam(rapidjson::Document &doc, rapidjson::Value &root, const std::string &name,
-	const BufferJson *data, bool isInner) {
+	const Wrap::BufferValue *data, bool isInner) {
 	rapidjson::Value nameValue(rapidjson::kStringType);
 	nameValue.SetString(name.c_str(), name.size(), doc.GetAllocator());
 
 	if (data) {
 		if (data->list.empty()) {
-			rapidjson::Value value = GetValueFromBufferJson(data);
+			rapidjson::Value value = GetValueFromBufferValue(data);
 			root.AddMember(nameValue, value, doc.GetAllocator());
 		}
 		else {
 			rapidjson::Value arraValue(rapidjson::kArrayType);
 			for (unsigned int i=0; i<data->list.size(); i++) {
-				const BufferJson* item = data->list[i];
-				rapidjson::Value value = GetValueFromBufferJson(item);
+				const Wrap::BufferValue* item = data->list[i];
+				rapidjson::Value value = GetValueFromBufferValue(item);
 				arraValue.PushBack(value, doc.GetAllocator());
 			}
 
@@ -74,7 +75,7 @@ void AddParam(rapidjson::Document &doc, rapidjson::Value &root, const std::strin
 	}
 }
 
-void AddParamEx(rapidjson::Document &doc, rapidjson::Value &root, const BufferJson* data,
+void AddParamEx(rapidjson::Document &doc, rapidjson::Value &root, const Wrap::BufferValue* data,
 	const VECSTRING &name) {
 	if (!data || data->list.size() < name.size()) {
 		root.SetArray();
@@ -82,11 +83,11 @@ void AddParamEx(rapidjson::Document &doc, rapidjson::Value &root, const BufferJs
 	}
 
 	for (unsigned int i = 0; i < name.size(); i++) {
-		const BufferJson *unit = data->list[i];
+		const Wrap::BufferValue *unit = data->list[i];
 		if (!unit->list.empty()) {
 			rapidjson::Value arraValue(rapidjson::kArrayType);
 			for (unsigned int j = 0; j < unit->list.size(); j++) {
-				const BufferJson *arra1 = unit->list[j];
+				const Wrap::BufferValue *arra1 = unit->list[j];
 				AddParam(doc, arraValue, "", arra1, true);
 			}
 
@@ -100,7 +101,7 @@ void AddParamEx(rapidjson::Document &doc, rapidjson::Value &root, const BufferJs
 	}
 }
 
-void AddParamNames(rapidjson::Document &doc, rapidjson::Value &root, const BufferJson* data, int count, ...)
+void AddParamNames(rapidjson::Document &doc, rapidjson::Value &root, const Wrap::BufferValue* data, int count, ...)
 {
 	VECSTRING names;
 	va_list args;
@@ -114,15 +115,11 @@ void AddParamNames(rapidjson::Document &doc, rapidjson::Value &root, const Buffe
 	AddParamEx(doc, root, data, names);
 }
 
-SimpleBridge::SimpleBridge() : mSection(nullptr) {
-    mSection = CriticalSectionWrapper::CreateCriticalSection();
+SimpleBridge::SimpleBridge(){
     LCSetResponse(this);
 }
 
 SimpleBridge::~SimpleBridge() {
-    if (mSection)
-        delete mSection;
-    mSection = nullptr;
 }
 
 //ResponseBase
@@ -189,8 +186,8 @@ SimpleBridge::onLobbyMsg(const int code, const char *msg, const unsigned int len
     short netRet;
     netRet = (short) code;
     if (code == 0) {
-		static NativeBuffer tempNativeBuf;
-		NativeBuffer* nativeBuf = &tempNativeBuf;
+		static Wrap::NativeBuffer tempNativeBuf;
+		Wrap::NativeBuffer* nativeBuf = &tempNativeBuf;
 		nativeBuf->clearBuffer();
 		if (!nativeBuf->writeStringNoLen(len, msg)){
 			LOGE("单个协议超过最大长度 %d > 65535 !!!\n", len);
@@ -247,29 +244,29 @@ SimpleBridge::onLobbyMsg(const int code, const char *msg, const unsigned int len
 // 			PreciseTimer timer;
 // 			printf("测试开始！！！\n");
 // 			timer.start();
-			BufferJson* data = AutoParseNativeBufferEx(nativeBuf);
+			Wrap::BufferValue* data = AutoParseNativeBufferEx(nativeBuf);
             AddParamNames(doc, paramRoot, data, 4, "arg0", "arg1", "arg2", "arg3", "arg4");
             callNative("sayTo", GetStrFromRoot(paramRoot));
-			RecycleBufferList(data);
+			ReleaseBufferValue(data);
 // 			timer.stop();
 // 			printf("CMD_SAYTO_C2S2C 消耗 %lf 微秒\n", timer.getElapsedTimeInMicroSec());
         } else if (cmd == CMD_NOTIFY_S2C) {
-			BufferJson* data = AutoParseNativeBufferEx(nativeBuf);
+			Wrap::BufferValue* data = AutoParseNativeBufferEx(nativeBuf);
             AddParamNames(doc, paramRoot, data, 2, "arg0", "arg1");
             callNative("notify", GetStrFromRoot(paramRoot));
-			RecycleBufferList(data);
+			ReleaseBufferValue(data);
         } else if (cmd == CMD_ENTERROOM_C2S2C) {
             //VECBUNIT data = AutoParseNativeBuffer(nativeBuf);
-			BufferJson* data = AutoParseNativeBufferEx(nativeBuf);
+			Wrap::BufferValue* data = AutoParseNativeBufferEx(nativeBuf);
 			AddParamNames(doc, paramRoot, data, 2, "arg0", "arg1");
 			callNative("enterRoom", GetStrFromRoot(paramRoot));
-			RecycleBufferList(data);
+			ReleaseBufferValue(data);
 		}
 		else if (cmd == CMD_EXITROOM_C2S2C) {
-			BufferJson* data = AutoParseNativeBufferEx(nativeBuf);
+			Wrap::BufferValue* data = AutoParseNativeBufferEx(nativeBuf);
             AddParamNames(doc, paramRoot, data, 1, "arg0");
             callNative("exitRoom", GetStrFromRoot(paramRoot));
-			RecycleBufferList(data);
+			ReleaseBufferValue(data);
 		} else if (cmd == CMD_DRIVEAWAY_S2C){
 			//被服务器踢下线了,我们需要主动断开连接
 			LCDisconnect();
@@ -288,13 +285,13 @@ SimpleBridge::onLobbyMsg(const int code, const char *msg, const unsigned int len
 }
 
 void SimpleBridge::appendSeq(const int seq, const std::string &method, const std::string &data) {
-    CriticalSectionScoped lock(mSection);
+    Wrap::Guard lock(mSection);
     MethodParam temp = {method, data};
     mMapSeq[seq] = temp;
 }
 
 MethodParam SimpleBridge::removeSeq(const int seq) {
-    CriticalSectionScoped lock(mSection);
+	Wrap::Guard lock(mSection);
     MethodParam ret = mMapSeq[seq];
     mMapSeq.erase(seq);
     return ret;

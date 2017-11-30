@@ -22,7 +22,7 @@
 #include <unistd.h>
 #include <ctype.h>
 #endif
-#include "md5.h"
+#include "../crypto/md5.h"
 #include <assert.h>
 #include "file_mgr.h"
 
@@ -31,13 +31,13 @@
 #define PER_RECV_BUF_SIZE			65535/*1024 * 25*/   // 接收缓冲区大小
 #define TRY_MAX_TIMES 3
 
-namespace NetworkUtil {
+namespace Wrap {
 
 	std::string UrlEncode(const std::string& szToEncode)
 	{
 		std::string src = szToEncode;
 		char hex[] = "0123456789ABCDEF";
-		string dst;
+		std::string dst;
 
 		for (size_t i = 0; i < src.size(); ++i)
 		{
@@ -1078,4 +1078,4 @@ int CHttpDownload::formatRequestHeader( char* SendHeader, int SendHeaderSize, ch
 	return nRet;
 }
 
-} /* namespace NetworkUtil */
+} /* namespace Wrap */

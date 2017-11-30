@@ -1,27 +1,36 @@
-﻿#include "config.h"
-#include "event_wrapper.h"
+﻿#include "../config.h"
+#include "event.h"
 
 #if defined(_WIN32)
-#include <windows.h>
-#include "event_win.h"
+#include <Windows.h>
 #pragma comment(lib,"winmm.lib")
-#elif defined(NETUTIL_MAC) && !defined(NETUTIL_IOS)
+#include "Mmsystem.h"
+#else
+
+#if defined(NETUTIL_MAC) && !defined(NETUTIL_IOS)
 #include <ApplicationServices/ApplicationServices.h>
 #include <pthread.h>
-#include "event_posix.h"
 #else
-#include <pthread.h>
-#include "event_posix.h"
 #endif
 
-#ifdef _WIN32
-#include "Mmsystem.h"
+#include <errno.h>
+#include <pthread.h>
+#include <signal.h>
+#include <stdio.h>
+#include <string.h>
+#include <sys/time.h>
+#include <unistd.h>
+
+#endif
+
+#ifdef WIN32
+
 EventWindows::EventWindows()
-: event_(::CreateEvent(NULL,    // security attributes
-		 FALSE,   // manual reset
-		 FALSE,   // initial state
-		 NULL)),  // name of event
-		 timerID_(NULL) {
+	: event_(CreateEvent(NULL,    // security attributes
+	FALSE,   // manual reset
+	FALSE,   // initial state
+	NULL)),  // name of event
+	timerID_(NULL) {
 }
 
 EventWindows::~EventWindows() {
@@ -57,7 +66,8 @@ bool EventWindows::StartTimer(bool periodic, unsigned long time) {
 	if (periodic) {
 		timerID_ = timeSetEvent(time, 0, (LPTIMECALLBACK)HANDLE(event_), 0,
 			TIME_PERIODIC | TIME_CALLBACK_EVENT_PULSE);
-	} else {
+	}
+	else {
 		timerID_ = timeSetEvent(time, 0, (LPTIMECALLBACK)HANDLE(event_), 0,
 			TIME_ONESHOT | TIME_CALLBACK_EVENT_SET);
 	}
@@ -73,17 +83,10 @@ bool EventWindows::StopTimer() {
 	timerID_ = NULL;
 	return true;
 }
+
 #else
 
 #define WEBRTC_CLOCK_TYPE_REALTIME
-
-#include <errno.h>
-#include <pthread.h>
-#include <signal.h>
-#include <stdio.h>
-#include <string.h>
-#include <sys/time.h>
-#include <unistd.h>
 
 const long int E6 = 1000000;
 const long int E9 = 1000 * E6;
@@ -92,33 +95,33 @@ const long int E9 = 1000 * E6;
  兼容IOS 10.0 才能使用clock_gettime
  */
 void clock_gettime_common(struct timespec *__tp){
-    
+
 #ifdef NETUTIL_MAC
-    timeval value;
-    struct timezone time_zone;
-    time_zone.tz_minuteswest = 0;
-    time_zone.tz_dsttime = 0;
-    gettimeofday(&value, &time_zone);
-    TIMEVAL_TO_TIMESPEC(&value, __tp);
+	timeval value;
+	struct timezone time_zone;
+	time_zone.tz_minuteswest = 0;
+	time_zone.tz_dsttime = 0;
+	gettimeofday(&value, &time_zone);
+	TIMEVAL_TO_TIMESPEC(&value, __tp);
 #else
-    #if defined(NETUTIL_IOS)
-        if (__builtin_available(iOS 10.0, *)) {
-    #endif
-    #ifdef WEBRTC_CLOCK_TYPE_REALTIME
-            clock_gettime(CLOCK_REALTIME, __tp);
-    #else
-            clock_gettime(CLOCK_MONOTONIC, __tp);
-    #endif
-    #if defined(NETUTIL_IOS)
-        } else {
-            timeval value;
-            struct timezone time_zone;
-            time_zone.tz_minuteswest = 0;
-            time_zone.tz_dsttime = 0;
-            gettimeofday(&value, &time_zone);
-            TIMEVAL_TO_TIMESPEC(&value, __tp);
-        }
-    #endif
+#if defined(NETUTIL_IOS)
+	if (__builtin_available(iOS 10.0, *)) {
+#endif
+#ifdef WEBRTC_CLOCK_TYPE_REALTIME
+		clock_gettime(CLOCK_REALTIME, __tp);
+#else
+		clock_gettime(CLOCK_MONOTONIC, __tp);
+#endif
+#if defined(NETUTIL_IOS)
+	} else {
+		timeval value;
+		struct timezone time_zone;
+		time_zone.tz_minuteswest = 0;
+		time_zone.tz_dsttime = 0;
+		gettimeofday(&value, &time_zone);
+		TIMEVAL_TO_TIMESPEC(&value, __tp);
+	}
+#endif
 #endif
 }
 
@@ -137,13 +140,13 @@ EventWrapper* EventPosix::Create() {
 }
 
 EventPosix::EventPosix()
-: timer_thread_(0),
-timer_event_(0),
-periodic_(false),
-time_(0),
-count_(0),
-state_(kDown),
-isInWait_(false)
+	: timer_thread_(0),
+	timer_event_(0),
+	periodic_(false),
+	time_(0),
+	count_(0),
+	state_(kDown),
+	isInWait_(false)
 {
 }
 
@@ -202,9 +205,9 @@ bool EventPosix::Set() {
 		return false;
 	}
 
-// 	while(isInWait_){
-// 		SleepMs(1);
-// 	}
+	// 	while(isInWait_){
+	// 		SleepMs(1);
+	// 	}
 
 	state_ = kUp;
 	// Release all waiting threads
@@ -224,7 +227,7 @@ EventTypeWrapper EventPosix::Wait(unsigned long timeout) {
 	if (kDown == state_) {
 		if (UTIL_EVENT_INFINITE != timeout) {
 			timespec end_at;
-            clock_gettime_common(&end_at);
+			clock_gettime_common(&end_at);
 			end_at.tv_sec  += timeout / 1000;
 			end_at.tv_nsec += (timeout - (timeout / 1000) * 1000) * E6;
 
@@ -310,7 +313,7 @@ bool EventPosix::Run(ThreadObj obj) {
 
 bool EventPosix::Process() {
 	if (created_at_.tv_sec == 0) {
-        clock_gettime_common(&created_at_);
+		clock_gettime_common(&created_at_);
 		count_ = 0;
 	}
 
@@ -363,12 +366,15 @@ bool EventPosix::StopTimer() {
 	count_ = 0;
 	return true;
 }
+
 #endif
 
 EventWrapper* EventWrapper::Create() {
 #if defined(_WIN32)
-  return new EventWindows();
+	return new EventWindows();
 #else
-  return EventPosix::Create();
+	return EventPosix::Create();
 #endif
 }
+
+

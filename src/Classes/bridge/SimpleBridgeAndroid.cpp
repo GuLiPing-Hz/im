@@ -8,19 +8,14 @@ SimpleBridgeAndroid *SimpleBridgeAndroid::getInstance() {
 }
 
 SimpleBridgeAndroid::SimpleBridgeAndroid()
-        : SimpleBridge(), mCs(nullptr) {
-    //mCs = CriticalSectionWrapper::CreateCriticalSection();
+        : SimpleBridge() {
 }
 
 SimpleBridgeAndroid::~SimpleBridgeAndroid() {
-    if (mCs) {
-        delete mCs;
-        mCs = nullptr;
-    }
 }
 
 void SimpleBridgeAndroid::callNative(const std::string &method, const std::string &param) {
-   cocos2d::JniHelper::callStaticStringMethod(NetApp::GetInstance()->m_nThreadId,
+   Wrap::JniHelper::callStaticStringMethod(NetApp::GetInstance()->m_nThreadId,
                                               "simple.util.bridge.JsAndroidBridge", "callNative",
                                               method, param);
 

@@ -2,12 +2,18 @@
 *请求处理类 源文件
 *************************************/
 #include "../wrap/config.h"
-#include "../wrap/thread_wrapper.h"
 #include "RequestBase.h"
 #include <string.h>
 #include "NetApp.h"
 #include "Tunnel.h"
 #include <string.h>
+#include "../wrap/ext/thread.h"
+
+//解决windonws 头文件冲突 或者先引入winsock2
+// #define _WINSOCKAPI_  
+// #include <Windows.h>  
+// #include <Winsock2.h> 
+
 #ifdef NETUTIL_ANDROID
 #include "../jni/JniHelper.h"
 #endif
@@ -138,7 +144,7 @@ int RequestBase::connectLobby(const char* host,short port,int timeout)
         return -1;
     }
     
-//     const char* sIp = NetworkUtil::ClientSocketBase::GetIpv4FromHostName(host);
+//     const char* sIp = Wrap::ClientSocketBase::GetIpv4FromHostName(host);
 //     if(sIp[0] == 0)
 //         return -1;
 
@@ -149,7 +155,7 @@ int RequestBase::connectLobby(const char* host,short port,int timeout)
 	strncpy(data->ip, host, sizeof(data->ip));
 	data->port = port;
 	data->timeout = timeout;
-	int ret = NetApp::GetInstance()->postMessage(eServerID::none, nullptr, MSG_CONNECT_LOBBY, data, 0);
+	int ret = NetApp::GetInstance()->postMessageNoBack(eServerID::none, nullptr, MSG_CONNECT_LOBBY, data, 0);
 	if (ret == -1){
 		free(data);
 		return -1;
@@ -158,7 +164,7 @@ int RequestBase::connectLobby(const char* host,short port,int timeout)
 }
 int RequestBase::disConnectLobby()
 {
-	return NetApp::GetInstance()->postMessage(eServerID::none, nullptr, MSG_DISCONNECT_LOBBY, nullptr, 0);
+	return NetApp::GetInstance()->postMessageNoBack(eServerID::none, nullptr, MSG_DISCONNECT_LOBBY, nullptr, 0);
 }
 int RequestBase::connectRoom(const char* host,short port,int type,int timeout)
 {
@@ -185,7 +191,7 @@ int RequestBase::sendMsgToLobby(const char* msg, unsigned int len, int seq, bool
 		return -1;
 
 	int ret = NetApp::GetInstance()->postMessage(eServerID::lobby, NetApp::GetInstance()->getLobbyTunnel()
-		, NetworkUtil::MSG_SEND_DATA, (void*)msg, len, seq, needBack);
+		, Wrap::MSG_SEND_DATA, (void*)msg, len, seq, needBack);
 	return ret;
 }
 

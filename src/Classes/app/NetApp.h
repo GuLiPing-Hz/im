@@ -3,10 +3,8 @@
 
 #include "../wrap/reactor.h"
 #include "../wrap/counter.h"
-#include "../wrap/seq_map.h"
-#include "../wrap/mutex_wrapper.h"
 #include "NetInformer.h"
-#include "../wrap/tm_seqmap.h"
+#include "TmSeqMap.h"
 #include "ResponseBase.h"
 #include <assert.h>
 #include "Tunnel.h"
@@ -20,7 +18,7 @@ enum eServerID {
 	lobby,
 };
 
-class NetApp : public NetworkUtil::MessageCenter {
+class NetApp : public Wrap::MessageCenter {
 private:
 	NetApp();
 
@@ -30,21 +28,16 @@ public:
 	static NetApp *GetInstance();
 	static void ReleaseApp();
 
-	//NetworkUtil::MessageCenter
-	virtual int postMessage(int serverId, NetworkUtil::ClientSocket *conn, int cmd, void *v, int len, int seq,
-		bool back = true);
+	//Wrap::MessageCenter
+	virtual Wrap::ThreadInformer* getInformer();
 
-	virtual int getMessage(NetworkUtil::MSGINFO &msg);
-
-	virtual int sendToSvr(NetworkUtil::ClientSocket *pSvr, const char *buf, int len);
-
-	virtual void addTimeout(int seq, NetworkUtil::ReserveData *data);
+	virtual void addTimeout(int seq, Wrap::ReserveData *data);
 
 	virtual void delTimeout(int seq);
 
-	virtual void onTimeout(NetworkUtil::ReserveData *data);
+	virtual void onTimeout(Wrap::ReserveData *data);
 
-	void setHeartbeatFunc(NetworkUtil::RUNKEEPLIVE func);
+	void setHeartbeatFunc(Wrap::RUNKEEPLIVE func);
 
 	bool start();
 
@@ -69,34 +62,29 @@ public:
 	ResponseBase *getResponseHandler() { return m_pResponse; }
 
 	//处理消息的发送与接收
-	int postMessage(int serverId, NetworkUtil::ClientSocket *conn, int cmd, void *v, int seq) {
-		return postMessage(serverId, conn, cmd, v, 0, seq, false);
+	int postMessageNoBack(int serverId, Wrap::ClientSocket *conn, int cmd, void *v, int seq) {
+		return Wrap::MessageCenter::postMessage(serverId, conn, cmd, v, 0, seq, false);
 	}
-
-	
-
-	NetInformer *getInformer() { return &m_Informer; }
 
 	inline bool isAuth() { return m_bIsAuth; }
 
 private:
-	CriticalSectionWrapper *m_pObjectCS;
-	NetworkUtil::NetReactor m_Reactor;
+	Wrap::NetReactor m_Reactor;
 	LobbyTunnel m_LobbyTunnel;
 	RoomTunnel m_RoomTunnel;
-	Counter m_Counter;
+	Wrap::Counter m_Counter;
 	char m_Token[256];
 	int m_iMyIDx;
 	unsigned int m_Tokenlen;
-	NetworkUtil::TMSeqMap m_RDMap;
+	TMSeqMap m_RDMap;
 	NetInformer m_Informer;
-	std::list<NetworkUtil::MSGINFO> m_requestlist;
+	std::list<Wrap::MSGINFO> m_requestlist;
 	std::list<int> m_wseq;
 	bool m_bIsAuth;
 	ResponseBase *m_pResponse;    //回调响应基类
 public:
 	unsigned int m_nThreadId;
-	//    NetworkUtil::CHttpDownloadMgr m_gMgr;
+	//    Wrap::CHttpDownloadMgr m_gMgr;
 };
 
 #endif//NETAPP__H__

@@ -27,14 +27,14 @@
  */
 #define ALL_CONTENT_ENCODINGS "deflate, gzip"
 
-namespace NetworkUtil{
+namespace Wrap{
 	class CHttpDownload;
 }
 /* force a cleanup */
-void Http_unencode_cleanup(NetworkUtil::CHttpDownload* k);
+void Http_unencode_cleanup(Wrap::CHttpDownload* k);
 
-int Http_unencode_deflate_write(NetworkUtil::CHttpDownload* k,unsigned char* httbBuf,unsigned int httpBufLen);
+int Http_unencode_deflate_write(Wrap::CHttpDownload* k, unsigned char* httbBuf, unsigned int httpBufLen);
 
-int Http_unencode_gzip_write(NetworkUtil::CHttpDownload* k,unsigned char* httbBuf,unsigned int httpBufLen);
+int Http_unencode_gzip_write(Wrap::CHttpDownload* k, unsigned char* httbBuf, unsigned int httpBufLen);
 
 #endif /* HEADER_CURL_CONTENT_ENCODING_H */

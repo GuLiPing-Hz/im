@@ -1,7 +1,7 @@
 ﻿#include "NetInformer.h"
 #include "NetApp.h"
 
-void NetInformer::dealCustomMsg(NetworkUtil::MSGINFO* msg){
+void NetInformer::dealCustomMsg(Wrap::MSGINFO* msg){
 	if (msg){
 		if (msg->cmd == MSG_CONNECT_LOBBY){
 			DataConnect* p = (DataConnect*)msg->v;

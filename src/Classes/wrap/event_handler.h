@@ -11,7 +11,7 @@
 	*/
 
 #ifdef WIN32
-#include <Winsock2.h>
+#include <Winsock2.h> //需要在引入windows之前，引入该文件，否则会报错
 #include <WS2tcpip.h>
 #pragma comment(lib,"Ws2_32.lib")
 #else
@@ -33,7 +33,7 @@ typedef int SOCKET;
 #include <time.h>
 #include "config.h"
 
-namespace NetworkUtil
+namespace Wrap
 {
 	class Reactor;
 	//提供一个反应器
@@ -46,7 +46,6 @@ namespace NetworkUtil
 
 		void setReactor(Reactor *pReactor){ mReactor = pReactor; }
 		Reactor* getReactor(){ return mReactor; }
-		//virtual void closeSocket() = 0;
 	protected:
 		Reactor *mReactor;
 	};
@@ -63,7 +62,6 @@ namespace NetworkUtil
 		int registerIdle();
 		int unRegisterIdle();
 		virtual void close();
-		//virtual void closeSocket(){}
 	};
 	//对事件的处理
 	class TMEventHandler : virtual public EventHandler

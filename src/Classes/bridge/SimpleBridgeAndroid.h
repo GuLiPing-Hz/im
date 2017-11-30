@@ -5,7 +5,7 @@
 #define SIMPLE_BRIDGE_ANDROID_H__
 
 #include "SimpleBridge.h"
-#include "../wrap/mutex_wrapper.h"
+#include "../wrap/mutex.h"
 
 
 /*
@@ -16,13 +16,10 @@ class SimpleBridgeAndroid : public SimpleBridge{
 	virtual ~SimpleBridgeAndroid();
 public:
 	static SimpleBridgeAndroid* getInstance();
-
-    CriticalSectionWrapper* getJavaCS(){return mCs;}
 protected:
 	virtual void callNative(const std::string& method,const std::string& param);
 
 private:
-    CriticalSectionWrapper* mCs;
 };
 
 #endif//SIMPLE_BRIDGE_ANDROID_H__

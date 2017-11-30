@@ -13,7 +13,7 @@
 #include "config.h"
 
 //定义 包解析的接口
-namespace NetworkUtil {
+namespace Wrap {
 	//流的数据类型，
 	typedef enum _StreamType {
 		PROTOCOLTYPE_TEXT = 1,// 字符串
@@ -29,7 +29,6 @@ namespace NetworkUtil {
 	} HeadType;
 
 	class ClientSocketBase;
-
 	class HttpSocketBase;
 
 	class DataDecoderBase {
@@ -38,7 +37,7 @@ namespace NetworkUtil {
 
 		virtual ~DataDecoderBase() {}
 
-		virtual int process(NetworkUtil::ClientSocketBase *pClient) = 0;
+		virtual int process(ClientSocketBase *pClient) = 0;
 	};
 
 	class DataDecoder : public DataDecoderBase {
@@ -52,7 +51,7 @@ namespace NetworkUtil {
 		virtual int process(ClientSocketBase *pClient);
 
 		//对收到的包进行处理： 返回0成功，返回非0失败
-		virtual int onPackage(NetworkUtil::ClientSocketBase *pClient, const char *buf, unsigned int buflen) = 0;
+		virtual int onPackage(ClientSocketBase *pClient, const char *buf, unsigned int buflen) = 0;
 
 		//从提供的参数buf中获取包的长度 Net -> Loacal
 		virtual unsigned int getBuflen(unsigned char *buf);

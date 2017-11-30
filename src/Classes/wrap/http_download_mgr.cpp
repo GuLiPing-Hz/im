@@ -14,18 +14,16 @@
 
 #define SAVE_BUF_SIZE			1048576/*1024 * 1024*/   // 接收缓冲区大小
 
-namespace NetworkUtil {
+namespace Wrap {
 
 CHttpDownloadMgr::CHttpDownloadMgr()
 :mThread(NULL)
-,mCS(NULL)
 {
 	// TODO Auto-generated constructor stub
 	for(int i=0;i<MAX_DOWNLOAD;i++)
 		mArraHttpDownload[i] = new CHttpDownload(&mReactor,this);
 
 	mThread = ThreadWrapper::CreateThread(&CHttpDownloadMgr::HttpDownload,(void*)this,kLowPriority,"Http download");
-	mCS = CriticalSectionWrapper::CreateCriticalSection();
 }
 
 CHttpDownloadMgr::~CHttpDownloadMgr() {
@@ -78,7 +76,7 @@ int CHttpDownloadMgr::addTask(TaskDownload& task,bool priority)
 	if(strlen(task.url) == 0)
 		return -3;
 
-	CriticalSectionScoped lock(mCS);
+	Guard lock(mCS);
 	SETURL::const_iterator it = mSetUrl.find(task.url);
 	if(it != mSetUrl.end())//已经在下载队列中
 		return 0;
@@ -143,7 +141,7 @@ void CHttpDownloadMgr::doNext(bool success,CHttpDownload* worker)
 {
 	TaskDownload info;
 	{
-		CriticalSectionScoped lock(mCS);
+		Guard lock(mCS);
 		if(!mCurTask.info.download && worker && success)
 			mCurTask.info.saveBufLen = worker->m_gDownloadInfo.saveBufLen;
 		memcpy(&info,&mCurTask,sizeof(info));
@@ -156,7 +154,7 @@ void CHttpDownloadMgr::doNext(bool success,CHttpDownload* worker)
 	if (info.info.saveBuf)//释放内存
 		free(info.info.saveBuf);
 
-	CriticalSectionScoped lock(mCS);
+	Guard lock(mCS);
 	mSetUrl.erase(info.url);
 	if(strcmp(mListTask.front().url , info.url) == 0)
 		mListTask.pop_front();
@@ -196,10 +194,10 @@ void CHttpDownloadMgr::doNext(bool success,CHttpDownload* worker)
 		}
 		else
 		{
-			CriticalSectionScoped lock(mCS);
+			Guard lock(mCS);
 			memcpy(&mCurTask,&next,sizeof(TaskDownload));
 		}
 	}
 }
 
-} /* namespace NetworkUtil */
+} /* namespace Wrap */
