@@ -203,12 +203,14 @@ SimpleBridge::onLobbyMsg(const int code, const char *msg, const unsigned int len
             return;
         }
 
-        char *buffer = new char[len];
+		char *buffer = (char*)wrap_calloc(len);// new char[len];
         if (!buffer) {
             LOGE("%s:OOM\n", __FUNCTION__);
             return;
         }
-        std::unique_ptr<char> pAuto(buffer);//自动指针
+        //std::unique_ptr<char> pAuto(buffer);//自动指针
+		Wrap::VoidGuard guard(buffer);
+
 		nativeBuf->readBuffer(buffer, packageLen);//读取字符串
         std::string xorStr = XorString(buffer, packageLen, NetXorKey, strlen(NetXorKey));
 
@@ -222,7 +224,7 @@ SimpleBridge::onLobbyMsg(const int code, const char *msg, const unsigned int len
         nativeBuf->readShort(seq);
         nativeBuf->readShort(netRet);
 
-		LOGD("%s : cmd = %d,seq = %d,ret = %d\n", __FUNCTION__, cmd, seq, netRet);
+		LOGD("%s : cmd = %d,seq = %d,ret = %d", __FUNCTION__, cmd, seq, netRet);
 
 		MethodParam mp;
 		if (seq > 0){

@@ -336,9 +336,6 @@
     <ClInclude Include="..\..\..\Classes\wrap\ext\set_thread_name_win.h">
       <Filter>Classes\wrap\ext</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Classes\app\TmSeqMap.h">
-      <Filter>Classes\app</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Classes\wrap\ext\thread.h">
       <Filter>Classes\wrap\ext</Filter>
     </ClInclude>
@@ -350,6 +347,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Classes\crypto\md5.h">
       <Filter>Classes\crypto</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\wrap\allocator.h">
+      <Filter>Classes\wrap</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

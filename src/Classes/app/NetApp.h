@@ -4,7 +4,6 @@
 #include "../wrap/reactor.h"
 #include "../wrap/counter.h"
 #include "NetInformer.h"
-#include "TmSeqMap.h"
 #include "ResponseBase.h"
 #include <assert.h>
 #include "Tunnel.h"
@@ -31,11 +30,7 @@ public:
 	//Wrap::MessageCenter
 	virtual Wrap::ThreadInformer* getInformer();
 
-	virtual void addTimeout(int seq, Wrap::ReserveData *data);
-
-	virtual void delTimeout(int seq);
-
-	virtual void onTimeout(Wrap::ReserveData *data);
+	virtual void onTimeoutData(Wrap::ReserveData *data);
 
 	void setHeartbeatFunc(Wrap::RUNKEEPLIVE func);
 
@@ -76,7 +71,6 @@ private:
 	char m_Token[256];
 	int m_iMyIDx;
 	unsigned int m_Tokenlen;
-	TMSeqMap m_RDMap;
 	NetInformer m_Informer;
 	std::list<Wrap::MSGINFO> m_requestlist;
 	std::list<int> m_wseq;

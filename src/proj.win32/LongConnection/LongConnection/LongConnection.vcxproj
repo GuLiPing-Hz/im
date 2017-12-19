@@ -89,7 +89,6 @@
     <ClInclude Include="..\..\..\Classes\app\RequestBase.h" />
     <ClInclude Include="..\..\..\Classes\app\ReserveData.h" />
     <ClInclude Include="..\..\..\Classes\app\ResponseBase.h" />
-    <ClInclude Include="..\..\..\Classes\app\TmSeqMap.h" />
     <ClInclude Include="..\..\..\Classes\app\Tunnel.h" />
     <ClInclude Include="..\..\..\Classes\bridge\IIosBridge.h" />
     <ClInclude Include="..\..\..\Classes\bridge\SimpleBridge.h" />
@@ -139,6 +138,7 @@
     <ClInclude Include="..\..\..\Classes\rapidjson\stringbuffer.h" />
     <ClInclude Include="..\..\..\Classes\rapidjson\writer.h" />
     <ClInclude Include="..\..\..\Classes\simple_util_bridge_JsAndroidBridge.h" />
+    <ClInclude Include="..\..\..\Classes\wrap\allocator.h" />
     <ClInclude Include="..\..\..\Classes\wrap\buffer_value.h" />
     <ClInclude Include="..\..\..\Classes\wrap\client_socket.h" />
     <ClInclude Include="..\..\..\Classes\wrap\config.h" />

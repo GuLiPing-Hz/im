@@ -117,48 +117,37 @@ cls& operator=(const cls&) = delete
 #define MIN(a,b) (((a)>(b))?(b):(a))
 #endif//MIN
 
+#define LOG_LEVEL_ALL 0
+#define LOG_LEVEL_WE 4
+#define LOG_LEVEL_ERR 5
+void SetLogLevel(int level);//设置打印等级 默认LOG_LEVEL_ALL
 
-#if defined _WIN32
-void Printf(const char* format, ...);
+//无需后缀的完整路径名，后缀内置添加
+void SetLogToFile(const char* path);
+//打印日志
+void Printf(int level, const char* file, long line, const char* format, ...);
+void PrintConsole(const char* log);
 
 // VERBOSE
-#define LOGV(...) Printf(__VA_ARGS__)
+#define LOGV(...) Printf(0,__FILE__,__LINE__,__VA_ARGS__)
 // DEBUG
-#define LOGD(...) Printf(__VA_ARGS__)
+#define LOGD(...) Printf(1,__FILE__,__LINE__,__VA_ARGS__)
 // INFO
-#define LOGI(...) Printf(__VA_ARGS__)
+#define LOGI(...) Printf(2,__FILE__,__LINE__,__VA_ARGS__)
 //WARN
-#define LOGW(...) Printf(__VA_ARGS__)
+#define LOGW(...) Printf(3,__FILE__,__LINE__,__VA_ARGS__)
 // ERROR
-#define LOGE(...) Printf(__VA_ARGS__)
+#define LOGE(...) Printf(4,__FILE__,__LINE__,__VA_ARGS__)
 
-#elif defined(__APPLE__) && !defined(ANDROID)
+#define LOGGLP(...) 
 
-//IOS
-// VERBOSE
-#define LOGV(...) printf(__VA_ARGS__)
-// DEBUG
-#define LOGD(...) printf(__VA_ARGS__)
-// INFO
-#define LOGI(...) printf(__VA_ARGS__)
-//WARN
-#define LOGW(...) printf(__VA_ARGS__)
-// ERROR
-#define LOGE(...) printf(__VA_ARGS__)
+//windows or ios
+#if defined(_WIN32) || (defined(__APPLE__) && !defined(ANDROID))
 
 #else //defined(ANDROID)	//Android
-#include <android/log.h>
-// VERBOSE
-#define LOGV(...)   __android_log_print(ANDROID_LOG_VERBOSE, "JniNetUtil", __VA_ARGS__)
-// DEBUG
-#define LOGD(...)  __android_log_print(ANDROID_LOG_DEBUG , "JniNetUtil ", __VA_ARGS__)
-// INFO
-#define LOGI(...)    __android_log_print(ANDROID_LOG_INFO  , "JniNetUtil ",__VA_ARGS__)
-//WARN
-#define LOGW(...)  __android_log_print(ANDROID_LOG_WARN  , "JniNetUtil ", __VA_ARGS__)
-// ERROR
-#define LOGE(...)   __android_log_print(ANDROID_LOG_ERROR  , "JniNetUtil ",__VA_ARGS__)
 
+//android日志头文件，这里增加了一个打印函数保留体
+#include <android/log.h>
 #define LOGGLP(...)  __android_log_print(ANDROID_LOG_INFO  , " GLP ",__VA_ARGS__)
 
 #endif

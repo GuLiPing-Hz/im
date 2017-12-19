@@ -9,6 +9,7 @@
 #include "http_download_mgr.h"
 #include "httpcontent.h"
 #include <algorithm>
+#include "pool.h"
 
 #ifdef WIN32
 #define R_OK  4  /* Read */
@@ -136,8 +137,8 @@ CHttpDownload::CHttpDownload(Reactor *pReactor,CHttpDownloadMgr* pMgr)
 	m_nRequestHeaderSize = 4096;
 	m_nResponseHeaderSize =4096;
 
-	m_sRequestHeader = new char[m_nRequestHeaderSize];
-	m_sResponseHeader = new char[m_nResponseHeaderSize];
+	m_sRequestHeader = (char*)wrap_calloc(m_nRequestHeaderSize);
+	m_sResponseHeader = (char*)wrap_calloc(m_nResponseHeaderSize);
 
 	memset(&z,0,sizeof(z));
 	memset( m_sRequestHeader, 0,  m_nRequestHeaderSize);
@@ -147,16 +148,9 @@ CHttpDownload::CHttpDownload(Reactor *pReactor,CHttpDownloadMgr* pMgr)
 
 CHttpDownload::~CHttpDownload() {
 	uninitDownload();
-	if(m_sResponseHeader)
-	{
-		delete m_sResponseHeader;
-		m_sResponseHeader = NULL;
-	}
-	if(m_sRequestHeader)
-	{
-		delete m_sRequestHeader;
-		m_sRequestHeader = NULL;
-	}
+
+	wrap_free(m_sResponseHeader);
+	wrap_free(m_sRequestHeader);
 }
 
 bool isAlpha(char c)
@@ -180,8 +174,8 @@ void CHttpDownload::initDownload(const char* url,ONPROGRESS funProgress,Download
 	m_sUrl = url;
 	parseURL(m_sUrl.c_str(),m_sProtocol,sizeof(m_sProtocol),m_sHost,sizeof(m_sHost)
 			,m_sRequest,sizeof(m_sRequest),&m_nPort);
-	//strcpy(m_sIp,GetIpFromHostName(m_sHost));//从域名中解析出IP地址
-	strcpy(m_sIp, m_sHost);
+	//StrLCpy(m_sIp,GetIpFromHostName(m_sHost));//从域名中解析出IP地址
+	StrLCpy(m_sIp, m_sHost, sizeof(m_sIp));
 	if(pInfo)
 	{
 		m_gDownloadInfo.download = pInfo->download;
@@ -189,9 +183,9 @@ void CHttpDownload::initDownload(const char* url,ONPROGRESS funProgress,Download
 
 		if(m_gDownloadInfo.download)
 		{
-			strcpy(m_gDownloadInfo.MD5,pInfo->MD5);
-			strcpy(m_gDownloadInfo.fileName , pInfo->fileName);
-			strcpy(m_gDownloadInfo.unzipDir , pInfo->unzipDir);
+			StrLCpy(m_gDownloadInfo.MD5, pInfo->MD5, 260);
+			StrLCpy(m_gDownloadInfo.fileName, pInfo->fileName, 260);
+			StrLCpy(m_gDownloadInfo.unzipDir, pInfo->unzipDir, 260);
 
 			static unsigned int s_count = 0;
 			s_count ++;
@@ -442,7 +436,7 @@ void CHttpDownload::parseURL( const char* url, char * protocol, int lprotocol, c
 
 	//将请求内容转义成网络字符串
 	memset(request, 0 ,lrequest);
-	strcpy(request,UrlEncode(temp).c_str());
+	StrLCpy(request, UrlEncode(temp).c_str(), lrequest);
 
 	ptr = strchr(host,':'); // find the port number, if any
 	if( ptr != NULL)
@@ -612,9 +606,9 @@ int CHttpDownload::getResponseHeader(DataBlock* pDb/*char* buf*/)
 			if ( m_nResponseHeaderSize > (PER_RECV_BUF_SIZE+1) ) {
 				return 0;
 			}
-			char * pTemp = new char[m_nResponseHeaderSize];
-			memset( pTemp, 0, m_nResponseHeaderSize );
-			delete m_sResponseHeader;
+			char * pTemp = (char*)wrap_calloc(m_nResponseHeaderSize);
+			memset(pTemp, 0, m_nResponseHeaderSize);
+			wrap_free(m_sResponseHeader);
 			m_sResponseHeader = pTemp;
 		}
 
@@ -768,7 +762,7 @@ CHttpDownload::eDownloadType CHttpDownload::dealWithTransferEncodingAndCommon(Da
 				sscanf(sChuckLen,"%lx",&m_nCurChunkSize);
 				if(m_nCurChunkSize == -1)
 				{
-					LOGE("%s : read chunk size error\n",__FUNCTION__);
+					LOGE("%s : read chunk size error",__FUNCTION__);
 					return DOWNLOAD_ERROR;
 				}
 
@@ -849,22 +843,22 @@ CHttpDownload::eDownloadType CHttpDownload::onDownloadSaveData(const char* pData
 
 		if(m_eContentEncoding == CE_Deflate)
 		{
-			unsigned char* pHttpBuf = new unsigned char[nLenData];
+			unsigned char* pHttpBuf = (unsigned char*)wrap_calloc(nLenData);
 			if(pHttpBuf)
 			{
 				memcpy(pHttpBuf,pData,nLenData);
 				Http_unencode_deflate_write(this,pHttpBuf,nLenData);
-				delete []pHttpBuf;
+				wrap_free(pHttpBuf);
 			}
 		}
 		else if(m_eContentEncoding == CE_Gzip)
 		{
-			unsigned char* pHttpBuf = new unsigned char[nLenData];
+			unsigned char* pHttpBuf = (unsigned char*)wrap_calloc(nLenData);
 			if(pHttpBuf)
 			{
 				memcpy(pHttpBuf,pData,nLenData);
 				Http_unencode_gzip_write(this,pHttpBuf,nLenData);
-				delete []pHttpBuf;
+				wrap_free(pHttpBuf);
 			}
 		}
 		else
@@ -937,7 +931,7 @@ CHttpDownload::eDownloadType CHttpDownload::onDownloadSaveData(const char* pData
 		}
 		else
 		{
-			LOGE("%s : the memory to save http response is non't enough!\n",__FUNCTION__);
+			LOGE("%s : the memory to save http response is non't enough!",__FUNCTION__);
 			return DOWNLOAD_ERROR;
 		}
 	}
@@ -991,7 +985,7 @@ void CHttpDownload::onDownloadFinish()
 	{
 		bSuccess=CFileMgr::UnZipFile(m_gDownloadInfo.fileName,m_gDownloadInfo.unzipDir,NULL);
 		if(!bSuccess)
-			LOGE("%s：%s zip file unzip failed\n",__FUNCTION__,m_gDownloadInfo.fileName);
+			LOGE("%s：%s zip file unzip failed",__FUNCTION__,m_gDownloadInfo.fileName);
 		else//解压成功，把压缩包删除
 			remove(m_gDownloadInfo.fileName);
 	}
@@ -1025,11 +1019,11 @@ int CHttpDownload::formatRequestHeader( char* SendHeader, int SendHeaderSize, ch
 	//第1行:方法,请求的路径,版本
 	if( Data )
 	{
-		strcpy( SendHeader, "POST " );
+		StrLCpy(SendHeader, "POST ", SendHeaderSize);
 	}
 	else
 	{
-		strcpy( SendHeader,"GET " );
+		StrLCpy(SendHeader, "GET ", SendHeaderSize);
 	}
 	strcat( SendHeader, Request );
 	strcat( SendHeader, " HTTP/1.1\r\n" );

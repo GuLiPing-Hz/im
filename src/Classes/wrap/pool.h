@@ -1,11 +1,12 @@
-#ifndef POOL_H__
+﻿#ifndef POOL_H__
 #define POOL_H__
 
 #include <assert.h>
 #include <string.h>
 #include <stdlib.h>
 #include <list>
-#include "config.h"
+#include "allocator.h"
+#include "funcs.h"
 
 namespace Wrap{
 	class PoolMgr;
@@ -13,15 +14,18 @@ namespace Wrap{
 		friend class PoolMgr;
 	public:
 		PoolObj(const char* n = NULL) :ref(1){
+			LOGI("PoolObj");
 			if (n == NULL){
 				name[0] = 0;
 			}
 			else{
-				strncpy(name, n, MIN(49, strlen(n) + 1));
+				StrLCpy(name, n, MIN(49, strlen(n) + 1));
 				name[49] = 0;
 			}
 		}
-		virtual ~PoolObj(){}
+		virtual ~PoolObj(){
+			LOGI("~PoolObj");
+		}
 
 	public:
 		int retain(){ return ++ref; }
@@ -30,7 +34,9 @@ namespace Wrap{
 
 			assert(ref >= 0);
 			if (ref == 0){
-				delete this;
+				//delete this;
+				PoolObj* temp = this;
+				wrap_delete(PoolObj, temp);
 
 				static int ret;
 				ret = 0;
@@ -68,13 +74,15 @@ namespace Wrap{
 	public:
 		static PoolMgr* GetIns(){
 			if (sIns == nullptr){
-				sIns = new PoolMgr();
+				wrap_new_begin;
+				sIns = wrap_new(PoolMgr);// new1 PoolMgr();
 			}
 			return sIns;
 		}
 		static void ReleaseIns(){
-			if (sIns)
-				delete sIns;
+			// 			if (sIns)
+			// 				delete sIns;
+			wrap_delete(PoolMgr, sIns);
 		}
 
 		template<class T>
@@ -90,7 +98,9 @@ namespace Wrap{
 				}
 			}
 
-			return new T();
+			//return new1 T();
+			wrap_new_begin;
+			return wrap_new(T);
 		}
 		void addToPool(PoolObj* obj){
 			if (obj){
@@ -108,7 +118,7 @@ namespace Wrap{
 				if (obj){
 					int ret = obj->release();
 					if (ret){
-						LOGE("PoolObj 内存泄漏啦 obj=%p\n", obj);
+						LOGE("PoolObj 内存泄漏啦 obj=%p", obj);
 					}
 				}
 			}
@@ -119,26 +129,23 @@ namespace Wrap{
 		LISTPOOLO lst;
 	};
 
+	template<typename T>
+	class ClsGuard{
+	public:
+		ClsGuard(T *p) : m_p(p){}
+		virtual ~ClsGuard(){ wrap_delete(T, m_p); }
+	private:
+		T *m_p;
+	};
+
 	class VoidGuard
 	{
 	public:
 		VoidGuard(void *p) : m_p(p){}
-		virtual ~VoidGuard(){ if (m_p)free(m_p); }
+		virtual ~VoidGuard(){ wrap_free(m_p); }
 	private:
 		void *m_p;
 	};
-
-
-	//使用std::shared_ptr
-//     template<class Cls>
-//     class SafePointer
-//     {
-//     public:
-//         SafePointer(Cls* p) :mPointer(p){}
-//         ~SafePointer(){ if (mPointer)delete mPointer; }
-//     private:
-//         Cls* mPointer;
-//     };
 }
 
 #endif // POOL_H__
