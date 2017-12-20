@@ -90,7 +90,6 @@
     <ClInclude Include="..\..\..\Classes\app\ReserveData.h" />
     <ClInclude Include="..\..\..\Classes\app\ResponseBase.h" />
     <ClInclude Include="..\..\..\Classes\app\Tunnel.h" />
-    <ClInclude Include="..\..\..\Classes\bridge\IIosBridge.h" />
     <ClInclude Include="..\..\..\Classes\bridge\SimpleBridge.h" />
     <ClInclude Include="..\..\..\Classes\bridge\SimpleBridgeAndroid.h" />
     <ClInclude Include="..\..\..\Classes\bridge\SimpleBridgeIos.h" />

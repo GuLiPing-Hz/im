@@ -87,9 +87,6 @@
     <ClInclude Include="..\..\..\Classes\bridge\SimpleJsBridge.h">
       <Filter>Classes\bridge</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Classes\bridge\IIosBridge.h">
-      <Filter>Classes\bridge</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Classes\charset\Chinese.h">
       <Filter>Classes\charset</Filter>
     </ClInclude>
