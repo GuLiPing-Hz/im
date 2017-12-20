@@ -5,7 +5,6 @@
 #define SIMPLE_BRIDGE_IOS_H__
 
 #include "SimpleBridge.h"
-#include "../ios/IIosBridge.h"
 #include <functional>
 
 typedef std::function<void(const char*,const char*)> FUNCIOS;
