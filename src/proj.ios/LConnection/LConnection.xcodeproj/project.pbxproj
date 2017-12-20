@@ -75,6 +75,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3F29AED41FEA732600BEE1F5 /* IIosBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IIosBridge.h; sourceTree = "<group>"; };
 		3F30292D1F90CC5D00BF0ED6 /* LConnectionTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LConnectionTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3F3029441F90CC5E00BF0ED6 /* LConnectionTestUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LConnectionTestUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3F31AAC51F8B7343000FF66B /* LConnection.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = LConnection.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -99,7 +100,6 @@
 		3F31AAEE1F8B883E000FF66B /* ResponseBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ResponseBase.h; sourceTree = "<group>"; };
 		3F31AAEF1F8B883E000FF66B /* Tunnel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Tunnel.cpp; sourceTree = "<group>"; };
 		3F31AAF01F8B883E000FF66B /* Tunnel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Tunnel.h; sourceTree = "<group>"; };
-		3F31AAF21F8B883E000FF66B /* IIosBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IIosBridge.h; sourceTree = "<group>"; };
 		3F31AAFA1F8B883E000FF66B /* CharsetCodec.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CharsetCodec.cpp; sourceTree = "<group>"; };
 		3F31AAFB1F8B883E000FF66B /* CharsetCodec.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CharsetCodec.h; sourceTree = "<group>"; };
 		3F31AAFC1F8B883E000FF66B /* Chinese.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Chinese.cpp; sourceTree = "<group>"; };
@@ -195,7 +195,6 @@
 		3FEAE18E1FCFFB8D0043CDE1 /* timer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = timer.cpp; sourceTree = "<group>"; };
 		3FEAE18F1FCFFB8D0043CDE1 /* httpcontent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = httpcontent.cpp; sourceTree = "<group>"; };
 		3FEAE1901FCFFB8D0043CDE1 /* client_socket.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = client_socket.h; sourceTree = "<group>"; };
-		3FEAE1911FCFFB8D0043CDE1 /* ReadMe.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = ReadMe.txt; sourceTree = "<group>"; };
 		3FEAE1921FCFFB8D0043CDE1 /* native_buffer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = native_buffer.cpp; sourceTree = "<group>"; };
 		3FEAE1931FCFFB8D0043CDE1 /* mutex.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mutex.h; sourceTree = "<group>"; };
 		3FEAE1941FCFFB8D0043CDE1 /* funcs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = funcs.h; sourceTree = "<group>"; };
@@ -255,6 +254,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3F29AECB1FEA72EF00BEE1F5 /* ios */ = {
+			isa = PBXGroup;
+			children = (
+				3F29AED41FEA732600BEE1F5 /* IIosBridge.h */,
+			);
+			path = ios;
+			sourceTree = "<group>";
+		};
 		3F31AABB1F8B7343000FF66B = {
 			isa = PBXGroup;
 			children = (
@@ -293,6 +300,7 @@
 		3F31AAE11F8B883E000FF66B /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				3F29AECB1FEA72EF00BEE1F5 /* ios */,
 				3F31AAE21F8B883E000FF66B /* app */,
 				3F31AAF11F8B883E000FF66B /* bridge */,
 				3F31AAF91F8B883E000FF66B /* charset */,
@@ -337,7 +345,6 @@
 			children = (
 				3F31AB9D1F8B9417000FF66B /* SimpleBridge.cpp */,
 				3F31AB9C1F8B9417000FF66B /* SimpleBridge.h */,
-				3F31AAF21F8B883E000FF66B /* IIosBridge.h */,
 				3F31AB981F8B8DBC000FF66B /* SimpleBridgeIos.h */,
 				3F31AB991F8B8DBC000FF66B /* SimpleBridgeIos.cpp */,
 			);
@@ -455,7 +462,6 @@
 				3FEAE19F1FCFFB8F0043CDE1 /* pool.h */,
 				3FEAE18D1FCFFB8D0043CDE1 /* reactor.cpp */,
 				3FEAE1AC1FCFFB900043CDE1 /* reactor.h */,
-				3FEAE1911FCFFB8D0043CDE1 /* ReadMe.txt */,
 				3FEAE19C1FCFFB8E0043CDE1 /* seq_map.h */,
 				3FEAE1A71FCFFB8F0043CDE1 /* thread_informer.cpp */,
 				3FEAE1A01FCFFB8F0043CDE1 /* thread_informer.h */,
