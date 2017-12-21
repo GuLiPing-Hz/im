@@ -354,9 +354,6 @@
     <ClInclude Include="..\..\..\Classes\ios\Reachability.h">
       <Filter>Classes\ios</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Classes\ios\IosBridge.h">
-      <Filter>Classes\ios</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Classes\ios\JSIosBridge.h">
       <Filter>Classes\ios</Filter>
     </ClInclude>
@@ -527,9 +524,6 @@
       <Filter>Classes\ios</Filter>
     </None>
     <None Include="..\..\..\Classes\ios\Reachability.m">
-      <Filter>Classes\ios</Filter>
-    </None>
-    <None Include="..\..\..\Classes\ios\IosBridge.mm">
       <Filter>Classes\ios</Filter>
     </None>
     <None Include="..\..\..\Classes\ios\JSIosBridge.mm">

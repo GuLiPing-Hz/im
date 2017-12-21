@@ -12,7 +12,6 @@
 #include "jsapi.h"
 #include "jsfriendapi.h"
 #include "scripting/js-bindings/manual/cocos2d_specifics.hpp"
-#include "IIosBridge.h"
 
 #define MACRO_METHOD "method"
 #define MACRO_SEQ "seq"
@@ -52,6 +51,8 @@
 #define NATIVE_2_JS_HTTP_RESP "HTTP_RESP"
 #define NATIVE_2_JS_SOCKET_RESP "SOCKET_RESP"
 
+typedef std::function<void(const char*,const char*,char*)> FUNCIOSRET;
+
 class SimpleJsBridge : public cocos2d::Ref , public ResponseBase{
 
 	friend bool Def_SimpleJsBridge_SetNativeListener(JSContext *cx, unsigned int argc, jsval *vp);
@@ -62,7 +63,7 @@ public:
 	static SimpleJsBridge* getInstance();
 	static void resetInstance();
 
-	void setIosBridge(IIosBridge* pBridge){ mBridge = pBridge; }
+	void setIosBridge(FUNCIOSRET& pBridge){ mBridge = pBridge; }
 	void setRequest(RequestBase* req){ mReq = req; }
 
 	//ResponseBase
@@ -172,7 +173,7 @@ private:
 	std::string mAfterfix;
 
 	RequestBase* mReq;
-	IIosBridge* mBridge;
+	FUNCIOSRET mBridge;
 };
 
 void register_custom_js(JSContext *cx, JS::HandleObject global);

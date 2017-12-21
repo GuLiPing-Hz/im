@@ -97,7 +97,6 @@
     <ClInclude Include="..\..\..\Classes\charset\Chinese.h" />
     <ClInclude Include="..\..\..\Classes\charset\Utf.h" />
     <ClInclude Include="..\..\..\Classes\crypto\md5.h" />
-    <ClInclude Include="..\..\..\Classes\ios\IosBridge.h" />
     <ClInclude Include="..\..\..\Classes\ios\JSIosBridge.h" />
     <ClInclude Include="..\..\..\Classes\ios\KeychainItemWrapper.h" />
     <ClInclude Include="..\..\..\Classes\ios\Reachability.h" />
@@ -257,7 +256,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\Classes\ios\IosBridge.mm" />
     <None Include="..\..\..\Classes\ios\JSIosBridge.mm" />
     <None Include="..\..\..\Classes\ios\KeychainItemWrapper.m" />
     <None Include="..\..\..\Classes\ios\Reachability.m" />

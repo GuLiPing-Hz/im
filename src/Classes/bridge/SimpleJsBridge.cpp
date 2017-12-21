@@ -17,9 +17,9 @@ std::string GetStrFromRoot(const rapidjson::Value &root)
 	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
 	root.Accept(writer);
 	std::string result = buffer.GetString();
-//#ifdef WIN32
+	//#ifdef WIN32
 	//cocos2d::log("GetStrFromRoot result = %s", result.c_str());
-//#endif
+	//#endif
 	return result;
 }
 
@@ -151,7 +151,7 @@ std::string SimpleJsBridge::callNativeFromJs(std::string method, std::string par
 		return reqHttp(param);//请求Http
 	}
 	else if (method == JS_2_NATIVE_SOCKET_REQ){
-		return reqSocket(param,buffer);//请求Socket
+		return reqSocket(param, buffer);//请求Socket
 	}
 	else
 	{
@@ -194,7 +194,7 @@ std::string SimpleJsBridge::callNativeFromJs(std::string method, std::string par
 		static char buf[1024] = {0};
 		buf[0] = 0;
 		if(mBridge)
-			mBridge->callNative(method.c_str(),param.c_str(),buf);
+			mBridge(method.c_str(),param.c_str(),buf);
 		return std::string(buf);
 	}
 }
@@ -225,7 +225,7 @@ void SimpleJsBridge::resetInstance(){
 
 SimpleJsBridge::SimpleJsBridge()
 	:mReq(nullptr)
-	, mBridge(NULL)
+	, mBridge(nullptr)
 {
 	mPrefix = "ZhejiangPani";
 	mAfterfix = "2017.com";
@@ -233,7 +233,7 @@ SimpleJsBridge::SimpleJsBridge()
 SimpleJsBridge::~SimpleJsBridge()
 {
 	mReq = nullptr;
-    mBridge = nullptr;
+	mBridge = nullptr;
 	int glp = 1;
 }
 
@@ -306,7 +306,7 @@ void SimpleJsBridge::onLobbyMsg(const int code, const char* msg, const unsigned 
 	std::string buffer;
 	if (msg && len > 0)
 		buffer = std::move(std::string(msg, len));
-	callJsFromNative(GetStrFromRoot(paramRoot),buffer);
+	callJsFromNative(GetStrFromRoot(paramRoot), buffer);
 }
 
 void SimpleJsBridge::setNativeListener(std::function<void(const std::string&, const std::string&)> listener)
@@ -314,7 +314,7 @@ void SimpleJsBridge::setNativeListener(std::function<void(const std::string&, co
 	mListener = listener;
 }
 
-std::string SimpleJsBridge::reqSocket(const std::string& param,const std::string& buffer){
+std::string SimpleJsBridge::reqSocket(const std::string& param, const std::string& buffer){
 
 	rapidjson::Document doc;
 	rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> &allocator = doc.GetAllocator();
@@ -324,8 +324,10 @@ std::string SimpleJsBridge::reqSocket(const std::string& param,const std::string
 		goto FAILED;
 
 	doc.Parse(param.c_str());
-	if (doc.HasParseError())
+	if (doc.HasParseError()){
+		LOGE("reqSocket param parse failed\n");
 		goto FAILED;
+	}
 	else{
 		std::string socketM = doc[MACRO_ARG0].GetString();
 		std::string socketP = doc[MACRO_ARG1].GetString();
@@ -336,6 +338,7 @@ std::string SimpleJsBridge::reqSocket(const std::string& param,const std::string
 
 		doc.Parse(socketP.c_str());//解析具体的参数
 		if (doc.HasParseError()){
+			LOGE("reqSocket socketP parse failed\n");
 			goto FAILED;
 		}
 
@@ -345,6 +348,7 @@ std::string SimpleJsBridge::reqSocket(const std::string& param,const std::string
 			int to = doc["timeout"].GetInt();
 
 			if (mReq->connectLobby(ip.c_str(), port, to) == -1){
+				LOGE("connectLobby send failed\n");
 				goto FAILED;
 			}
 		}
@@ -352,14 +356,21 @@ std::string SimpleJsBridge::reqSocket(const std::string& param,const std::string
 			mReq->disConnectLobby();
 		}
 		else if (socketM == "sendMsgToLobby"){
+			if (!doc.HasMember("len")){
+				LOGE("sendMsgToLobby need len\n");
+				goto FAILED;
+			}
 			int len = doc["len"].GetInt();
 
-			if (len != buffer.length())//如果长度不匹配
+			if (len != buffer.length()){//如果长度不匹配
+				LOGE("sendMsgToLobby len != buffer.length()\n");
 				goto FAILED;
+			}
 
 			bool needBack = doc["needBack"].GetBool();
 
 			if (mReq->sendMsgToLobby(buffer.c_str(), len, seq, needBack) == 0){
+				LOGE("sendMsgToLobby send failed\n");
 				goto FAILED;
 			}
 		}
@@ -419,9 +430,9 @@ std::string SimpleJsBridge::reqHttp(const std::string& param){
 		//转义地址一下
 		httpReq->setUrl(Wrap::UrlEncode(httpH + "/" + httpM + "?" + reqParam + "&sign=" + sign));
 
-// #if (COCOS2D_DEBUG > 0) 
-// 		cocos2d::log("Http : %s ; md5(%s)", httpReq->getUrl(), plainTxt.c_str());
-// #endif
+#if (COCOS2D_DEBUG > 0) 
+		cocos2d::log("Http : %s ; md5(%s)", httpReq->getUrl(), plainTxt.c_str());
+#endif
 
 		HttpUserData* pUserData = new HttpUserData();
 		if (!pUserData)
@@ -461,9 +472,9 @@ std::string SimpleJsBridge::reqHttp(const std::string& param){
 				auto vect = response->getResponseData();
 
 				rapidjson::Value arg2(rapidjson::kObjectType);
-// 				std::string arg2Str;
-// 				arg2Str.insert(arg2Str.begin(), vect->begin(), vect->end());
-// 				arg2.SetString(arg2Str.c_str(), allocator);
+				// 				std::string arg2Str;
+				// 				arg2Str.insert(arg2Str.begin(), vect->begin(), vect->end());
+				// 				arg2.SetString(arg2Str.c_str(), allocator);
 				arg2.SetString(&(vect->front()), vect->size(), allocator);
 				paramRoot.AddMember(MACRO_ARG2, arg2, allocator);//response data
 
@@ -516,7 +527,7 @@ bool Def_SimpleJsBridge_CallNativeFromJs(JSContext *cx, unsigned int argc, jsval
 	JSB_PRECONDITION2(cobj, cx, false, "Def_SimpleJsBridge_SetNativeListener : Invalid Native Object");
 	if (argc == 2 || argc == 3)
 	{
-        //cocos2d::log("Def_SimpleJsBridge_CallNativeFromJs call");
+		//cocos2d::log("Def_SimpleJsBridge_CallNativeFromJs call");
 		std::string arg0;
 		ok &= jsval_to_std_string(cx, args.get(0), &arg0);
 		JSB_PRECONDITION2(ok, cx, false, "js_Call_Native : Error processing method arguments 1");
@@ -561,7 +572,7 @@ bool Def_SimpleJsBridge_SetNativeListener(JSContext *cx, unsigned int argc, jsva
 				std::shared_ptr<JSFunctionWrapper> func(new JSFunctionWrapper(cx, jstarget, args.get(0), args.thisv()));
 				auto lambda = [=](const std::string& param, const std::string& buffer) -> void {
 					JSB_AUTOCOMPARTMENT_WITH_GLOBAL_OBJCET
-					jsval largv[2];
+						jsval largv[2];
 					largv[0] = std_string_to_jsval(cx, param);
 					largv[1] = STRING_TO_JSVAL(JS_NewStringCopyN(cx, buffer.c_str(), buffer.size()));
 					JS::RootedValue rval(cx);
