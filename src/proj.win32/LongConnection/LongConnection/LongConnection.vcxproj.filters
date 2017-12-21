@@ -37,21 +37,21 @@
     <Filter Include="Classes\jni">
       <UniqueIdentifier>{fffb5782-fae0-4f4c-b574-71dc16ab681e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Classes\rapidjson">
-      <UniqueIdentifier>{a9c382f3-5af4-4196-ad20-d535ea18dc5f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Classes\wrap\ext">
       <UniqueIdentifier>{bbee828c-d3a8-4414-92c7-64c1b8e88939}</UniqueIdentifier>
     </Filter>
     <Filter Include="Classes\crypto">
       <UniqueIdentifier>{dc4acbca-c86f-48da-a438-99e34c2277cc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Classes\ios">
+      <UniqueIdentifier>{93c8da11-ff5b-46a6-ab71-be23b1607ea9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\rapidjson">
+      <UniqueIdentifier>{a9c382f3-5af4-4196-ad20-d535ea18dc5f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
-    <Text Include="..\..\..\Classes\wrap\ReadMe.txt">
-      <Filter>Classes\wrap</Filter>
-    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -348,6 +348,18 @@
     <ClInclude Include="..\..\..\Classes\wrap\allocator.h">
       <Filter>Classes\wrap</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Classes\ios\KeychainItemWrapper.h">
+      <Filter>Classes\ios</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\ios\Reachability.h">
+      <Filter>Classes\ios</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\ios\IosBridge.h">
+      <Filter>Classes\ios</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\ios\JSIosBridge.h">
+      <Filter>Classes\ios</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -509,5 +521,19 @@
     <ClCompile Include="..\..\..\Classes\crypto\md5.cpp">
       <Filter>Classes\crypto</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\Classes\ios\KeychainItemWrapper.m">
+      <Filter>Classes\ios</Filter>
+    </None>
+    <None Include="..\..\..\Classes\ios\Reachability.m">
+      <Filter>Classes\ios</Filter>
+    </None>
+    <None Include="..\..\..\Classes\ios\IosBridge.mm">
+      <Filter>Classes\ios</Filter>
+    </None>
+    <None Include="..\..\..\Classes\ios\JSIosBridge.mm">
+      <Filter>Classes\ios</Filter>
+    </None>
   </ItemGroup>
 </Project>

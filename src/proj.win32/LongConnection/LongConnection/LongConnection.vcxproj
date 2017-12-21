@@ -78,7 +78,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Text Include="..\..\..\Classes\wrap\ReadMe.txt" />
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -98,6 +97,10 @@
     <ClInclude Include="..\..\..\Classes\charset\Chinese.h" />
     <ClInclude Include="..\..\..\Classes\charset\Utf.h" />
     <ClInclude Include="..\..\..\Classes\crypto\md5.h" />
+    <ClInclude Include="..\..\..\Classes\ios\IosBridge.h" />
+    <ClInclude Include="..\..\..\Classes\ios\JSIosBridge.h" />
+    <ClInclude Include="..\..\..\Classes\ios\KeychainItemWrapper.h" />
+    <ClInclude Include="..\..\..\Classes\ios\Reachability.h" />
     <ClInclude Include="..\..\..\Classes\jni\JniHelper.h" />
     <ClInclude Include="..\..\..\Classes\LongConnection.h" />
     <ClInclude Include="..\..\..\Classes\protocol.h" />
@@ -252,6 +255,12 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\Classes\ios\IosBridge.mm" />
+    <None Include="..\..\..\Classes\ios\JSIosBridge.mm" />
+    <None Include="..\..\..\Classes\ios\KeychainItemWrapper.m" />
+    <None Include="..\..\..\Classes\ios\Reachability.m" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
