@@ -14,10 +14,6 @@
 // #include <Windows.h>  
 // #include <Winsock2.h> 
 
-#ifdef NETUTIL_ANDROID
-#include "../jni/JniHelper.h"
-#endif
-
 #define HONGBAO_ID_LEN 51
 
 ThreadWrapper* handleNetThread = NULL;
@@ -143,28 +139,21 @@ int RequestBase::connectLobby(const char* host,short port,int timeout)
         LOGE("NetUtil is not initialize\n");
         return -1;
     }
-    
-//     const char* sIp = Wrap::ClientSocketBase::GetIpv4FromHostName(host);
-//     if(sIp[0] == 0)
-//         return -1;
 
 	int len = sizeof(DataConnect);
-	DataConnect *data = (DataConnect*)malloc(len);
-	if (!data)
-		return -1;
-	strncpy(data->ip, host, sizeof(data->ip));
-	data->port = port;
-	data->timeout = timeout;
-	int ret = NetApp::GetInstance()->postMessageNoBack(eServerID::none, nullptr, MSG_CONNECT_LOBBY, data, 0);
+	DataConnect data;
+	StrLCpy(data.ip, host, sizeof(data.ip));
+	data.port = port;
+	data.timeout = timeout;
+	int ret = NetApp::GetInstance()->postMessageNoBack(eServerID::none, nullptr, MSG_CONNECT_LOBBY, &data, len, 0);
 	if (ret == -1){
-		free(data);
 		return -1;
 	}
 	return ret;
 }
 int RequestBase::disConnectLobby()
 {
-	return NetApp::GetInstance()->postMessageNoBack(eServerID::none, nullptr, MSG_DISCONNECT_LOBBY, nullptr, 0);
+	return NetApp::GetInstance()->postMessageNoBack(eServerID::none, nullptr, MSG_DISCONNECT_LOBBY, 0);
 }
 int RequestBase::connectRoom(const char* host,short port,int type,int timeout)
 {

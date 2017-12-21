@@ -56,9 +56,13 @@ public:
 
 	ResponseBase *getResponseHandler() { return m_pResponse; }
 
-	//处理消息的发送与接收
-	int postMessageNoBack(int serverId, Wrap::ClientSocket *conn, int cmd, void *v, int seq) {
-		return Wrap::MessageCenter::postMessage(serverId, conn, cmd, v, 0, seq, false);
+	//投递一条不需要回复的，data为空的消息
+	int postMessageNoBack(int serverId, Wrap::ClientSocket *conn, int cmd, int seq) {
+		return Wrap::MessageCenter::postMessage(serverId, conn, cmd, NULL, 0, seq, false);
+	}
+	//投递一条不需要回复的消息
+	int postMessageNoBack(int serverId, Wrap::ClientSocket *conn, int cmd, void *v,int len, int seq) {
+		return Wrap::MessageCenter::postMessage(serverId, conn, cmd, v, len, seq, false);
 	}
 
 	inline bool isAuth() { return m_bIsAuth; }
