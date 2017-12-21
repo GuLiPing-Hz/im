@@ -10,7 +10,7 @@
 typedef std::function<void(const char*,const char*)> FUNCIOS;
 
 /*
- 这个类用于android的回调
+ 这个类用于ios的回调
  */
 class SimpleBridgeIos : public SimpleBridge{
     SimpleBridgeIos();
