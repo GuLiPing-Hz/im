@@ -1,5 +1,8 @@
 ﻿#include "funcs.h"
 #include "config.h"
+#include <sstream>
+#include <time.h>
+#include <stdint.h>
 #include "pool.h"
 
 #ifdef _WIN32
@@ -10,8 +13,6 @@
 #include <unistd.h>
 
 #endif
-
-#include <sstream>
 
 Wrap::Allocator *Wrap::Allocator::sIns = NULL;
 Wrap::PoolMgr *Wrap::PoolMgr::sIns = NULL;
@@ -188,10 +189,11 @@ void LogCiphertext(const unsigned char *ciphertext, size_t len) {
     size_t pos = 0;
     while (pos < len) {
         char buf[10] = {0};
-        sprintf(buf, "%x-", ciphertext[pos] & 0xff);
+        sprintf(buf, "%02x-", ciphertext[pos] & 0xff);
         ss << buf;
         pos++;
     }
+	ss << std::endl;
     PrintConsole(ss.str().c_str());
 }
 
