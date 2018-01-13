@@ -2,7 +2,7 @@
 #include "DataDecoderRoom.h"
 #include "NetApp.h"
 #include "../wrap/mutex.h"
-#include "../wrap/config.h"
+#include "../wrap/wrap_config.h"
 #include "ResponseBase.h"
 #include <vector>
 

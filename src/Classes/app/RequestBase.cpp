@@ -1,7 +1,7 @@
 ﻿/*************************************
 *请求处理类 源文件
 *************************************/
-#include "../wrap/config.h"
+#include "../wrap/wrap_config.h"
 #include "RequestBase.h"
 #include <string.h>
 #include "NetApp.h"

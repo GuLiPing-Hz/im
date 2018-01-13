@@ -1,7 +1,7 @@
 ﻿#include "Tunnel.h"
 #include "NetApp.h"
 
-#include "../wrap/config.h"
+#include "../wrap/wrap_config.h"
 
 #define MAXBUFSIZETEA 256
 

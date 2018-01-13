@@ -142,7 +142,6 @@
     <ClInclude Include="..\..\..\Classes\wrap\allocator.h" />
     <ClInclude Include="..\..\..\Classes\wrap\buffer_value.h" />
     <ClInclude Include="..\..\..\Classes\wrap\client_socket.h" />
-    <ClInclude Include="..\..\..\Classes\wrap\config.h" />
     <ClInclude Include="..\..\..\Classes\wrap\counter.h" />
     <ClInclude Include="..\..\..\Classes\wrap\data_block.h" />
     <ClInclude Include="..\..\..\Classes\wrap\data_decoder.h" />
@@ -165,6 +164,7 @@
     <ClInclude Include="..\..\..\Classes\wrap\thread_mgr.h" />
     <ClInclude Include="..\..\..\Classes\wrap\timer.h" />
     <ClInclude Include="..\..\..\Classes\wrap\typedefs.h" />
+    <ClInclude Include="..\..\..\Classes\wrap\wrap_config.h" />
     <ClInclude Include="..\..\..\Classes\zip\crypt.h" />
     <ClInclude Include="..\..\..\Classes\zip\ioapi.h" />
     <ClInclude Include="..\..\..\Classes\zip\unzip.h" />

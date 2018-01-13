@@ -1,4 +1,4 @@
-﻿#include "../wrap/config.h"
+﻿#include "../wrap/wrap_config.h"
 #ifndef COCOS_PROJECT
 
 #ifndef SIMPLE_BRIDGE_ANDROID_H__

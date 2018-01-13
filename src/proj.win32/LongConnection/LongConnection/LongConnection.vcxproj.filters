@@ -267,9 +267,6 @@
     <ClInclude Include="..\..\..\Classes\bridge\SimpleBridgeIos.h">
       <Filter>Classes\bridge</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Classes\wrap\config.h">
-      <Filter>Classes\wrap</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Classes\wrap\counter.h">
       <Filter>Classes\wrap</Filter>
     </ClInclude>
@@ -356,6 +353,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Classes\ios\JSIosBridge.h">
       <Filter>Classes\ios</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Classes\wrap\wrap_config.h">
+      <Filter>Classes\wrap</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

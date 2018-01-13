@@ -2,7 +2,7 @@
 #include "NetApp.h"
 #include "../wrap/mutex.h"
 
-#include "../wrap/config.h"
+#include "../wrap/wrap_config.h"
 
 using namespace Wrap;
 
