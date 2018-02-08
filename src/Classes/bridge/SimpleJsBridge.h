@@ -1,4 +1,4 @@
-﻿#ifndef SIMPLE_JS_NATIVE_BRIDGE_H__
+#ifndef SIMPLE_JS_NATIVE_BRIDGE_H__
 #define SIMPLE_JS_NATIVE_BRIDGE_H__
 
 #include <string>
@@ -36,24 +36,39 @@
 #define JS_2_NATIVE_GET_UUID "GET_UUID"
 //获取手机型号
 #define JS_2_NATIVE_GET_PHONEMODEL "GET_PHONEMODEL"
+#define JS_2_NATIVE_GET_DEVICE "GET_DEVICE"
 //获取产品渠道，android获取渠道，ios获取bundle id
 #define JS_2_NATIVE_GET_FLAVOR "GET_FLAVOR"
+//获取当前的屏幕方向
+#define JS_2_NATIVE_GET_ORIENTATION "GET_ORIENTATION"
 #define JS_2_NATIVE_GOH5 "GOH5"
 //打印文件日志
 #define JS_2_NATIVE_LOG "LOG"
+//分享到微信
+#define JS_2_NATIVE_SHARE_WX  "SHARE_WX"
+
+#define JS_2_NATIVE_SETPBACK "SETPBACK"
+//统计用户登录登出
+#define JS_2_NATIVE_LOG_INOUT "LOG_INOUT"
+#define JS_2_NATIVE_LOG_PAY "LOG_PAY"
+#define JS_2_NATIVE_IS_IPHONEX "IS_IPHONEX"
 
 #define JS_2_NATIVE_HTTP_REQ "HTTP_REQ"
 #define JS_2_NATIVE_SOCKET_REQ "SOCKET_REQ"
 
 //Native Call Js
 #define NATIVE_2_JS_GET_CODE "CALLBACK_GET_CODE"
+#define NATIVE_2_JS_PAY_RESULT "CALLBACK_PAY_RESULT"
+#define NATIVE_2_JS_ORIENTATION "CALLBACK_ORIENTATION"
+#define NATIVE_2_JS_SHARERESULT  "CALLBACK_SHARERESULT"
+
 #define NATIVE_2_JS_HEARTBEAT "HEART_BEAT"
 #define NATIVE_2_JS_HTTP_RESP "HTTP_RESP"
 #define NATIVE_2_JS_SOCKET_RESP "SOCKET_RESP"
 
-typedef std::function<void(const char*,const char*,char*)> FUNCIOSRET;
+typedef std::function<void(const char*, const char*, char*)> FUNCIOSRET;
 
-class SimpleJsBridge : public cocos2d::Ref , public ResponseBase{
+class SimpleJsBridge : public cocos2d::Ref, public ResponseBase {
 
 	friend bool Def_SimpleJsBridge_SetNativeListener(JSContext *cx, unsigned int argc, jsval *vp);
 
@@ -63,8 +78,8 @@ public:
 	static SimpleJsBridge* getInstance();
 	static void resetInstance();
 
-	void setIosBridge(FUNCIOSRET& pBridge){ mBridge = pBridge; }
-	void setRequest(RequestBase* req){ mReq = req; }
+	void setIosBridge(FUNCIOSRET& pBridge) { mBridge = pBridge; }
+	void setRequest(RequestBase* req) { mReq = req; }
 
 	//ResponseBase
 	/*
@@ -74,7 +89,7 @@ public:
 	/*
 	成功连接房间服务器
 	*/
-	virtual void onRoomTunnelConnectSuccess(){};
+	virtual void onRoomTunnelConnectSuccess() {};
 
 	/*
 	连接大厅服务器超时
@@ -83,7 +98,7 @@ public:
 	/*
 	连接房间服务器超时
 	*/
-	virtual void onRoomTunnelConnectTimeout(){};
+	virtual void onRoomTunnelConnectTimeout() {};
 
 	/*
 	连接大厅服务器错误
@@ -94,7 +109,7 @@ public:
 	连接房间服务器错误
 	@param code 错误码
 	*/
-	virtual void onRoomTunnelConnectError(const int code){};
+	virtual void onRoomTunnelConnectError(const int code) {};
 
 	//服务器主动断开的连接,客户端recv == 0的时候,回调到以下的接口
 	/*
@@ -104,7 +119,7 @@ public:
 	/*
 	房间服务器断开
 	*/
-	virtual void onRoomTunnelClose(){};	//
+	virtual void onRoomTunnelClose() {};	//
 
 	//客户端recv异常,send异常,网络层buf溢出,select出现问题,都会回调到这个以下接口
 	/*
@@ -116,7 +131,7 @@ public:
 	房间服务器异常
 	@param code 错误码
 	*/
-	virtual void onRoomTunnelError(const int code){};
+	virtual void onRoomTunnelError(const int code) {};
 
 	/*
 	收到来自大厅服务器的信息
@@ -153,8 +168,7 @@ public:
 	arg5 : 第六个返回值   最多支持6个参数
 	}
 	*/
-	std::string callNativeFromJs(std::string method, std::string param,std::string buffer);
-
+	std::string callNativeFromJs(std::string method, std::string param, std::string buffer);
 private:
 	//only call in js
 	void setNativeListener(std::function<void(const std::string&, const std::string&)> listener);
@@ -163,11 +177,11 @@ private:
 	std::string reqHttp(const std::string& param);
 public:
 	//call for native in cocos Thread
-	void callJsFromNative(const std::string& param,const std::string& buffer="");
+	void callJsFromNative(const std::string& param, const std::string& buffer = "");
 
 private:
 	static SimpleJsBridge* sInstance;
-	std::function<void(const std::string&,const std::string&)> mListener;
+	std::function<void(const std::string&, const std::string&)> mListener;
 
 	std::string mPrefix;
 	std::string mAfterfix;

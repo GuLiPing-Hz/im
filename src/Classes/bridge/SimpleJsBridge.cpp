@@ -11,15 +11,18 @@
 
 using namespace cocos2d::network;
 
+#define DEBUG_NET_HTTP 0
+
 std::string GetStrFromRoot(const rapidjson::Value &root)
 {
 	rapidjson::StringBuffer buffer;
 	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
 	root.Accept(writer);
 	std::string result = buffer.GetString();
-	//#ifdef WIN32
-	//cocos2d::log("GetStrFromRoot result = %s", result.c_str());
-	//#endif
+
+#if (DEBUG_NET_HTTP) 
+	cocos2d::log("GetStrFromRoot result = %s", result.c_str());
+#endif
 	return result;
 }
 
@@ -47,13 +50,13 @@ std::string GetNetStatus()
 }
 
 std::string GetUUID(){
-	//{9A25755A - 9404 - 42C8 - BB37 - 888E7900D057}
+	//9A25755A - 9404 - 42C8 - BB37 - 888E7900D057
 
 	static char C[] = "0123456789ABCDEF";
 
 	std::random_device rd;
 	char ret[50] = { 0 };
-	sprintf(ret, "{%c%c%c%c%c%c%c%c-%c%c%c%c-%c%c%c%c-%c%c%c%c-%c%c%c%c%c%c%c%c%c%c%c%c}"
+	sprintf(ret, "%c%c%c%c%c%c%c%c-%c%c%c%c-%c%c%c%c-%c%c%c%c-%c%c%c%c%c%c%c%c%c%c%c%c"
 		, C[rd() % 16], C[rd() % 16], C[rd() % 16], C[rd() % 16], C[rd() % 16], C[rd() % 16], C[rd() % 16], C[rd() % 16]
 		, C[rd() % 16], C[rd() % 16], C[rd() % 16], C[rd() % 16]
 		, C[rd() % 16], C[rd() % 16], C[rd() % 16], C[rd() % 16]
@@ -153,6 +156,14 @@ std::string SimpleJsBridge::callNativeFromJs(std::string method, std::string par
 	else if (method == JS_2_NATIVE_SOCKET_REQ){
 		return reqSocket(param, buffer);//请求Socket
 	}
+	else if (method == JS_2_NATIVE_GET_DEVICE){
+		root.AddMember(MACRO_CODE, 0, allocator);
+		root.AddMember(MACRO_ARG0, "PC", allocator);
+	}
+	else if (method == JS_2_NATIVE_GET_ORIENTATION){
+		root.AddMember(MACRO_CODE, 0, allocator);
+		root.AddMember(MACRO_ARG0, "2", allocator);
+	}
 	else
 	{
 		root.AddMember(MACRO_CODE, 2, allocator);
@@ -227,8 +238,8 @@ SimpleJsBridge::SimpleJsBridge()
 	:mReq(nullptr)
 	, mBridge(nullptr)
 {
-	mPrefix = "ZhejiangPani";
-	mAfterfix = "2017.com";
+	mPrefix = "ZhejiangZhangjing";
+	mAfterfix = "2018.01.09";
 }
 SimpleJsBridge::~SimpleJsBridge()
 {
@@ -430,7 +441,7 @@ std::string SimpleJsBridge::reqHttp(const std::string& param){
 		//转义地址一下
 		httpReq->setUrl(Wrap::UrlEncode(httpH + "/" + httpM + "?" + reqParam + "&sign=" + sign));
 
-#if (COCOS2D_DEBUG > 0) 
+#if (DEBUG_NET_HTTP) 
 		cocos2d::log("Http : %s ; md5(%s)", httpReq->getUrl(), plainTxt.c_str());
 #endif
 
@@ -451,7 +462,9 @@ std::string SimpleJsBridge::reqHttp(const std::string& param){
 		ccHttpRequestCallback callBack = [this](HttpClient* client, HttpResponse* response)->void{
 			HttpUserData* pData = (HttpUserData*)response->getHttpRequest()->getUserData();
 
+#if (DEBUG_NET_HTTP) 
 			cocos2d::log("Http Callback: %d , %s ; param(%s)", response->getResponseCode(), pData->method, pData->param);
+#endif
 
 			rapidjson::Document doc;
 			rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> &allocator = doc.GetAllocator();
@@ -468,14 +481,14 @@ std::string SimpleJsBridge::reqHttp(const std::string& param){
 
 			paramRoot.AddMember(MACRO_SEQ, pData->seq, allocator);//请求序列
 
-			if (response->isSucceed()){
-				auto vect = response->getResponseData();
-
+			auto vect = response->getResponseData();
+			if (response->isSucceed() && !vect->empty()){
 				rapidjson::Value arg2(rapidjson::kObjectType);
 				// 				std::string arg2Str;
 				// 				arg2Str.insert(arg2Str.begin(), vect->begin(), vect->end());
 				// 				arg2.SetString(arg2Str.c_str(), allocator);
 				arg2.SetString(&(vect->front()), vect->size(), allocator);
+
 				paramRoot.AddMember(MACRO_ARG2, arg2, allocator);//response data
 
 				paramRoot.AddMember(MACRO_CODE, 0, allocator);
@@ -527,7 +540,6 @@ bool Def_SimpleJsBridge_CallNativeFromJs(JSContext *cx, unsigned int argc, jsval
 	JSB_PRECONDITION2(cobj, cx, false, "Def_SimpleJsBridge_SetNativeListener : Invalid Native Object");
 	if (argc == 2 || argc == 3)
 	{
-		//cocos2d::log("Def_SimpleJsBridge_CallNativeFromJs call");
 		std::string arg0;
 		ok &= jsval_to_std_string(cx, args.get(0), &arg0);
 		JSB_PRECONDITION2(ok, cx, false, "js_Call_Native : Error processing method arguments 1");
