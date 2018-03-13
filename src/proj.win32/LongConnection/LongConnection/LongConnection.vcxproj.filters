@@ -357,6 +357,9 @@
     <ClInclude Include="..\..\..\Classes\wrap\wrap_config.h">
       <Filter>Classes\wrap</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Classes\crypto\base64.h">
+      <Filter>Classes\crypto</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -516,6 +519,9 @@
       <Filter>Classes\wrap</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Classes\crypto\md5.cpp">
+      <Filter>Classes\crypto</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\crypto\base64.c">
       <Filter>Classes\crypto</Filter>
     </ClCompile>
   </ItemGroup>

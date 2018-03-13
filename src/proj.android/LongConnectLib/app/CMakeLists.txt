@@ -39,35 +39,31 @@ add_library( # Sets the name of the library.
              ../../../Classes/zlib/uncompr.c
              ../../../Classes/zlib/zutil.c
 
-             ../../../Classes/wrap/aes.cpp
-             ../../../Classes/wrap/byte_order.cpp
+             ../../../Classes/crypto/md5.cpp
+
+             ../../../Classes/wrap/ext/event.cpp
+             ../../../Classes/wrap/ext/thread.cpp
+
+             ../../../Classes/wrap/buffer_value.cpp
              ../../../Classes/wrap/client_socket.cpp
-             ../../../Classes/wrap/crypt.cpp
              ../../../Classes/wrap/data_decoder.cpp
-             ../../../Classes/wrap/event.cpp
              ../../../Classes/wrap/event_handler.cpp
              ../../../Classes/wrap/file_mgr.cpp
-             ../../../Classes/wrap/httpcontent.cpp
+             ../../../Classes/wrap/funcs.cpp
              ../../../Classes/wrap/http_download.cpp
              ../../../Classes/wrap/http_download_mgr.cpp
-             ../../../Classes/wrap/jniloghelp.cpp
-             ../../../Classes/wrap/md5.cpp
-             ../../../Classes/wrap/mutex_wrapper.cpp
+             ../../../Classes/wrap/httpcontent.cpp
+             ../../../Classes/wrap/native_buffer.cpp
              ../../../Classes/wrap/reactor.cpp
-             ../../../Classes/wrap/rw_stream.cpp
-             ../../../Classes/wrap/seq_map.cpp
-             ../../../Classes/wrap/sleep.cpp
-             ../../../Classes/wrap/thread.cpp
+             ../../../Classes/wrap/serversocket.cpp
              ../../../Classes/wrap/thread_informer.cpp
              ../../../Classes/wrap/thread_mgr.cpp
              ../../../Classes/wrap/timer.cpp
-             ../../../Classes/wrap/pool.cpp
 
              ../../../Classes/charset/CharsetCodec.cpp
              ../../../Classes/charset/Chinese.cpp
              ../../../Classes/charset/Utf.cpp
 
-             ../../../Classes/bridge/NativeBuffer.cpp
              ../../../Classes/bridge/SimpleBridge.cpp
              ../../../Classes/bridge/SimpleBridgeAndroid.cpp
 

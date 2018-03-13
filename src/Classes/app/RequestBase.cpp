@@ -14,6 +14,11 @@
 // #include <Windows.h>  
 // #include <Winsock2.h> 
 
+#ifdef COCOS_PROJECT
+#else
+#include "../jni/JniHelper.h"
+#endif
+
 #define HONGBAO_ID_LEN 51
 
 ThreadWrapper* handleNetThread = NULL;
@@ -30,14 +35,14 @@ void OnThreadStart(unsigned int threadid)
 	NetApp::GetInstance()->m_nThreadId = threadid;
     
 #if defined(NETUTIL_ANDROID) && !defined(COCOS_PROJECT)
-    cocos2d::JniHelper::attachCurThread(threadid);
+    Wrap::JniHelper::attachCurThread(threadid);
 #endif
 }
 
 void OnTreadEnd(unsigned int threadid)
 {
 #if defined(NETUTIL_ANDROID) && !defined(COCOS_PROJECT)
-    cocos2d::JniHelper::detachCurThread(threadid);
+	Wrap::JniHelper::detachCurThread(threadid);
 #endif
 }
 
@@ -136,7 +141,7 @@ int RequestBase::connectLobby(const char* host,short port,int timeout)
 {
     if(!m_bInit)
     {
-        LOGE("NetUtil is not initialize\n");
+        LOGE("NetUtil is not initialize");
         return -1;
     }
 

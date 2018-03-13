@@ -190,7 +190,7 @@ SimpleBridge::onLobbyMsg(const int code, const char *msg, const unsigned int len
 		Wrap::NativeBuffer* nativeBuf = &tempNativeBuf;
 		nativeBuf->clearBuffer();
 		if (!nativeBuf->writeStringNoLen(len, msg)){
-			LOGE("单个协议超过最大长度 %d > 65535 !!!\n", len);
+			LOGE("单个协议超过最大长度 %d > 65535 !!!", len);
 			return;
 		}
 
@@ -199,13 +199,13 @@ SimpleBridge::onLobbyMsg(const int code, const char *msg, const unsigned int len
         //LOGI("packageLen = " + packageLen + ",len=" + len);
         if ((packageLen + 2) != len) {//解析长度不一致，协议故障，，通常是开发人员导致的错误
             //this.mAppPresenter.onMsgBack(RESULT_ERROR_PARSE, jsonResult.arg3, null);
-            LOGE("onLobbyMsg parse package len not the same %d != %d\n", packageLen, len);
+            LOGE("onLobbyMsg parse package len not the same %d != %d", packageLen, len);
             return;
         }
 
 		char *buffer = (char*)wrap_calloc(len);// new char[len];
         if (!buffer) {
-            LOGE("%s:OOM\n", __FUNCTION__);
+            LOGE("%s:OOM", __FUNCTION__);
             return;
         }
         //std::unique_ptr<char> pAuto(buffer);//自动指针

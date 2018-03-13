@@ -19,7 +19,7 @@
 */
 void JNICALL Java_simple_util_bridge_JsAndroidBridge_setNativeContext
         (JNIEnv *env, jclass, jobject obj) {
-    cocos2d::JniHelper::setClassLoaderFrom(env, obj);
+	Wrap::JniHelper::setClassLoaderFrom(env, obj);
 }
 
 /*
@@ -30,7 +30,7 @@ void JNICALL Java_simple_util_bridge_JsAndroidBridge_setNativeContext
 jint JNICALL Java_simple_util_bridge_JsAndroidBridge_callCppFromNative
         (JNIEnv *env, jclass, jstring str) {
     LOGD("%s", __FUNCTION__);
-    std::string param = cocos2d::JniHelper::jstring2string(env, str);
+    std::string param = Wrap::JniHelper::jstring2string(env, str);
     LOGD("%s param=%s\n", __FUNCTION__, param.c_str());
 #ifdef COCOS_PROJECT
     SimpleJsBridge::getInstance()->callJsFromNative(param);

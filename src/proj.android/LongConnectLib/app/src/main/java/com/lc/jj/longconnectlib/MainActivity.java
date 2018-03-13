@@ -11,6 +11,20 @@ import simple.config.LCRequest;
 import simple.config.LCResponse;
 import simple.config.LConnection;
 
+/**
+ * 一：
+ * 程序创建的so库位置查找：
+ * <p>
+ * 首先切换成Project视图
+ * 找到app->build->intermediates->cmake
+ * <p>
+ * 自己选择需要的so库
+ * <p>
+ * 二：
+ * 其他android程序应用，首先把aar放到app->libs
+ * 然后app\src\main 下面新建jniLibs 把上面的自己需要的架构库放入其中即可
+ */
+
 public class MainActivity extends AppCompatActivity {
 
     public static final String Tag = "MainActivity";

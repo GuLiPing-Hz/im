@@ -1,6 +1,9 @@
 package simple.util.bridge;
 
 import android.content.Context;
+import android.util.Log;
+
+import java.io.UnsupportedEncodingException;
 
 import simple.bean.CallNativeArg;
 import simple.util.gson.GsonUtils;
@@ -18,6 +21,8 @@ import simple.util.gson.GsonUtils;
  */
 
 public class JsAndroidBridge {
+
+    static final String TAG = "JsAndroidBridge";
 
     public static final String METHOD_ARG0 = "arg0";
     public static final String METHOD_ARG1 = "arg1";
@@ -95,9 +100,24 @@ public class JsAndroidBridge {
         return GsonUtils.getGson().toJson(ret);
     }
 
-    public static void callNative2(String method, String param) {
-        if (sOnMethod != null)
-            sOnMethod.call(method, param);
+    /**
+     * 为了兼容param中带有非法的UTF8字符
+     *
+     * @param method
+     * @param param
+     * @return
+     */
+    public static String callNative2(String method, byte[] param) {
+        try {
+            String nativeString = new String(param, "UTF-8"); // please debate what the safest charset should be?
+
+            return callNative(method, nativeString);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            Log.e(TAG, "Couldn't convert the byte to String");
+        }
+
+        return null;
     }
 
     public static native void setNativeContext(Context context);

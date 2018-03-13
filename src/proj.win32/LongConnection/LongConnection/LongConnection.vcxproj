@@ -97,6 +97,7 @@
     <ClInclude Include="..\..\..\Classes\charset\CharsetCodec.h" />
     <ClInclude Include="..\..\..\Classes\charset\Chinese.h" />
     <ClInclude Include="..\..\..\Classes\charset\Utf.h" />
+    <ClInclude Include="..\..\..\Classes\crypto\base64.h" />
     <ClInclude Include="..\..\..\Classes\crypto\md5.h" />
     <ClInclude Include="..\..\..\Classes\ios\JSIosBridge.h" />
     <ClInclude Include="..\..\..\Classes\ios\KeychainItemWrapper.h" />
@@ -192,9 +193,7 @@
     <ClCompile Include="..\..\..\Classes\app\RequestBase.cpp" />
     <ClCompile Include="..\..\..\Classes\app\Tunnel.cpp" />
     <ClCompile Include="..\..\..\Classes\bridge\SimpleBridge.cpp" />
-    <ClCompile Include="..\..\..\Classes\bridge\SimpleBridgeAndroid.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\bridge\SimpleBridgeAndroid.cpp" />
     <ClCompile Include="..\..\..\Classes\bridge\SimpleBridgeIos.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
@@ -204,13 +203,12 @@
     <ClCompile Include="..\..\..\Classes\charset\CharsetCodec.cpp" />
     <ClCompile Include="..\..\..\Classes\charset\Chinese.cpp" />
     <ClCompile Include="..\..\..\Classes\charset\Utf.cpp" />
+    <ClCompile Include="..\..\..\Classes\crypto\base64.c" />
     <ClCompile Include="..\..\..\Classes\crypto\md5.cpp" />
-    <ClCompile Include="..\..\..\Classes\jni\JniHelper.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="..\..\..\Classes\jni\JniHelper.cpp" />
     <ClCompile Include="..\..\..\Classes\LongConnection.cpp" />
     <ClCompile Include="..\..\..\Classes\simple_util_bridge_JsAndroidBridge.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\..\Classes\wrap\buffer_value.cpp" />
