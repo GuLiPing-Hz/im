@@ -12,6 +12,7 @@
 #include "jsapi.h"
 #include "jsfriendapi.h"
 #include "scripting/js-bindings/manual/cocos2d_specifics.hpp"
+#include "../wrap/mutex.h"
 
 #define MACRO_METHOD "method"
 #define MACRO_SEQ "seq"
@@ -67,6 +68,12 @@
 #define NATIVE_2_JS_SOCKET_RESP "SOCKET_RESP"
 
 typedef std::function<void(const char*, const char*, char*)> FUNCIOSRET;
+
+struct JsBridgeParam {
+	std::string param;
+	std::string buffer;
+};
+typedef std::list<JsBridgeParam> LISTJSBPARAM;
 
 class SimpleJsBridge : public cocos2d::Ref, public ResponseBase {
 
@@ -180,6 +187,8 @@ public:
 	void callJsFromNative(const std::string& param, const std::string& buffer = "");
 
 private:
+	void callJsRealNativePerFrame(float);
+private:
 	static SimpleJsBridge* sInstance;
 	std::function<void(const std::string&, const std::string&)> mListener;
 
@@ -188,6 +197,9 @@ private:
 
 	RequestBase* mReq;
 	FUNCIOSRET mBridge;
+
+	Wrap::Mutex mMutex;
+	LISTJSBPARAM mParams;
 };
 
 void register_custom_js(JSContext *cx, JS::HandleObject global);

@@ -148,6 +148,12 @@ std::string SimpleJsBridge::callNativeFromJs(std::string method, std::string par
 		root.AddMember(MACRO_CODE, 0, allocator);
 	}
 	else if (method == JS_2_NATIVE_LOG){
+		doc.Parse(param.c_str());
+		if (doc.HasParseError()) {
+			root.AddMember(MACRO_CODE, 1, allocator);
+			return GetStrFromRoot(root);
+		}
+		LOGI("log %s", doc[MACRO_ARG0].GetString());
 		root.AddMember(MACRO_CODE, 0, allocator);//不打印日志
 	}
 	else if (method == JS_2_NATIVE_HTTP_REQ){
@@ -240,6 +246,9 @@ SimpleJsBridge::SimpleJsBridge()
 {
 	mPrefix = "ZhejiangZhangjing";
 	mAfterfix = "2018.01.09";
+
+	
+	cocos2d::Director::getInstance()->getScheduler()->schedule(CC_CALLBACK_1(SimpleJsBridge::callJsRealNativePerFrame, this), this, 0.03f, false, "SimpleJsBridge");
 }
 SimpleJsBridge::~SimpleJsBridge()
 {
@@ -522,9 +531,39 @@ FAILED:
 
 void SimpleJsBridge::callJsFromNative(const std::string& param, const std::string& buffer)
 {
+
+	JsBridgeParam data = {
+		param,buffer
+	};
+
+	//LOGI("push Data len =%d\n", mParams.size());
+	{
+		Wrap::Guard lock(mMutex);
+		if (mParams.size() > 10000)
+			return;
+		mParams.push_back(data);
+	}
+
+	//这里需要做一个消息队列处理，不能一次性推入GL渲染线程，导致画面卡顿
+	//cocos2d::Director::getInstance()->getScheduler()->performFunctionInCocosThread(lambda);
+}
+
+void SimpleJsBridge::callJsRealNativePerFrame(float)//一帧只处理一次服务器返回，否则会导致客户端掉帧
+{
+	JsBridgeParam data;
+
+	{
+		Wrap::Guard lock(mMutex);
+		if (mParams.empty())
+			return;
+
+		data = mParams.front();
+		mParams.pop_front();
+	}
+	
 	auto lambda = [=]() -> void {
 		if (mListener)
-			mListener(param, buffer);
+			mListener(data.param, data.buffer);
 	};
 
 	cocos2d::Director::getInstance()->getScheduler()->performFunctionInCocosThread(lambda);
