@@ -49,7 +49,7 @@ std::string GetNetStatus()
 	return isOnline ? NET_WIFI : NET_NONE;
 }
 
-std::string GetUUID(){
+std::string GetUUID() {
 	//9A25755A - 9404 - 42C8 - BB37 - 888E7900D057
 
 	static char C[] = "0123456789ABCDEF";
@@ -101,10 +101,10 @@ std::string SimpleJsBridge::callNativeFromJs(std::string method, std::string par
 		root.AddMember(MACRO_CODE, 0, allocator);
 		root.AddMember(MACRO_ARG0, "1ebdde31bd197f9be86a49f568c6c66b", allocator);
 	}
-	else if (method == JS_2_NATIVE_GET_CODE){
+	else if (method == JS_2_NATIVE_GET_CODE) {
 
 		doc.Parse(param.c_str());
-		if (doc.HasParseError()){
+		if (doc.HasParseError()) {
 			root.AddMember(MACRO_CODE, 1, allocator);
 			return GetStrFromRoot(root);
 		}
@@ -122,24 +122,24 @@ std::string SimpleJsBridge::callNativeFromJs(std::string method, std::string par
 		paramRoot.AddMember(MACRO_ARG0, paramArg0, allocator);
 		callJsFromNative(GetStrFromRoot(paramRoot));//回调到js
 	}
-	else if (method == JS_2_NATIVE_GET_UUID){
+	else if (method == JS_2_NATIVE_GET_UUID) {
 		root.AddMember(MACRO_CODE, 0, allocator);
 
 		rapidjson::Value arg0(rapidjson::kStringType);
 		arg0.SetString(GetUUID().c_str(), allocator);
 		root.AddMember(MACRO_ARG0, arg0, allocator);
 	}
-	else if (method == JS_2_NATIVE_GET_PHONEMODEL){
+	else if (method == JS_2_NATIVE_GET_PHONEMODEL) {
 		root.AddMember(MACRO_CODE, 0, allocator);
 		root.AddMember(MACRO_ARG0, "Windows 7", allocator);
 	}
-	else if (method == JS_2_NATIVE_GET_FLAVOR){
+	else if (method == JS_2_NATIVE_GET_FLAVOR) {
 		root.AddMember(MACRO_CODE, 0, allocator);
 		root.AddMember(MACRO_ARG0, "Official", allocator);
 	}
-	else if (method == JS_2_NATIVE_GOH5){
+	else if (method == JS_2_NATIVE_GOH5) {
 		doc.Parse(param.c_str());
-		if (doc.HasParseError()){
+		if (doc.HasParseError()) {
 			root.AddMember(MACRO_CODE, 1, allocator);
 			return GetStrFromRoot(root);
 		}
@@ -147,7 +147,7 @@ std::string SimpleJsBridge::callNativeFromJs(std::string method, std::string par
 		ShellExecuteA(NULL, "open", doc[MACRO_ARG0].GetString(), NULL, NULL, SW_SHOW);//关键代码
 		root.AddMember(MACRO_CODE, 0, allocator);
 	}
-	else if (method == JS_2_NATIVE_LOG){
+	else if (method == JS_2_NATIVE_LOG) {
 		doc.Parse(param.c_str());
 		if (doc.HasParseError()) {
 			root.AddMember(MACRO_CODE, 1, allocator);
@@ -156,17 +156,17 @@ std::string SimpleJsBridge::callNativeFromJs(std::string method, std::string par
 		LOGI("log %s", doc[MACRO_ARG0].GetString());
 		root.AddMember(MACRO_CODE, 0, allocator);//不打印日志
 	}
-	else if (method == JS_2_NATIVE_HTTP_REQ){
+	else if (method == JS_2_NATIVE_HTTP_REQ) {
 		return reqHttp(param);//请求Http
 	}
-	else if (method == JS_2_NATIVE_SOCKET_REQ){
+	else if (method == JS_2_NATIVE_SOCKET_REQ) {
 		return reqSocket(param, buffer);//请求Socket
 	}
-	else if (method == JS_2_NATIVE_GET_DEVICE){
+	else if (method == JS_2_NATIVE_GET_DEVICE) {
 		root.AddMember(MACRO_CODE, 0, allocator);
 		root.AddMember(MACRO_ARG0, "PC", allocator);
 	}
-	else if (method == JS_2_NATIVE_GET_ORIENTATION){
+	else if (method == JS_2_NATIVE_GET_ORIENTATION) {
 		root.AddMember(MACRO_CODE, 0, allocator);
 		root.AddMember(MACRO_ARG0, "2", allocator);
 	}
@@ -188,37 +188,37 @@ std::string SimpleJsBridge::callNativeFromJs(std::string method, std::string par
 #elif CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID //Android
 #include "platform/android/jni/JniHelper.h"
 
-std::string SimpleJsBridge::callNativeFromJs(std::string method, std::string param,std::string buffer)
+std::string SimpleJsBridge::callNativeFromJs(std::string method, std::string param, std::string buffer)
 {
 	if (method == JS_2_NATIVE_HTTP_REQ)
 		return reqHttp(param);//请求Http
-	else if(method == JS_2_NATIVE_SOCKET_REQ){
-		return reqSocket(param,buffer);
+	else if (method == JS_2_NATIVE_SOCKET_REQ) {
+		return reqSocket(param, buffer);
 	}
 	else//call android
 		return cocos2d::JniHelper::callStaticStringMethod("simple.util.bridge.JsAndroidBridge", "callNativeFromJs", method, param);
 }
 
 #elif CC_TARGET_PLATFORM == CC_PLATFORM_IOS //IOS
-std::string SimpleJsBridge::callNativeFromJs(std::string method, std::string param,std::string buffer)
+std::string SimpleJsBridge::callNativeFromJs(std::string method, std::string param, std::string buffer)
 {
 	if (method == JS_2_NATIVE_HTTP_REQ)
 		return reqHttp(param);//请求Http
-	else if(method == JS_2_NATIVE_SOCKET_REQ){
-		return reqSocket(param,buffer);
+	else if (method == JS_2_NATIVE_SOCKET_REQ) {
+		return reqSocket(param, buffer);
 	}
-	else{
-		static char buf[1024] = {0};
+	else {
+		static char buf[1024] = { 0 };
 		buf[0] = 0;
-		if(mBridge)
-			mBridge(method.c_str(),param.c_str(),buf);
+		if (mBridge)
+			mBridge(method.c_str(), param.c_str(), buf);
 		return std::string(buf);
 	}
 }
 
 #endif
 
-struct HttpUserData{
+struct HttpUserData {
 	char method[50];
 	char* param;
 	int seq;
@@ -233,8 +233,8 @@ SimpleJsBridge *SimpleJsBridge::getInstance()
 	return sInstance;
 }
 
-void SimpleJsBridge::resetInstance(){
-	if (sInstance){
+void SimpleJsBridge::resetInstance() {
+	if (sInstance) {
 		sInstance->release();
 		sInstance = nullptr;
 	}
@@ -247,7 +247,7 @@ SimpleJsBridge::SimpleJsBridge()
 	mPrefix = "ZhejiangZhangjing";
 	mAfterfix = "2018.01.09";
 
-	
+
 	cocos2d::Director::getInstance()->getScheduler()->schedule(CC_CALLBACK_1(SimpleJsBridge::callJsRealNativePerFrame, this), this, 0.03f, false, "SimpleJsBridge");
 }
 SimpleJsBridge::~SimpleJsBridge()
@@ -274,7 +274,7 @@ void SimpleJsBridge::onLobbyTunnelConnectSuccess()//成功连接大厅服务器
 	callJsFromNative(GetStrFromRoot(paramRoot));
 
 	//启动心跳包
-	NetApp::GetInstance()->setHeartbeatFunc([this]()->void{
+	NetApp::GetInstance()->setHeartbeatFunc([this]()->void {
 
 		//心跳包时间计数
 		static int time_old = 0;
@@ -284,7 +284,7 @@ void SimpleJsBridge::onLobbyTunnelConnectSuccess()//成功连接大厅服务器
 		{
 			time_old = time_new;
 
-			if (NetApp::GetInstance()->getLobbyTunnel()->isConnected()){
+			if (NetApp::GetInstance()->getLobbyTunnel()->isConnected()) {
 				MAKE_PARAM_ROOT(NATIVE_2_JS_HEARTBEAT, 0, 0);
 				callJsFromNative(GetStrFromRoot(paramRoot));
 			}
@@ -300,7 +300,7 @@ void SimpleJsBridge::onLobbyTunnelConnectTimeout()		//连接大厅服务器超�
 }
 
 //连接错误
-void SimpleJsBridge::onLobbyTunnelConnectError(int code){
+void SimpleJsBridge::onLobbyTunnelConnectError(int code) {
 	MAKE_PARAM_SOCKET("onLobbyTunnelConnectError", code);
 	callJsFromNative(GetStrFromRoot(paramRoot));
 }
@@ -313,12 +313,12 @@ void SimpleJsBridge::onLobbyTunnelClose()	//断开大厅服务器
 }
 
 //客户端recv异常,send异常,网络层buf溢出,select出现问题,都会回调到这个以下接口
-void SimpleJsBridge::onLobbyTunnelError(int code){
+void SimpleJsBridge::onLobbyTunnelError(int code) {
 	MAKE_PARAM_SOCKET("onLobbyTunnelError", code);
 	callJsFromNative(GetStrFromRoot(paramRoot));
 }
 
-void SimpleJsBridge::onLobbyMsg(const int code, const char* msg, const unsigned int len, const int seq){
+void SimpleJsBridge::onLobbyMsg(const int code, const char* msg, const unsigned int len, const int seq) {
 	MAKE_PARAM_SOCKET("onLobbyMsg", code);
 	paramRoot.AddMember(MACRO_ARG2, len, allocator);
 	paramRoot.AddMember(MACRO_ARG3, seq, allocator);
@@ -334,7 +334,7 @@ void SimpleJsBridge::setNativeListener(std::function<void(const std::string&, co
 	mListener = listener;
 }
 
-std::string SimpleJsBridge::reqSocket(const std::string& param, const std::string& buffer){
+std::string SimpleJsBridge::reqSocket(const std::string& param, const std::string& buffer) {
 
 	rapidjson::Document doc;
 	rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> &allocator = doc.GetAllocator();
@@ -344,11 +344,11 @@ std::string SimpleJsBridge::reqSocket(const std::string& param, const std::strin
 		goto FAILED;
 
 	doc.Parse(param.c_str());
-	if (doc.HasParseError()){
+	if (doc.HasParseError()) {
 		LOGE("reqSocket param parse failed\n");
 		goto FAILED;
 	}
-	else{
+	else {
 		std::string socketM = doc[MACRO_ARG0].GetString();
 		std::string socketP = doc[MACRO_ARG1].GetString();
 
@@ -357,39 +357,39 @@ std::string SimpleJsBridge::reqSocket(const std::string& param, const std::strin
 			seq = doc[MACRO_SEQ].GetInt();
 
 		doc.Parse(socketP.c_str());//解析具体的参数
-		if (doc.HasParseError()){
+		if (doc.HasParseError()) {
 			LOGE("reqSocket socketP parse failed\n");
 			goto FAILED;
 		}
 
-		if (socketM == "connectLobby"){
+		if (socketM == "connectLobby") {
 			std::string ip = doc["ip"].GetString();
 			int port = doc["port"].GetInt();
 			int to = doc["timeout"].GetInt();
 
-			if (mReq->connectLobby(ip.c_str(), port, to) == -1){
+			if (mReq->connectLobby(ip.c_str(), port, to) == -1) {
 				LOGE("connectLobby send failed\n");
 				goto FAILED;
 			}
 		}
-		else if (socketM == "disConnectLobby"){
+		else if (socketM == "disConnectLobby") {
 			mReq->disConnectLobby();
 		}
-		else if (socketM == "sendMsgToLobby"){
-			if (!doc.HasMember("len")){
+		else if (socketM == "sendMsgToLobby") {
+			if (!doc.HasMember("len")) {
 				LOGE("sendMsgToLobby need len\n");
 				goto FAILED;
 			}
 			int len = doc["len"].GetInt();
 
-			if (len != buffer.length()){//如果长度不匹配
+			if (len != buffer.length()) {//如果长度不匹配
 				LOGE("sendMsgToLobby len != buffer.length()\n");
 				goto FAILED;
 			}
 
 			bool needBack = doc["needBack"].GetBool();
 
-			if (mReq->sendMsgToLobby(buffer.c_str(), len, seq, needBack) == 0){
+			if (mReq->sendMsgToLobby(buffer.c_str(), len, seq, needBack) == 0) {
 				LOGE("sendMsgToLobby send failed\n");
 				goto FAILED;
 			}
@@ -404,13 +404,13 @@ FAILED:
 	return GetStrFromRoot(root);
 }
 
-std::string SimpleJsBridge::reqHttp(const std::string& param){
+std::string SimpleJsBridge::reqHttp(const std::string& param) {
 	rapidjson::Document doc;
 	rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> &allocator = doc.GetAllocator();
 	rapidjson::Value root(rapidjson::kObjectType);
 
 	doc.Parse(param.c_str());
-	if (doc.HasParseError()){
+	if (doc.HasParseError()) {
 		goto FAILED;
 	}
 	else {
@@ -421,21 +421,21 @@ std::string SimpleJsBridge::reqHttp(const std::string& param){
 		int seq = doc[MACRO_SEQ].GetInt();
 
 		doc.Parse(httpP.c_str());//解析具体的参数
-		if (doc.HasParseError()){
+		if (doc.HasParseError()) {
 			goto FAILED;
 		}
 
 		std::map<std::string, std::string> mapParam;
-		for (auto it = doc.MemberBegin(); it != doc.MemberEnd(); it++){
+		for (auto it = doc.MemberBegin(); it != doc.MemberEnd(); it++) {
 			mapParam.insert(std::make_pair(it->name.GetString(), it->value.GetString()));
 		}
 		std::string reqParam;
-		for (std::map<std::string, std::string>::iterator it = mapParam.begin(); it != mapParam.end();){
+		for (std::map<std::string, std::string>::iterator it = mapParam.begin(); it != mapParam.end();) {
 
 			std::string value = it->second;
 			reqParam += it->first + "=" + value;
 			it++;
-			if (it != mapParam.end()){
+			if (it != mapParam.end()) {
 				reqParam += "&";
 			}
 		}
@@ -460,7 +460,7 @@ std::string SimpleJsBridge::reqHttp(const std::string& param){
 		pUserData->seq = seq;
 		strcpy(pUserData->method, httpM.c_str());
 		pUserData->param = new char[httpP.length() + 1];
-		if (!pUserData->param){
+		if (!pUserData->param) {
 			delete pUserData;
 			goto FAILED;
 		}
@@ -468,7 +468,7 @@ std::string SimpleJsBridge::reqHttp(const std::string& param){
 		strcpy(pUserData->param, httpP.c_str());
 		httpReq->setUserData(pUserData);
 
-		ccHttpRequestCallback callBack = [this](HttpClient* client, HttpResponse* response)->void{
+		ccHttpRequestCallback callBack = [this](HttpClient* client, HttpResponse* response)->void {
 			HttpUserData* pData = (HttpUserData*)response->getHttpRequest()->getUserData();
 
 #if (DEBUG_NET_HTTP) 
@@ -491,7 +491,7 @@ std::string SimpleJsBridge::reqHttp(const std::string& param){
 			paramRoot.AddMember(MACRO_SEQ, pData->seq, allocator);//请求序列
 
 			auto vect = response->getResponseData();
-			if (response->isSucceed() && !vect->empty()){
+			if (response->isSucceed() && !vect->empty()) {
 				rapidjson::Value arg2(rapidjson::kObjectType);
 				// 				std::string arg2Str;
 				// 				arg2Str.insert(arg2Str.begin(), vect->begin(), vect->end());
@@ -560,7 +560,7 @@ void SimpleJsBridge::callJsRealNativePerFrame(float)//一帧只处理一次服�
 		data = mParams.front();
 		mParams.pop_front();
 	}
-	
+
 	auto lambda = [=]() -> void {
 		if (mListener)
 			mListener(data.param, data.buffer);
@@ -588,7 +588,7 @@ bool Def_SimpleJsBridge_CallNativeFromJs(JSContext *cx, unsigned int argc, jsval
 		JSB_PRECONDITION2(ok, cx, false, "js_Call_Native : Error processing param arguments 2");
 
 		std::string arg2;
-		if (argc == 3 && args.get(2).isString()){
+		if (argc == 3 && args.get(2).isString()) {
 			arg2 = jsval_to_std_string_len(cx, args.get(2));
 		}
 
@@ -685,7 +685,7 @@ bool Def_Native_Md5(JSContext *cx, unsigned int argc, jsval *vp)
 	return false;
 }
 
-bool Def_Native_Md5File(JSContext *cx, unsigned int argc, jsval *vp){
+bool Def_Native_Md5File(JSContext *cx, unsigned int argc, jsval *vp) {
 	bool ok = true;
 	JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
 	if (argc == 1)
@@ -778,7 +778,7 @@ void register_SimpleJSBridge(JSContext *cx, JS::HandleObject ns)
 	jsb_register_class<SimpleJsBridge>(cx, jsb_simple_bridge_class, proto, JS::NullPtr());
 }
 
-void register_custom_js(JSContext *cx, JS::HandleObject global){
+void register_custom_js(JSContext *cx, JS::HandleObject global) {
 	// Get the simple root
 	JS::RootedObject ns(cx);
 	get_or_create_js_obj(cx, global, "simple", &ns);
