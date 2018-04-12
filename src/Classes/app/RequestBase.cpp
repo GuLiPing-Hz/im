@@ -1,4 +1,4 @@
-﻿/*************************************
+/*************************************
 *请求处理类 源文件
 *************************************/
 #include "../wrap/wrap_config.h"
@@ -14,9 +14,11 @@
 // #include <Windows.h>  
 // #include <Winsock2.h> 
 
+#if CFG_TARGET_PLATFORM == CC_PLATFORM_ANDROID
 #ifdef COCOS_PROJECT
 #else
 #include "../jni/JniHelper.h"
+#endif
 #endif
 
 #define HONGBAO_ID_LEN 51

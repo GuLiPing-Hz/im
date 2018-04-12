@@ -1,5 +1,5 @@
 #include "simple_util_bridge_JsIOSBridge.h"
-#include "wrap/config.h"
+#include "wrap/wrap_config.h"
 
 #ifdef COCOS_PROJECT
 #include "bridge/SimpleJsBridge.h"

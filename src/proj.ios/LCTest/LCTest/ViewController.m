@@ -73,6 +73,11 @@
     self.mConnectReq = [LCRequest listenConnect:^(int type,NSDictionary* successData,int failedCode,NSString* reqJson){
         //连接断开了.我们先移除监听
         [LConnection removeReq:self.mConnectReq];
+        //[LConnection removeReq:self.mSayReq];
+        
+        //把房间信息先清空
+        self.mMyRoomId = nil;
+        self.mIsInRoom = NO;
         
         //监听不会有成功的回调
         if(type == RESPONSE_FAILED){
@@ -85,13 +90,12 @@
                     
                     //重连成功的时候,我们再加上
                     [LConnection appendReq:self.mConnectReq];
+                    //[LConnection appendReq:self.mSayReq];
                 } else {
                     [self showStatus:[NSString stringWithFormat:@"重连超过最大次数,返回登录界面"]];
                     
                     self.mMyUID = nil;
-                    self.mMyRoomId = nil;
                     self.mIsLogin = NO;
-                    self.mIsInRoom = NO;
                 }
             }];
         } else if(type == RESPONSE_CLOSED){
@@ -112,9 +116,7 @@
             }
             
             self.mMyUID = nil;
-            self.mMyRoomId = nil;
             self.mIsLogin = NO;
-            self.mIsInRoom = NO;
         }
         
     } withAuto:NO];

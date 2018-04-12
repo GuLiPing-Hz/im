@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3DABC3D9207F7C2000795151 /* allocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 3DABC3D5207F7C2000795151 /* allocator.h */; };
+		3DABC3DA207F7C2000795151 /* serversocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 3DABC3D6207F7C2000795151 /* serversocket.h */; };
+		3DABC3DB207F7C2000795151 /* serversocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3DABC3D7207F7C2000795151 /* serversocket.cpp */; };
+		3DABC3DC207F7C2000795151 /* wrap_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 3DABC3D8207F7C2000795151 /* wrap_config.h */; };
 		3F31AACA1F8B7343000FF66B /* LConnectionMain.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F31AAC81F8B7343000FF66B /* LConnectionMain.h */; };
 		3F31AAD91F8B75A2000FF66B /* LConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F31AAD71F8B75A2000FF66B /* LConnection.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3F31AADA1F8B75A2000FF66B /* LConnection.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3F31AAD81F8B75A2000FF66B /* LConnection.mm */; };
@@ -75,6 +79,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3DABC3D5207F7C2000795151 /* allocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = allocator.h; sourceTree = "<group>"; };
+		3DABC3D6207F7C2000795151 /* serversocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = serversocket.h; sourceTree = "<group>"; };
+		3DABC3D7207F7C2000795151 /* serversocket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = serversocket.cpp; sourceTree = "<group>"; };
+		3DABC3D8207F7C2000795151 /* wrap_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wrap_config.h; sourceTree = "<group>"; };
 		3F30292D1F90CC5D00BF0ED6 /* LConnectionTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LConnectionTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3F3029441F90CC5E00BF0ED6 /* LConnectionTestUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LConnectionTestUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3F31AAC51F8B7343000FF66B /* LConnection.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = LConnection.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -222,7 +230,6 @@
 		3FEAE1AC1FCFFB900043CDE1 /* reactor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = reactor.h; sourceTree = "<group>"; };
 		3FEAE1AD1FCFFB900043CDE1 /* thread_mgr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = thread_mgr.h; sourceTree = "<group>"; };
 		3FEAE1AE1FCFFB900043CDE1 /* data_block.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = data_block.h; sourceTree = "<group>"; };
-		3FEAE1AF1FCFFB900043CDE1 /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		3FEAE1B11FCFFBC50043CDE1 /* md5.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = md5.cpp; sourceTree = "<group>"; };
 		3FEAE1B21FCFFBC50043CDE1 /* md5.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = md5.h; sourceTree = "<group>"; };
 		3FF0AA0D1FA8774D0004CC64 /* merge.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = merge.sh; sourceTree = "<group>"; };
@@ -423,43 +430,46 @@
 		3F31AB3A1F8B883E000FF66B /* wrap */ = {
 			isa = PBXGroup;
 			children = (
-				3FEAE1A11FCFFB8F0043CDE1 /* ext */,
 				3FEAE1991FCFFB8E0043CDE1 /* buffer_value.cpp */,
-				3FEAE1A91FCFFB8F0043CDE1 /* buffer_value.h */,
 				3FEAE1891FCFFB8D0043CDE1 /* client_socket.cpp */,
+				3FEAE1AA1FCFFB900043CDE1 /* data_decoder.cpp */,
+				3FEAE1A81FCFFB8F0043CDE1 /* event_handler.cpp */,
+				3FEAE1971FCFFB8E0043CDE1 /* file_mgr.cpp */,
+				3FEAE1881FCFFB8D0043CDE1 /* funcs.cpp */,
+				3FEAE19D1FCFFB8E0043CDE1 /* http_download_mgr.cpp */,
+				3FEAE19B1FCFFB8E0043CDE1 /* http_download.cpp */,
+				3FEAE18F1FCFFB8D0043CDE1 /* httpcontent.cpp */,
+				3FEAE1921FCFFB8D0043CDE1 /* native_buffer.cpp */,
+				3FEAE18D1FCFFB8D0043CDE1 /* reactor.cpp */,
+				3DABC3D7207F7C2000795151 /* serversocket.cpp */,
+				3FEAE1A71FCFFB8F0043CDE1 /* thread_informer.cpp */,
+				3FEAE1981FCFFB8E0043CDE1 /* thread_mgr.cpp */,
+				3FEAE18E1FCFFB8D0043CDE1 /* timer.cpp */,
+				3DABC3D5207F7C2000795151 /* allocator.h */,
+				3FEAE1A91FCFFB8F0043CDE1 /* buffer_value.h */,
 				3FEAE1901FCFFB8D0043CDE1 /* client_socket.h */,
-				3FEAE1AF1FCFFB900043CDE1 /* config.h */,
 				3FEAE18A1FCFFB8D0043CDE1 /* counter.h */,
 				3FEAE1AE1FCFFB900043CDE1 /* data_block.h */,
-				3FEAE1AA1FCFFB900043CDE1 /* data_decoder.cpp */,
 				3FEAE19A1FCFFB8E0043CDE1 /* data_decoder.h */,
-				3FEAE1A81FCFFB8F0043CDE1 /* event_handler.cpp */,
 				3FEAE1871FCFFB8D0043CDE1 /* event_handler.h */,
-				3FEAE1971FCFFB8E0043CDE1 /* file_mgr.cpp */,
 				3FEAE19E1FCFFB8F0043CDE1 /* file_mgr.h */,
-				3FEAE1881FCFFB8D0043CDE1 /* funcs.cpp */,
 				3FEAE1941FCFFB8D0043CDE1 /* funcs.h */,
-				3FEAE19D1FCFFB8E0043CDE1 /* http_download_mgr.cpp */,
 				3FEAE18B1FCFFB8D0043CDE1 /* http_download_mgr.h */,
-				3FEAE19B1FCFFB8E0043CDE1 /* http_download.cpp */,
 				3FEAE1AB1FCFFB900043CDE1 /* http_download.h */,
 				3FEAE1951FCFFB8D0043CDE1 /* http_downtype.h */,
-				3FEAE18F1FCFFB8D0043CDE1 /* httpcontent.cpp */,
 				3FEAE18C1FCFFB8D0043CDE1 /* httpcontent.h */,
 				3FEAE1931FCFFB8D0043CDE1 /* mutex.h */,
-				3FEAE1921FCFFB8D0043CDE1 /* native_buffer.cpp */,
 				3FEAE1851FCFFB8C0043CDE1 /* native_buffer.h */,
 				3FEAE19F1FCFFB8F0043CDE1 /* pool.h */,
-				3FEAE18D1FCFFB8D0043CDE1 /* reactor.cpp */,
 				3FEAE1AC1FCFFB900043CDE1 /* reactor.h */,
 				3FEAE19C1FCFFB8E0043CDE1 /* seq_map.h */,
-				3FEAE1A71FCFFB8F0043CDE1 /* thread_informer.cpp */,
+				3DABC3D6207F7C2000795151 /* serversocket.h */,
 				3FEAE1A01FCFFB8F0043CDE1 /* thread_informer.h */,
-				3FEAE1981FCFFB8E0043CDE1 /* thread_mgr.cpp */,
 				3FEAE1AD1FCFFB900043CDE1 /* thread_mgr.h */,
-				3FEAE18E1FCFFB8D0043CDE1 /* timer.cpp */,
 				3FEAE1961FCFFB8E0043CDE1 /* timer.h */,
 				3FEAE1861FCFFB8C0043CDE1 /* typedefs.h */,
+				3DABC3D8207F7C2000795151 /* wrap_config.h */,
+				3FEAE1A11FCFFB8F0043CDE1 /* ext */,
 			);
 			path = wrap;
 			sourceTree = "<group>";
@@ -548,8 +558,11 @@
 			files = (
 				3F31AADF1F8B7826000FF66B /* LCRequest.h in Headers */,
 				3F31AB9A1F8B8DBC000FF66B /* SimpleBridgeIos.h in Headers */,
+				3DABC3DC207F7C2000795151 /* wrap_config.h in Headers */,
 				3F31AAD91F8B75A2000FF66B /* LConnection.h in Headers */,
+				3DABC3DA207F7C2000795151 /* serversocket.h in Headers */,
 				3F31AACA1F8B7343000FF66B /* LConnectionMain.h in Headers */,
+				3DABC3D9207F7C2000795151 /* allocator.h in Headers */,
 				3F31AB9E1F8B9418000FF66B /* SimpleBridge.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -744,6 +757,7 @@
 				3FEDD1921F8C8080006D59F9 /* inflate.c in Sources */,
 				3FEDD1931F8C8080006D59F9 /* inftrees.c in Sources */,
 				3FEDD1941F8C8080006D59F9 /* trees.c in Sources */,
+				3DABC3DB207F7C2000795151 /* serversocket.cpp in Sources */,
 				3FEDD1951F8C8080006D59F9 /* uncompr.c in Sources */,
 				3FEDD1961F8C8080006D59F9 /* zutil.c in Sources */,
 				3FEDD1851F8C805E006D59F9 /* ioapi.c in Sources */,
@@ -950,7 +964,7 @@
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 97BN32YDJL;
+				DEVELOPMENT_TEAM = PD2JU85N2G;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -971,7 +985,7 @@
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 97BN32YDJL;
+				DEVELOPMENT_TEAM = PD2JU85N2G;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
