@@ -1,66 +1,66 @@
-#ifndef PROTOCOL_H__20170930
+ï»¿#ifndef PROTOCOL_H__20170930
 #define PROTOCOL_H__20170930
 
 enum eCMD{
 	/*
 	C->S:
-	string uid    ÓÃ»§ID
+	string uid    ç”¨æˆ·ID
 	string token  Token
-	string appkey Ó¦ÓÃKey
-	S->C: ¿Õ
+	string appkey åº”ç”¨Key
+	S->C: ç©º
 	*/
-	CMD_LOGIN_C2S2C = 1,//µÇÂ¼
+	CMD_LOGIN_C2S2C = 1,//ç™»å½•
 
 	/*
-	C->S: ¿Õ
-	S->C: ¿Õ ¿Í»§¶Ë²»Àí»áÃ»ÊÂ
+	C->S: ç©º
+	S->C: ç©º å®¢æˆ·ç«¯ä¸ç†ä¼šæ²¡äº‹
 	*/
-	CMD_LOGOUT_C2S2C = 2,//µÇ³ö
+	CMD_LOGOUT_C2S2C = 2,//ç™»å‡º
 
 	/*
-	C->S: Ò»Ñù
-	S->C: Ò»Ñù
-	char    type       type==0Ê±,to_uid±íÊ¾ÊÇÓÃ»§id£¬type==1Ê±,to_uid±íÊ¾ÊÇÈºid
-	string from_uid   ·¢ÑÔÕß 0 ±íÊ¾ÏµÍ³,ÆäËû±íÊ¾ÓÃ»§ID
-	string to_uid     ·¢ÑÔÕß¶ÔÏó
-	string content    json×Ö·û´®
-	string ext        json×Ö·û´®
+	C->S: ä¸€æ ·
+	S->C: ä¸€æ ·
+	char    type       type==0æ—¶,to_uidè¡¨ç¤ºæ˜¯ç”¨æˆ·idï¼Œtype==1æ—¶,to_uidè¡¨ç¤ºæ˜¯ç¾¤id
+	string from_uid   å‘è¨€è€… 0 è¡¨ç¤ºç³»ç»Ÿ,å…¶ä»–è¡¨ç¤ºç”¨æˆ·ID
+	string to_uid     å‘è¨€è€…å¯¹è±¡
+	string content    jsonå­—ç¬¦ä¸²
+	string ext        jsonå­—ç¬¦ä¸²
 	*/
-	CMD_SAYTO_C2S2C = 3,//·¢ÑÔ
+	CMD_SAYTO_C2S2C = 3,//å‘è¨€
 
 	/*
 	S->C:
-	string from_uid   0 ±íÊ¾ÏµÍ³,ÆäËû±íÊ¾ÓÃ»§ID
-	string content    json×Ö·û´®
+	string from_uid   0 è¡¨ç¤ºç³»ç»Ÿ,å…¶ä»–è¡¨ç¤ºç”¨æˆ·ID
+	string content    jsonå­—ç¬¦ä¸²
 	*/
-	CMD_NOTIFY_S2C = 4,//Í¨ÖªÏûÏ¢
+	CMD_NOTIFY_S2C = 4,//é€šçŸ¥æ¶ˆæ¯
 
 	/*
 	C->S:
-	string room_id  ·¿¼äID
+	string room_id  æˆ¿é—´ID
 
 	S->C:
-	string room_id  ·¿¼äID
+	string room_id  æˆ¿é—´ID
 	string uid
 	*/
-	CMD_ENTERROOM_C2S2C = 5,//½øÈë·¿¼ä
+	CMD_ENTERROOM_C2S2C = 5,//è¿›å…¥æˆ¿é—´
 
 	/*
-	C->S: ¿Õ
+	C->S: ç©º
 	S->C:
 	string uid
 	*/
-	CMD_EXITROOM_C2S2C = 6,//Àë¿ª·¿¼ä
+	CMD_EXITROOM_C2S2C = 6,//ç¦»å¼€æˆ¿é—´
 
 	/*
-	C->S: ¿Õ
+	C->S: ç©º
 	*/
-	CMD_KEEPALIVE_C2S = 7,//ÐÄÌø°ü
+	CMD_KEEPALIVE_C2S = 7,//å¿ƒè·³åŒ…
 
 	/*
-	S->C: ¿Õ
+	S->C: ç©º
 	*/
-	CMD_DRIVEAWAY_S2C = 8,//ÌßÈËÏÂÏß
+	CMD_DRIVEAWAY_S2C = 8,//è¸¢äººä¸‹çº¿
 };
 
 #endif // PROTOCOL_H__20170930
