@@ -171,6 +171,8 @@ static BOOL sIsLogin = NO;
  */
 +(BOOL)logout
 {
+    return [LConnection disconnect];
+    /*
     if([LConnection logout]){
         sIsLogin = NO;
         
@@ -182,6 +184,7 @@ static BOOL sIsLogin = NO;
         return YES;
     }
     return NO;
+    */
 }
 
 /**

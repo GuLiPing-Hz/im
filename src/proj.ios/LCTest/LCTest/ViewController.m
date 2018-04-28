@@ -201,6 +201,7 @@
         self.mMyRoomId = nil;
         self.mIsInRoom = NO;
         
+        [self showStatus:@"登出成功"];
         [self showTip:@"登出成功"];
     } else {
         [self showTip:@"登出失败"];

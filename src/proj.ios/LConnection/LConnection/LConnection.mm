@@ -83,6 +83,9 @@ static NSLock* sLock = NULL;
 {
     [sLock lock];
     [sLCRequests removeObject:request];
+    if([sLCRequests count]>3){
+        int glp = 1;
+    }
     [sLock unlock];
 }
 
