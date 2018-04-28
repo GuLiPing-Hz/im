@@ -211,18 +211,20 @@ public class LCRequest {
      * @return
      */
     public static boolean logout() {
-        if (LConnection.logout()) {
-            sIsLogin = false;
+        return LConnection.disconnect();
 
-            LConnection.sHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    LConnection.disconnect();
-                }
-            }, 1000);
-            return true;
-        }
-        return false;
+//        if (LConnection.logout()) {
+//            sIsLogin = false;
+//
+//            LConnection.sHandler.postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    LConnection.disconnect();
+//                }
+//            }, 1000);
+//            return true;
+//        }
+//        return false;
     }
 
     /**
