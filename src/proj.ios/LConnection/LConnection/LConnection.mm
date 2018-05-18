@@ -74,7 +74,8 @@ static NSLock* sLock = NULL;
 +(void)appendReq:(LCRequest*) request
 {
     [sLock lock];
-    if(request.mResponse)//需要监听的请求才会放到监听列表中,否则没有意义
+    //需要监听的请求才会放到监听列表中,否则没有意义
+    if(request.mResponse)
         [sLCRequests addObject:request];
     [sLock unlock];
 }
@@ -83,9 +84,6 @@ static NSLock* sLock = NULL;
 {
     [sLock lock];
     [sLCRequests removeObject:request];
-    if([sLCRequests count]>3){
-        int glp = 1;
-    }
     [sLock unlock];
 }
 
@@ -103,36 +101,47 @@ static NSLock* sLock = NULL;
         NSNumber* nsCode = result[RESULT_CODE];
         int code = nsCode.intValue;
         
+//        LOGI("method = %s",method);
+        
         [sLock lock];
         for(int i = (int)sLCRequests.count-1;i>=0;i--){
             LCRequest* request = sLCRequests[i];
+            
+            //优先移除监听
+            if (request.mAutoRemove){//检查是否需要移除当前监听
+                [sLCRequests removeObject:request];
+            }
+            
+//            LOGI("for method = %s , request method = %s",method,request.mMethod.UTF8String);
             
             if ([request.mMethod caseInsensitiveCompare:@"connectLobby" ] == NSOrderedSame && (strcmp(method, "onLobbyTunnelConnectSuccess") == 0
                                                                       || strcmp(method , "onLobbyTunnelConnectTimeout" ) == 0|| strcmp(method , "onLobbyTunnelConnectError")==0
                                                                       || strcmp(method , "onLobbyTunnelClose")==0 || strcmp(method , "onLobbyTunnelError")==0 || strcmp(method,"driveAway") == 0)) {
                 if (strcmp(method , "onLobbyTunnelConnectSuccess") == 0) {
                     dispatch_async(dispatch_get_main_queue(), ^{//分发到主线程
-                        //[request.mResponse onSuccess:NULL];
-                        request.mResponse(0, nil, 0, nil);
+                        request.mResponse(RESPONSE_SUCCESS, nil, 0, nil);
                     });
                 } else if (strcmp(method , "onLobbyTunnelClose") == 0 || strcmp(method,"driveAway") == 0) {
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        request.mResponse(2, nil, code, nil);
+                        request.mResponse(RESPONSE_CLOSED, nil, code, nil);
                     });
                 } else {
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        request.mResponse(1, nil, code, nil);
+                        request.mResponse(RESPONSE_FAILED, nil, code, nil);
                     });
                 }
-                if (request.mAutoRemove)
-                {
-                    [sLCRequests removeObject:request];
-                }
-            } else if (strcmp(request.mMethod.UTF8String, method) == 0) {
+            }
+            else if(strcmp(request.mMethod.UTF8String, "login") == 0 && strcmp(method , "onLobbyTunnelError")==0){
+                //如果我们在登录的时候监听到error
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    request.mResponse(RESPONSE_FAILED, nil, code, result[RESULT_REQUEST]);
+                });
+            }
+            else if (strcmp(request.mMethod.UTF8String, method) == 0) {
                 if (code == 0) {
                     if (strcmp(method , "login") == 0) {
                         dispatch_async(dispatch_get_main_queue(), ^{
-                            request.mResponse(0, nil, 0, nil);
+                            request.mResponse(RESPONSE_SUCCESS, nil, 0, nil);
                         });
                     } else if (strcmp(method , "sayTo") == 0) {
                         id param4 = result[RESULT_ARG4];
@@ -140,43 +149,37 @@ static NSLock* sLock = NULL;
                         ,@"type",result[RESULT_ARG1],@"from",result[RESULT_ARG2],@"to",result[RESULT_ARG3],@"content",@"ext",param4 == nil?@"":param4, nil];
                         
                         dispatch_async(dispatch_get_main_queue(), ^{
-                            request.mResponse(0, data, 0, nil);
-                            //[request.mResponse onSuccess:data];
+                            request.mResponse(RESPONSE_SUCCESS, data, 0, nil);
                         });
                     } else if (strcmp(method , "notify") == 0) {
                         NSDictionary* data = [NSDictionary dictionaryWithObjectsAndKeys:result[RESULT_ARG0]
                                               ,@"from",result[RESULT_ARG1],@"content", nil];
                         
                         dispatch_async(dispatch_get_main_queue(), ^{
-                            request.mResponse(0, data, 0, nil);
-                            //[request.mResponse onSuccess:data];
+                            request.mResponse(RESPONSE_SUCCESS, data, 0, nil);
                         });
                     } else if (strcmp(method , "enterRoom") == 0) {
                         NSDictionary* data = [NSDictionary dictionaryWithObjectsAndKeys:result[RESULT_ARG0]
                                               ,@"room_id",result[RESULT_ARG1],@"uid", nil];
                         
                         dispatch_async(dispatch_get_main_queue(), ^{
-                            request.mResponse(0, data, 0, nil);
-                            //[request.mResponse onSuccess:data];
+                            request.mResponse(RESPONSE_SUCCESS, data, 0, nil);
                         });
                     } else if (strcmp(method , "exitRoom") == 0) {
                         NSDictionary* data = [NSDictionary dictionaryWithObjectsAndKeys:result[RESULT_ARG0]                                              ,@"uid", nil];
                         
                         dispatch_async(dispatch_get_main_queue(), ^{
-                            request.mResponse(0, data, 0, nil);
-                            //[request.mResponse onSuccess:data];
+                            request.mResponse(RESPONSE_SUCCESS, data, 0, nil);
                         });
                     }
                 } else {
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        request.mResponse(1, nil, code, result[RESULT_REQUEST]);
+                        request.mResponse(RESPONSE_FAILED, nil, code, result[RESULT_REQUEST]);
                         //[request.mResponse onFailed:code withReq:result[RESULT_REQUEST]];
                     });
                 }
                 
-                if (request.mAutoRemove){//检查是否需要移除当前监听
-                    [sLCRequests removeObject:request];
-                }
+                
             }
         }
         

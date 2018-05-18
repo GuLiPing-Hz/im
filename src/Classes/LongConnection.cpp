@@ -1,4 +1,4 @@
-﻿#include "LongConnection.h"
+#include "LongConnection.h"
 #include "app/RequestBase.h"
 #include "wrap/counter.h"
 #include "wrap/native_buffer.h"
@@ -185,7 +185,6 @@ int LCExitRoom() {
 }
 
 int LCHeartbeat() {
-    LOGI("%s\n", __FUNCTION__);
     Wrap::NativeBuffer *nativeBuf = BuildNativeBuffer(CMD_KEEPALIVE_C2S, 0);
     std::string ret = FinishNativeBufferW(nativeBuf);
     if (ret.empty())

@@ -1,4 +1,4 @@
-﻿#ifndef LONGCONNECTION_H__
+#ifndef LONGCONNECTION_H__
 #define LONGCONNECTION_H__
 
 class ResponseBase;

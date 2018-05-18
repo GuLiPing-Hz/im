@@ -22,6 +22,7 @@ static int sTimeout = 10;
 static int sMaxReLoginTimes = 3;
 static int sCurReloginTimes = 0;
 static BOOL sIsLogin = NO;
+static BOOL sISLogining = NO;
 
 +(BOOL)IsLogin
 {
@@ -106,6 +107,10 @@ static BOOL sIsLogin = NO;
     if(sAppKey == NULL || sIp == NULL || sPort == 0)
         return NULL;
     
+    if(sISLogining)//正在登录中
+        return NULL;
+    
+    sISLogining = YES;
     sIsLogin = NO;
     sUId = uid;
     sToken = token;
@@ -116,24 +121,28 @@ static BOOL sIsLogin = NO;
             if(type == RESPONSE_SUCCESS){
                 if ([LConnection login:uid withToken:token withKey:sAppKey])
                     LCRequest* ret = [[LCRequest alloc] init:@"login" withResponse:^(int type,NSDictionary* successData,int failedCode,NSString* reqJson){
+                        sISLogining = NO;
                         if(type == RESPONSE_SUCCESS){
                             sIsLogin = YES;
                         } else {
                             sIsLogin = NO;
                         }
-                        
                         if(response)
                             response(type,successData,failedCode,reqJson);
                     }];
-                else if(response){
-                    response(RESPONSE_FAILED,NULL,RESULT_REQ_NOT_SEND,NULL);
+                else {
+                    sISLogining = NO;
+                    if(response)
+                        response(RESPONSE_FAILED,NULL,RESULT_REQ_NOT_SEND,NULL);
                 }
-            } else if(response){
-                response(type,successData,failedCode,reqJson);
+            } else {
+                sISLogining = NO;
+                if(response)
+                    response(type,successData,failedCode,reqJson);
             }
         } withAuto:YES];
     }
-    
+    sISLogining = NO;
     return NULL;
 }
 
@@ -172,6 +181,7 @@ static BOOL sIsLogin = NO;
 +(BOOL)logout
 {
     return [LConnection disconnect];
+    sIsLogin = NO;
     /*
     if([LConnection logout]){
         sIsLogin = NO;

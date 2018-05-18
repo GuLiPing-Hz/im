@@ -1,4 +1,4 @@
-﻿#include "Tunnel.h"
+#include "Tunnel.h"
 #include "NetApp.h"
 
 #include "../wrap/wrap_config.h"
@@ -48,13 +48,13 @@ void Tunnel::onSocketClose()
 
 void Tunnel::onSocketRecvError(int errCode)
 {
-	LOGI("recv error, fd=%d, error=%d\n", getFD(), errCode);
+	LOGI("recv error, fd=%d, error=%d", getFD(), errCode);
 	onNetLevelError(errCode);
 }
 
 void Tunnel::onSocketSendError(int errCode)
 {
-	LOGI("send error, fd=%d, error=%d\n", getFD(), errCode);
+	LOGI("send error, fd=%d, error=%d", getFD(), errCode);
 	onNetLevelError(errCode);
 }
 
