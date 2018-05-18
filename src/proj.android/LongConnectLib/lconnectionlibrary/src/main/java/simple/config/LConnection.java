@@ -87,12 +87,15 @@ public class LConnection {
                     Iterator<LCRequest> it = sLCRequests.iterator();
                     while (it.hasNext()) {
                         final LCRequest request = it.next();
+
+                        if (request.mAutoRemove)//检查是否需要移除当前监听
+                            it.remove();
+
                         if (TextUtils.equals(request.mMethod, "connectLobby") && (TextUtils.equals(method, "onLobbyTunnelConnectSuccess")
                                 || TextUtils.equals(method, "onLobbyTunnelConnectTimeout") || TextUtils.equals(method, "onLobbyTunnelConnectError")
                                 || TextUtils.equals(method, "onLobbyTunnelClose") || TextUtils.equals(method, "onLobbyTunnelError")
                                 || TextUtils.equals(method, "driveAway")
                         )) {
-                            //it.remove();
                             if (TextUtils.equals(method, "onLobbyTunnelConnectSuccess")) {
                                 sHandler.post(new Runnable() {
                                     @Override
@@ -115,9 +118,16 @@ public class LConnection {
                                     }
                                 });
                             }
-                            if (request.mAutoRemove)
-                                it.remove();
-                        } else if (TextUtils.equals(request.mMethod, method)) {
+                        }
+                        else if(TextUtils.equals(request.mMethod, "login") && TextUtils.equals(method, "onLobbyTunnelError")){
+                            sHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    request.mResponse.onFailed(result.code, result.request);
+                                }
+                            });
+                        }
+                        else if (TextUtils.equals(request.mMethod, method)) {
                             if (result.code == 0) {
                                 if (TextUtils.equals(method, "login")) {
                                     sHandler.post(new Runnable() {
@@ -181,9 +191,6 @@ public class LConnection {
                                     }
                                 });
                             }
-
-                            if (request.mAutoRemove)//检查是否需要移除当前监听
-                                it.remove();
                         }
                     }
                     mLock.unlock();
