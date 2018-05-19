@@ -88,14 +88,14 @@ public class LConnection {
                     while (it.hasNext()) {
                         final LCRequest request = it.next();
 
-                        if (request.mAutoRemove)//检查是否需要移除当前监听
-                            it.remove();
-
                         if (TextUtils.equals(request.mMethod, "connectLobby") && (TextUtils.equals(method, "onLobbyTunnelConnectSuccess")
                                 || TextUtils.equals(method, "onLobbyTunnelConnectTimeout") || TextUtils.equals(method, "onLobbyTunnelConnectError")
                                 || TextUtils.equals(method, "onLobbyTunnelClose") || TextUtils.equals(method, "onLobbyTunnelError")
                                 || TextUtils.equals(method, "driveAway")
                         )) {
+                            if (request.mAutoRemove)//检查是否需要移除当前监听
+                                it.remove();
+
                             if (TextUtils.equals(method, "onLobbyTunnelConnectSuccess")) {
                                 sHandler.post(new Runnable() {
                                     @Override
@@ -120,6 +120,9 @@ public class LConnection {
                             }
                         }
                         else if(TextUtils.equals(request.mMethod, "login") && TextUtils.equals(method, "onLobbyTunnelError")){
+                            if (request.mAutoRemove)//检查是否需要移除当前监听
+                                it.remove();
+
                             sHandler.post(new Runnable() {
                                 @Override
                                 public void run() {
@@ -128,6 +131,9 @@ public class LConnection {
                             });
                         }
                         else if (TextUtils.equals(request.mMethod, method)) {
+                            if (request.mAutoRemove)//检查是否需要移除当前监听
+                                it.remove();
+
                             if (result.code == 0) {
                                 if (TextUtils.equals(method, "login")) {
                                     sHandler.post(new Runnable() {

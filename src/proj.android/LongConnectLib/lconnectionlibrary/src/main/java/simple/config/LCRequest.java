@@ -30,6 +30,7 @@ public class LCRequest {
     static int sMaxReLoginTimes = 3;
     static int sCurReloingTimes = 0;
     static boolean sIsLogin = false;
+    static boolean sIsLogining = false;
 
     public static boolean IsLogin() {
         return sIsLogin;
@@ -116,6 +117,10 @@ public class LCRequest {
         if (sAppkey == null || sIp == null || sPort == 0)
             return null;
 
+        if(sIsLogining)
+            return null;
+
+        sIsLogining = true;
         sIsLogin = false;
         sUId = uid;
         sToken = token;
@@ -132,6 +137,7 @@ public class LCRequest {
                             @Override
                             public void onSuccess(Bundle data) {
                                 sIsLogin = true;
+                                sIsLogining = false;
 
                                 if (response != null)
                                     response.onSuccess(data);
@@ -140,12 +146,13 @@ public class LCRequest {
                             @Override
                             public void onFailed(int code, String jsonReq) {
                                 sIsLogin = false;
-
+                                sIsLogining = false;
                                 if (response != null)
                                     response.onFailed(code, jsonReq);
                             }
                         });//构造一个监听
                     } else {
+                        sIsLogining = false;
                         if (response != null)
                             response.onFailed(LConnection.RESULT_REQ_NOT_SEND, null);
                     }
@@ -153,6 +160,7 @@ public class LCRequest {
 
                 @Override
                 public void onFailed(int code, String jsonReq) {
+                    sIsLogining = false;
                     if (response != null) {
                         response.onFailed(code, jsonReq);
                     }
@@ -160,6 +168,7 @@ public class LCRequest {
             }, true);
         }
 
+        sIsLogining = false;
         return null;
     }
 
