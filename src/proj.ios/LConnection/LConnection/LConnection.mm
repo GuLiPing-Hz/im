@@ -104,19 +104,20 @@ static NSLock* sLock = NULL;
 //        LOGI("method = %s",method);
         
         [sLock lock];
-        for(int i = (int)sLCRequests.count-1;i>=0;i--){
+        for(int i = (int)sLCRequests.count-1;i>=0;i--) {
             LCRequest* request = sLCRequests[i];
-            
-            //优先移除监听
-            if (request.mAutoRemove){//检查是否需要移除当前监听
-                [sLCRequests removeObject:request];
-            }
             
 //            LOGI("for method = %s , request method = %s",method,request.mMethod.UTF8String);
             
             if ([request.mMethod caseInsensitiveCompare:@"connectLobby" ] == NSOrderedSame && (strcmp(method, "onLobbyTunnelConnectSuccess") == 0
                                                                       || strcmp(method , "onLobbyTunnelConnectTimeout" ) == 0|| strcmp(method , "onLobbyTunnelConnectError")==0
                                                                       || strcmp(method , "onLobbyTunnelClose")==0 || strcmp(method , "onLobbyTunnelError")==0 || strcmp(method,"driveAway") == 0)) {
+                //优先移除监听
+                if (request.mAutoRemove) {//写在判断里面是因为必须找到对应的回调才能移除，否则依旧继续监听
+                //检查是否需要移除当前监听
+                    [sLCRequests removeObject:request];
+                }
+                
                 if (strcmp(method , "onLobbyTunnelConnectSuccess") == 0) {
                     dispatch_async(dispatch_get_main_queue(), ^{//分发到主线程
                         request.mResponse(RESPONSE_SUCCESS, nil, 0, nil);
@@ -132,12 +133,26 @@ static NSLock* sLock = NULL;
                 }
             }
             else if(strcmp(request.mMethod.UTF8String, "login") == 0 && strcmp(method , "onLobbyTunnelError")==0){
+                
+                //优先移除监听
+                if (request.mAutoRemove) {
+                    //检查是否需要移除当前监听
+                    [sLCRequests removeObject:request];
+                }
+                
                 //如果我们在登录的时候监听到error
                 dispatch_async(dispatch_get_main_queue(), ^{
                     request.mResponse(RESPONSE_FAILED, nil, code, result[RESULT_REQUEST]);
                 });
             }
             else if (strcmp(request.mMethod.UTF8String, method) == 0) {
+
+                //优先移除监听
+                if (request.mAutoRemove) {
+                    //检查是否需要移除当前监听
+                    [sLCRequests removeObject:request];
+                }
+
                 if (code == 0) {
                     if (strcmp(method , "login") == 0) {
                         dispatch_async(dispatch_get_main_queue(), ^{
@@ -178,8 +193,6 @@ static NSLock* sLock = NULL;
                         //[request.mResponse onFailed:code withReq:result[RESULT_REQUEST]];
                     });
                 }
-                
-                
             }
         }
         
