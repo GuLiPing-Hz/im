@@ -21,7 +21,7 @@ VSBridge::~VSBridge() {
 
 void VSBridge::callNative(const std::string& method, const std::string& param)
 {
-	LOGI("%s : %s\n", __FUNCTION__, param.c_str());
+	LOGI("%s : %s", __FUNCTION__, param.c_str());
 	if (method == "onLobbyTunnelConnectSuccess"){
 
 		rapidjson::Document doc;
@@ -53,16 +53,16 @@ void VSBridge::callNative(const std::string& method, const std::string& param)
 	else if (method == "enterRoom") {
 		LOGI("enterRoom %s\n", param.c_str());
 
-		rapidjson::Document doc;
-		rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> &allocator = doc.GetAllocator();
-		rapidjson::Value root(rapidjson::kObjectType);
-		root.AddMember("method", "sayTo", allocator);
-		root.AddMember("arg0", "0", allocator);
-		root.AddMember("arg1", "1000001", allocator);
-		root.AddMember("arg2", "1000002", allocator);
-		root.AddMember("arg3", "123456", allocator);
-		root.AddMember("arg4", "", allocator);
-		callByNative(GetStrFromRoot(root));
+		//rapidjson::Document doc;
+		//rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> &allocator = doc.GetAllocator();
+		//rapidjson::Value root(rapidjson::kObjectType);
+		//root.AddMember("method", "sayTo", allocator);
+		//root.AddMember("arg0", "0", allocator);
+		//root.AddMember("arg1", "1000001", allocator);
+		//root.AddMember("arg2", "1000002", allocator);
+		//root.AddMember("arg3", "123456", allocator);
+		//root.AddMember("arg4", "", allocator);
+		//callByNative(GetStrFromRoot(root));
 	}
 	else if (method == "exitRoom") {
 	}

@@ -3,11 +3,15 @@
 #include "buffer_value.h"
 #include "pool.h"
 
-namespace Wrap{
+namespace Wrap {
 
 	BufferValue *ReadNativeBufferValue(NativeBuffer *nativeBuf, int type, int &len) {
+		BufferValue* ret = NULL;
+		if (!nativeBuf)
+			return ret;
+
 		wrap_new_begin;
-		BufferValue *ret = wrap_new(BufferValue);//PoolMgr::GetIns()->getFromPool<BufferValue>("BufferValue");
+		ret = wrap_new(BufferValue);//PoolMgr::GetIns()->getFromPool<BufferValue>("BufferValue");
 		if (!ret)
 			return ret;
 
@@ -47,7 +51,146 @@ namespace Wrap{
 		return ret;
 	}
 
-	BufferValue* AutoParseNativeBufferEx(NativeBuffer *nativeBuf){
+	BufferValue *ReadNativeBufferSingleAndArray(NativeBuffer *nativeBuf, int type, int &len) {
+		if (type == BufferValue::type_char || type == BufferValue::type_short || type == BufferValue::type_int
+			|| type == BufferValue::type_int64 || type == BufferValue::type_float || type == BufferValue::type_str) {//TypeConfig._char+TypeConfig._array
+			return ReadNativeBufferValue(nativeBuf, type, len);
+		}
+		else if (type > BufferValue::type_str && type < BufferValue::type_array_custom)
+		{
+			//简单数组类型
+			BufferValue* ret = NULL;
+			if (!nativeBuf)
+				return ret;
+
+			wrap_new_begin;
+			ret = wrap_new(BufferValue);//PoolMgr::GetIns()->getFromPool<BufferValue>("BufferValue");
+			if (!ret)
+				return ret;
+
+			char realType = type & 0xf;//数据具体类型
+			short arraLen;
+			nativeBuf->readShort(arraLen);
+			// Log.i("readNativeBufferData realType=" + realType + ",arraLen=" + arraLen);
+
+			BufferValue *arra = wrap_new(BufferValue);//PoolMgr::GetIns()->getFromPool<BufferValue>("BufferValue");//数组存储
+			arra->type = (BufferValue::eDataType) realType;//数组的具体类型
+
+			for (int i = 0; i < arraLen; i++) {
+				int inLen = 0;
+				BufferValue *tempRet = ReadNativeBufferValue(nativeBuf, realType, inLen);
+				arra->list.push_back(tempRet);//把值记录下来
+			}
+
+			ret->list.push_back(arra);
+
+			return ret;
+		}
+		else {
+			return nullptr;
+		}
+	}
+
+	BufferValue *ReadNativeBufferSingleAndArrayEx(NativeBuffer *nativeBuf, int type, int &len) {
+		if (type == BufferValue::type_array_custom) {//自定义结构数组
+			BufferValue* ret = NULL;
+			if (!nativeBuf)
+				return NULL;
+
+			wrap_new_begin;
+			ret = wrap_new(BufferValue);//PoolMgr::GetIns()->getFromPool<BufferValue>("BufferValue");
+			if (!ret)
+				return ret;
+
+			char realType = type & 0xf;//数据具体类型
+			short arraLen;
+			nativeBuf->readShort(arraLen);
+			// Log.i("readNativeBufferData realType=" + realType + ",arraLen=" + arraLen);
+
+			BufferValue *arra = wrap_new(BufferValue);//PoolMgr::GetIns()->getFromPool<BufferValue>("BufferValue");//数组存储
+			arra->type = (BufferValue::eDataType) realType;//数组的具体类型
+			if (arraLen > 0) {//不是空数组
+				for (int i = 0; i < arraLen; i++) {
+					//读取数据结构长度
+					short structLen;
+					nativeBuf->readShort(structLen);
+					// Log.i("readNativeBufferData structLen = " + structLen);
+
+					int tempLen = 0;
+					BufferValue *struc = wrap_new(BufferValue);//PoolMgr::GetIns()->getFromPool<BufferValue>("BufferValue");//数据结构
+
+					//struc->isInner = false;
+					struc->type = BufferValue::type_custom;
+					while (tempLen < structLen) {
+						char tempType;
+						nativeBuf->readChar(tempType);
+						tempLen += 1;//1字节
+
+						int inLen = 0;
+						BufferValue *tempRet = ReadNativeBufferSingleAndArrayEx(nativeBuf, tempType, inLen);
+						struc->list.push_back(tempRet);//把值记录下来
+
+						if (inLen == 0) {//出现异常了！！！，
+							int remainLen = structLen - tempLen;
+							if (remainLen > 0) {
+								//把多余的数据跳过一下
+								nativeBuf->skipBuffer(remainLen);
+							}
+							break;
+						}
+
+						tempLen += inLen;
+					}
+					arra->list.push_back(struc);//放入结构数据
+				}
+			}
+
+			ret->list.push_back(arra);
+			return ret;
+		}
+		else {
+			return ReadNativeBufferSingleAndArray(nativeBuf, type, len);
+		}
+	}
+
+	//支持自定义结构嵌套自定义结构的解析
+	BufferValue* AutoParseNativeBufferEx(NativeBuffer *nativeBuf) {
+		// LOGI("AutoParseNativeBufferEx**************************************");
+		BufferValue* ret = NULL;
+		if (!nativeBuf)
+			return NULL;
+
+		wrap_new_begin;
+		ret = wrap_new(BufferValue);//PoolMgr::GetIns()->getFromPool<BufferValue>("BufferValue");
+		if (!ret)
+			return ret;
+
+		int len = 0;
+		do {
+			char type;
+			nativeBuf->readChar(type);//读取标志位
+			if (type > BufferValue::type_array_custom || type <= 0)//异常type
+				break;
+
+			if (type == BufferValue::type_array_custom) {//自定义结构
+				BufferValue* tempRet = ReadNativeBufferSingleAndArrayEx(nativeBuf, type, len);
+				//把值记录下来
+				ret->list.push_back(tempRet);
+			}
+			else {//简单数组或者简单值
+				BufferValue* tempRet = ReadNativeBufferSingleAndArray(nativeBuf, type, len);
+				//把值记录下来
+				ret->list.push_back(tempRet);
+			}
+
+		} while (nativeBuf->hasData());
+
+		return ret;
+	}
+
+	/*
+	不能解析自定义结构 嵌套自定义结构
+	BufferValue* AutoParseNativeBufferEx(NativeBuffer *nativeBuf) {
 		BufferValue* ret = NULL;
 		if (!nativeBuf)
 			return NULL;
@@ -80,7 +223,7 @@ namespace Wrap{
 
 							int tempLen = 0;
 							BufferValue *struc = wrap_new(BufferValue);//PoolMgr::GetIns()->getFromPool<BufferValue>("BufferValue");//数据结构
-							
+
 							//struc->isInner = false;
 							struc->type = BufferValue::type_custom;
 							while (tempLen < structLen) {
@@ -127,7 +270,7 @@ namespace Wrap{
 
 		return ret;
 	}
-
+	*/
 #ifdef COCOS_PROJECT
 	NativeBuffer *NativeBuffer::Create() {
 		NativeBuffer *buf = new NativeBuffer();
@@ -162,7 +305,7 @@ namespace Wrap{
 		data_.move(data, len);
 	}
 
-	const DataBlockLocal65535* NativeBuffer::getBuffer() const{
+	const DataBlockLocal65535* NativeBuffer::getBuffer() const {
 		return &data_;
 	}
 
@@ -182,7 +325,7 @@ namespace Wrap{
 		return data_.append(&c, sizeof(c)) > 0;
 	}
 
-	bool NativeBuffer::writeUChar(const unsigned char c){
+	bool NativeBuffer::writeUChar(const unsigned char c) {
 		return data_.append((char*)&c, sizeof(c)) > 0;
 	}
 
@@ -190,7 +333,7 @@ namespace Wrap{
 		return writeType(c);
 	}
 
-	bool NativeBuffer::writeUShort(const unsigned short c){
+	bool NativeBuffer::writeUShort(const unsigned short c) {
 		return writeType(c);
 	}
 
@@ -198,7 +341,7 @@ namespace Wrap{
 		return writeType(c);
 	}
 
-	bool NativeBuffer::writeUInt(const unsigned int c){
+	bool NativeBuffer::writeUInt(const unsigned int c) {
 		return writeType(c);
 	}
 
@@ -206,7 +349,7 @@ namespace Wrap{
 		return writeType(c);
 	}
 
-	bool NativeBuffer::writeUInt64(const unsigned long long c){
+	bool NativeBuffer::writeUInt64(const unsigned long long c) {
 		return writeType(c);
 	}
 
@@ -238,7 +381,7 @@ namespace Wrap{
 		return readBuffer(&c, sizeof(c));
 	}
 
-	bool NativeBuffer::readUChar(unsigned char &c){
+	bool NativeBuffer::readUChar(unsigned char &c) {
 		return readBuffer((char*)&c, sizeof(c));
 	}
 
@@ -246,7 +389,7 @@ namespace Wrap{
 		return readType(c);
 	}
 
-	bool NativeBuffer::readUShort(unsigned short &c){
+	bool NativeBuffer::readUShort(unsigned short &c) {
 		return readType(c);
 	}
 
@@ -254,7 +397,7 @@ namespace Wrap{
 		return readType(c);
 	}
 
-	bool NativeBuffer::readUInt(unsigned int &c){
+	bool NativeBuffer::readUInt(unsigned int &c) {
 		return readType(c);
 	}
 
@@ -262,7 +405,7 @@ namespace Wrap{
 		return readType(c);
 	}
 
-	bool NativeBuffer::readUInt64(unsigned long long &c){
+	bool NativeBuffer::readUInt64(unsigned long long &c) {
 		return readType(c);
 	}
 
@@ -303,7 +446,7 @@ namespace Wrap{
 
 		std::string ret;
 		char* p = (char*)wrap_calloc(c);
-		if (p){
+		if (p) {
 			//std::unique_ptr<char> pAuto(p);//自动指针
 			Wrap::VoidGuard guard(p);
 			std::string str;
@@ -320,15 +463,15 @@ namespace Wrap{
 
 #ifdef COCOS_PROJECT
 
-std::string jsval_to_std_string_len(JSContext *cx, JS::HandleValue arg){
+std::string jsval_to_std_string_len(JSContext *cx, JS::HandleValue arg) {
 	if (!arg.isString())
 		return "";
 
 	std::string ret;
 	size_t len = JS_GetStringEncodingLength(cx, arg.toString());
-	if (len != -1 && len > 0){
+	if (len != -1 && len > 0) {
 		char* temp = (char*)wrap_calloc(len);
-		if (temp){
+		if (temp) {
 			//std::unique_ptr<char> pAuto(temp);//自动指针
 			Wrap::VoidGuard guard(temp);
 			JS_EncodeStringToBuffer(cx, arg.toString(), temp, len);
@@ -339,7 +482,7 @@ std::string jsval_to_std_string_len(JSContext *cx, JS::HandleValue arg){
 	return ret;
 }
 
-jsval utf8string_to_jsval(JSContext *cx, const std::string& v){
+jsval utf8string_to_jsval(JSContext *cx, const std::string& v) {
 	JS::RootedObject tmp(cx, JS_NewObject(cx, NULL, JS::NullPtr(), JS::NullPtr()));
 	if (!tmp) return JSVAL_NULL;
 
@@ -526,7 +669,7 @@ bool JS_Native_writeString(JSContext *cx, unsigned int argc, jsval *vp)
 	return false;
 }
 
-bool JS_Native_writeStringNoLen(JSContext *cx, unsigned int argc, jsval *vp){
+bool JS_Native_writeStringNoLen(JSContext *cx, unsigned int argc, jsval *vp) {
 	JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
 	bool ok = true;
 	JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -549,7 +692,7 @@ bool JS_Native_writeStringNoLen(JSContext *cx, unsigned int argc, jsval *vp){
 	return false;
 }
 
-bool JS_Native_writeStringWithUtf8(JSContext *cx, unsigned int argc, jsval *vp){
+bool JS_Native_writeStringWithUtf8(JSContext *cx, unsigned int argc, jsval *vp) {
 	JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
 	bool ok = true;
 	JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -573,7 +716,7 @@ bool JS_Native_writeStringWithUtf8(JSContext *cx, unsigned int argc, jsval *vp){
 	return false;
 }
 
-bool JS_Native_getBuffer(JSContext *cx, unsigned int argc, jsval *vp){
+bool JS_Native_getBuffer(JSContext *cx, unsigned int argc, jsval *vp) {
 	JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
 	bool ok = true;
 	JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -595,7 +738,7 @@ bool JS_Native_getBuffer(JSContext *cx, unsigned int argc, jsval *vp){
 	return false;
 }
 
-bool JS_Native_getBufferLen(JSContext *cx, unsigned int argc, jsval *vp){
+bool JS_Native_getBufferLen(JSContext *cx, unsigned int argc, jsval *vp) {
 	JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
 	bool ok = true;
 	JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -617,7 +760,7 @@ bool JS_Native_getBufferLen(JSContext *cx, unsigned int argc, jsval *vp){
 	return false;
 }
 
-bool JS_Native_clearBuffer(JSContext *cx, unsigned int argc, jsval *vp){
+bool JS_Native_clearBuffer(JSContext *cx, unsigned int argc, jsval *vp) {
 	JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
 	bool ok = true;
 	JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -773,15 +916,15 @@ bool JS_Native_readString(JSContext *cx, unsigned int argc, jsval *vp)
 		cobj->readString(c, nullptr);//读取字符串长度
 
 		char* p = (char*)wrap_calloc(c);
-		if (p){
+		if (p) {
 			//std::unique_ptr<char> pAuto(p);//自动指针
 			Wrap::VoidGuard guard(p);
 			std::string str;
-			if (cobj->readString(c, p)){//读取字符串
+			if (cobj->readString(c, p)) {//读取字符串
 				std::string temp(p, c);
 				str = std::move(temp);
 			}
-			else{
+			else {
 				JS_ReportError(cx, "JS_Native_readString : readString failed");
 				return false;
 			}
@@ -792,7 +935,7 @@ bool JS_Native_readString(JSContext *cx, unsigned int argc, jsval *vp)
 
 			return true;
 		}
-		else{
+		else {
 			JS_ReportError(cx, "JS_Native_readString : oom");
 			return false;
 		}
@@ -802,7 +945,7 @@ bool JS_Native_readString(JSContext *cx, unsigned int argc, jsval *vp)
 	return false;
 }
 
-bool JS_Native_readStringNoLen(JSContext *cx, unsigned int argc, jsval *vp){
+bool JS_Native_readStringNoLen(JSContext *cx, unsigned int argc, jsval *vp) {
 	JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
 	bool ok = true;
 	JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -816,15 +959,15 @@ bool JS_Native_readStringNoLen(JSContext *cx, unsigned int argc, jsval *vp){
 		JSB_PRECONDITION2(ok, cx, false, "JS_Native_readStringNoLen : Error processing method arguments");
 
 		char* p = (char*)wrap_calloc(len);
-		if (p){
+		if (p) {
 			//std::unique_ptr<char> pAuto(p);//自动指针
 			Wrap::VoidGuard guard(p);
 			std::string str;
-			if (cobj->readBuffer(p, len)){//读取字符串
+			if (cobj->readBuffer(p, len)) {//读取字符串
 				std::string temp(p, len);
 				str = std::move(temp);
 			}
-			else{
+			else {
 				JS_ReportError(cx, "JS_Native_readStringNoLen : readBuffer Error");
 				return false;
 			}
@@ -835,7 +978,7 @@ bool JS_Native_readStringNoLen(JSContext *cx, unsigned int argc, jsval *vp){
 
 			return true;
 		}
-		else{
+		else {
 			JS_ReportError(cx, "JS_Native_readStringNoLen : oom");
 			return false;
 		}
@@ -845,7 +988,7 @@ bool JS_Native_readStringNoLen(JSContext *cx, unsigned int argc, jsval *vp){
 	return false;
 }
 
-bool JS_Native_readStringWithUtf8(JSContext *cx, unsigned int argc, jsval *vp){
+bool JS_Native_readStringWithUtf8(JSContext *cx, unsigned int argc, jsval *vp) {
 	JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
 	bool ok = true;
 	JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -858,15 +1001,15 @@ bool JS_Native_readStringWithUtf8(JSContext *cx, unsigned int argc, jsval *vp){
 		cobj->readString(c, nullptr);//读取字符串长度
 
 		char* p = (char*)wrap_calloc(c);
-		if (p){
+		if (p) {
 			//std::unique_ptr<char> pAuto(p);//自动指针
 			Wrap::VoidGuard guard(p);
 			std::string str;
-			if (cobj->readString(c, p)){//读取字符串
+			if (cobj->readString(c, p)) {//读取字符串
 				std::string temp(p, c);
 				str = std::move(temp);
 			}
-			else{
+			else {
 				JS_ReportError(cx, "JS_Native_readStringWithUtf8 : readString failed");
 				return false;
 			}
@@ -877,7 +1020,7 @@ bool JS_Native_readStringWithUtf8(JSContext *cx, unsigned int argc, jsval *vp){
 
 			return true;
 		}
-		else{
+		else {
 			JS_ReportError(cx, "JS_Native_readStringWithUtf8 : oom");
 			return false;
 		}
@@ -887,7 +1030,7 @@ bool JS_Native_readStringWithUtf8(JSContext *cx, unsigned int argc, jsval *vp){
 	return false;
 }
 
-bool JS_Native_hasData(JSContext *cx, unsigned int argc, jsval *vp){
+bool JS_Native_hasData(JSContext *cx, unsigned int argc, jsval *vp) {
 	JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
 	bool ok = true;
 	JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -909,7 +1052,7 @@ bool JS_Native_hasData(JSContext *cx, unsigned int argc, jsval *vp){
 	return false;
 }
 
-bool JS_Native_skipBuffer(JSContext *cx, unsigned int argc, jsval *vp){
+bool JS_Native_skipBuffer(JSContext *cx, unsigned int argc, jsval *vp) {
 	JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
 	bool ok = true;
 	JS::RootedObject obj(cx, args.thisv().toObjectOrNull());

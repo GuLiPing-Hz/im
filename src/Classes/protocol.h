@@ -7,6 +7,7 @@ enum eCMD{
 	string uid    用户ID
 	string token  Token
 	string appkey 应用Key
+	short  type   用户类型 0表示普通用户，1表示机器人
 	S->C: 空
 	*/
 	CMD_LOGIN_C2S2C = 1,//登录
@@ -42,6 +43,7 @@ enum eCMD{
 	S->C:
 	string room_id  房间ID
 	string uid
+	short  type   用户类型 0表示普通用户，1表示机器人
 	*/
 	CMD_ENTERROOM_C2S2C = 5,//进入房间
 
@@ -61,6 +63,17 @@ enum eCMD{
 	S->C: 空
 	*/
 	CMD_DRIVEAWAY_S2C = 8,//踢人下线
+
+	/*
+	
+	S->C: 
+	string room_id  房间ID
+	custom[] {  
+			string uid  房间用户ID数组
+			short type 房间用户对应的类型  两者长度一致
+			}
+	*/
+	CMD_ROOM_USERS_S2C = 9,//进入房间用户收到已经在房间的用户列表
 };
 
 #endif // PROTOCOL_H__20170930

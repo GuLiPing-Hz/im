@@ -11,7 +11,7 @@ namespace Wrap{
 				wrap_delete(BufferValue, value);
 			}
 			else{
-				BufferValue::VECTORBJ::iterator it = value->list.begin();
+				auto it = value->list.begin();
 				for (it; it != value->list.end(); it++){
 					BufferValue* item = *it;
 					ReleaseBufferValue(item);

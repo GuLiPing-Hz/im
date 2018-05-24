@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "登陆成功", Toast.LENGTH_SHORT).show();
 
 //              boolean ret = LCRequest.logout();
-//                enterRoom();
+                enterRoom();
 //              sayTo();
             }
 
@@ -119,6 +119,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void enterRoom() {
+        //监听房间用户列表
+        LCRequest.listenRoomUser(new LCResponse() {
+            @Override
+            public void onSuccess(Bundle data) {
+                Log.i(Tag, "listenRoomUser data = " + data.toString());
+            }
+
+            @Override
+            public void onFailed(int code, String jsonReq) {
+
+            }
+        }, false);
         LCRequest request = LCRequest.enterRoom(UID1, new LCResponse() {
             @Override
             public void onSuccess(Bundle bundle) {
@@ -126,29 +138,29 @@ public class MainActivity extends AppCompatActivity {
 
                 //sayTo(LConnection.TYPE_TEAM,UID1,"<gpmsg from=\"3001041\" dateline=\"2017-10-27 11:25:13\" id=\"30010411509074713903\" type=\"1\" to=\"3002167\"><send avatar=\"http://eaglelive-10077467.image.myqcloud.com/31cc83ff-2ef6-43fe-9b96-5d5df6ce66dc?imageView2/1/w/260/h/260 \" uid=\"3001041\" nickname=\"Erennnnnnnnnnnnn\" level=\"100\" grade=\"0\" role_id=\"1\" icon=\"0\"/><gift image=\"\" id=\"\" mode=\"\" number=\"\" name=\"\"/><praise num=\"\"/>" + "<action avatar=\"\" gender=\"\" uid=\"\" nickname=\"\" age=\"\" total_num=\"\" role_id=\"\" type=\"\"/><msg file_location=\"\" file=\"\" body=\"是\"/></gpmsg>");
 
-                new Thread() {
-                    @Override
-                    public void run() {
-                        while (true) {
-//                            sHandler.post(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    sayTo(LConnection.TYPE_TEAM, UID1,"123456");
-//                                }
-//                            });
-
-                            sayTo(LConnection.TYPE_TEAM, UID1, "123456");
-//                            LCRequest.sayTo(LConnection.TYPE_TEAM, "1000001", UID1, "123456", "", null);
-
-                            try {
-                                Thread.sleep(10);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-
-                    }
-                }.start();
+//                new Thread() {
+//                    @Override
+//                    public void run() {
+//                        while (true) {
+////                            sHandler.post(new Runnable() {
+////                                @Override
+////                                public void run() {
+////                                    sayTo(LConnection.TYPE_TEAM, UID1,"123456");
+////                                }
+////                            });
+//
+//                            sayTo(LConnection.TYPE_TEAM, UID1, "123456");
+////                            LCRequest.sayTo(LConnection.TYPE_TEAM, "1000001", UID1, "123456", "", null);
+//
+//                            try {
+//                                Thread.sleep(10);
+//                            } catch (InterruptedException e) {
+//                                e.printStackTrace();
+//                            }
+//                        }
+//
+//                    }
+//                }.start();
             }
 
             @Override

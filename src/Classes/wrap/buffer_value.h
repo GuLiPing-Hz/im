@@ -10,7 +10,7 @@ namespace Wrap{
 	public:
 		enum eDataType {
 			type_unknow = 0,
-			type_char = 1,//[16+1][数组长度][data]
+			type_char = 1,//[16+1|1字节][数组长度|2字节][data]
 			type_short = 2,
 			type_int = 3,
 			type_int64 = 4,
@@ -19,8 +19,9 @@ namespace Wrap{
 			type_str = 17,
 
 			//下面两个主要给BufferUnitArra使用
-			type_custom = 6,//[16+6][数组长度][{结构长度,结构体}]...
+			type_custom = 6,//[16+6|1字节][数组长度|2字节][{结构长度,结构体}]...
 			type_array = 16,//
+			type_array_custom = 22,
 		};
 		eDataType type;
 

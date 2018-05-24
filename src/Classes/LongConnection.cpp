@@ -92,6 +92,8 @@ int LCLogin(const int seq, const char *uid, const char *token, const char *appke
 	ok &= nativeBuf->writeString(strlen(token), token);
 	ok &= nativeBuf->writeChar(Wrap::BufferValue::type_array + Wrap::BufferValue::type_char);
 	ok &= nativeBuf->writeString(strlen(appkey), appkey);
+	ok &= nativeBuf->writeChar(Wrap::BufferValue::type_char);
+	ok &= nativeBuf->writeChar(0);//使用dll的默认都当成是普通用户
 	if (!ok)
 		return -1;
 

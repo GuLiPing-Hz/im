@@ -117,7 +117,7 @@ public class LCRequest {
         if (sAppkey == null || sIp == null || sPort == 0)
             return null;
 
-        if(sIsLogining)
+        if (sIsLogining)
             return null;
 
         sIsLogining = true;
@@ -321,5 +321,16 @@ public class LCRequest {
      */
     public static LCRequest listenExitRoom(@NonNull LCResponse response, boolean auto) {
         return new LCRequest("exitRoom", response, auto);
+    }
+
+    /**
+     * 监听房间用户进出的消息，会监听自己的信息
+     *
+     * @param response
+     * @param auto
+     * @return
+     */
+    public static LCRequest listenRoomUser(@NonNull LCResponse response, boolean auto) {
+        return new LCRequest("roomUser", response, auto);
     }
 }

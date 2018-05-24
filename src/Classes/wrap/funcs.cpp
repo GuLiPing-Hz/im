@@ -71,7 +71,7 @@ void Printf(int level, const char *file, long line, const char *format, ...) {
     struct tm *p;
     time(&timep);
     p = gmtime(&timep); /* 获取当前时间 */
-    sprintf(timeLog, "%02d:%02d:%02d %lld", (p->tm_hour + 8), p->tm_min, p->tm_sec, timep);
+    sprintf(timeLog, "%02d:%02d:%02d", (p->tm_hour + 8), p->tm_min, p->tm_sec);
     
     std::stringstream os;//file
     os << "[" << gLogStr[level] << "]" << timeLog << "_" << line << " : " << buf << std::endl;

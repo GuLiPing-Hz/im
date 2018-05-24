@@ -6,12 +6,17 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
 import simple.bean.CallNativeArg;
+import simple.bean.IMUser;
 import simple.util.bridge.JsAndroidBridge;
 import simple.util.gson.GsonUtils;
 
@@ -118,8 +123,7 @@ public class LConnection {
                                     }
                                 });
                             }
-                        }
-                        else if(TextUtils.equals(request.mMethod, "login") && TextUtils.equals(method, "onLobbyTunnelError")){
+                        } else if (TextUtils.equals(request.mMethod, "login") && TextUtils.equals(method, "onLobbyTunnelError")) {
                             if (request.mAutoRemove)//检查是否需要移除当前监听
                                 it.remove();
 
@@ -129,8 +133,50 @@ public class LConnection {
                                     request.mResponse.onFailed(result.code, result.request);
                                 }
                             });
-                        }
-                        else if (TextUtils.equals(request.mMethod, method)) {
+                        } else if (TextUtils.equals(request.mMethod, "roomUser") && (TextUtils.equals(method, "enterRoom")
+                                || TextUtils.equals(method, "exitRoom") || TextUtils.equals(method, "roomUser"))) {
+                            if (request.mAutoRemove)//检查是否需要移除当前监听
+                                it.remove();
+
+                            final Bundle data = new Bundle();
+                            if (TextUtils.equals(method, "enterRoom")) {
+                                data.putBoolean("enter", true);
+                                data.putString("room_id", result.arg0);
+                                IMUser user = new IMUser(result.arg1, Integer.parseInt(result.arg2));
+                                ArrayList<IMUser> list = new ArrayList<>();
+                                list.add(user);
+                                data.putSerializable("uids", list);
+                            } else if (TextUtils.equals(method, "exitRoom")) {
+                                data.putBoolean("enter", false);
+                                IMUser user = new IMUser(result.arg1);
+                                ArrayList<IMUser> list = new ArrayList<>();
+                                list.add(user);
+                                data.putSerializable("uids", list);
+                            } else {
+                                data.putBoolean("enter", true);
+
+                                ArrayList<IMUser> list = new ArrayList<>();
+                                try {
+                                    JSONArray jsonArray = new JSONArray(result.arg1);
+                                    for (int i = 0; i < jsonArray.length(); i++) {
+                                        JSONObject jsonObject = (JSONObject) jsonArray.get(i);
+                                        IMUser user = new IMUser(jsonObject.getString("arg1_0"), jsonObject.getInt("arg1_1"));
+                                        list.add(user);
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                                data.putSerializable("uids", list);
+                            }
+
+                            sHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    request.mResponse.onSuccess(data);
+                                }
+                            });
+                        } else if (TextUtils.equals(request.mMethod, method)) {
                             if (request.mAutoRemove)//检查是否需要移除当前监听
                                 it.remove();
 
