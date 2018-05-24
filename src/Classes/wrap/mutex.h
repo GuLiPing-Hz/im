@@ -1,34 +1,36 @@
 #ifndef MUTEX_H___
 #define MUTEX_H___
 
-#include <mutex>
 #include "wrap_config.h"
+#include <mutex>
 
-namespace Wrap{
+namespace Wrap {
 
-	/*
-	²»Í¬ÓÚmutex; recursive_mutexÔÚÍ¬Ò»Ïß³Ìµ÷ÓÃÁ½´Î²»»áËÀËø£¬¶ømutex»á-_-
-	*/
-	class Mutex : public std::recursive_mutex 
-	{
-		DISABLE_COPY_CTOR(Mutex);
-	public:
-		Mutex() :std::recursive_mutex(){}
-		virtual ~Mutex(){}
-	};
+    /*
+    ä¸åŒäºmutex; recursive_mutexåœ¨åŒä¸€çº¿ç¨‹è°ƒç”¨ä¸¤æ¬¡ä¸ä¼šæ­»é”ï¼Œè€Œmutexä¼š-_-
+    */
+    class Mutex : public std::recursive_mutex {
+        DISABLE_COPY_CTOR(Mutex);
 
-	//std::recursive_timed_mutex ¿ÉÒÔÍ¨¹ıtry_lock_for()£¬try_lock_until()¡£
+    public:
+        Mutex() : std::recursive_mutex() {}
 
-	/*
-	Çø±ğÓÚlock_guard£»unique_lock¸øÁË¸üºÃµÄ¼ÓËøÌåÑé
-	*/
-	class Guard : public std::unique_lock<Mutex>
-	{
-		DISABLE_COPY_CTOR(Guard);
-	public:
-		Guard(Mutex& mutex) :std::unique_lock<Mutex>(mutex){}
-		virtual ~Guard(){}
-	};
+        virtual ~Mutex() {}
+    };
+
+    //std::recursive_timed_mutex å¯ä»¥é€šè¿‡try_lock_for()ï¼Œtry_lock_until()ã€‚
+
+    /*
+    åŒºåˆ«äºlock_guardï¼›unique_lockç»™äº†æ›´å¥½çš„åŠ é”ä½“éªŒ
+    */
+    class Guard : public std::unique_lock<Mutex> {
+        DISABLE_COPY_CTOR(Guard);
+
+    public:
+        Guard(Mutex &mutex) : std::unique_lock<Mutex>(mutex) {}
+
+        virtual ~Guard() {}
+    };
 }
 
 #endif//MUTEX_H___

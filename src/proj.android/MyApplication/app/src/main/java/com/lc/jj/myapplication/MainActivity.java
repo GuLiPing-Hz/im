@@ -38,7 +38,8 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView mRecyclerView;
 
     List<TalkBean> mTalkBeanList = new ArrayList<>();
-    LCRequest mTalk;
+    LCRequest mTalkListener;
+    public static LCRequest sRoomUserListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(new TalkAdapter(mTalkBeanList));
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        mTalk = LCRequest.listenSay(new LCResponse() {
+        mTalkListener = LCRequest.listenSay(new LCResponse() {
             @Override
             public void onSuccess(Bundle bundle) {
                 TalkBean talkBean = new TalkBean();
@@ -78,8 +79,8 @@ public class MainActivity extends AppCompatActivity {
         /**
          * 这里也有可能被系统回收，根据你的需求
          */
-        if (mTalk != null)
-            LConnection.removeReq(mTalk);
+        if (mTalkListener != null)
+            LConnection.removeReq(mTalkListener);
     }
 
     @OnClick({R.id.btn_logout, R.id.btn_send, R.id.btn_enterroom})
@@ -126,6 +127,23 @@ public class MainActivity extends AppCompatActivity {
                 if (TextUtils.isEmpty(roomId)) {
                     Toast.makeText(this, "请输入房间ID", Toast.LENGTH_SHORT).show();
                     return;
+                }
+
+                //离开房间后，就算监听着，因为服务器不会给我们消息，所以等于没有监听
+                //那我就简单的输出个用户进出房间的日志
+                if (sRoomUserListener == null) {
+                    //进入房间之前监听用户列表
+                    sRoomUserListener = LCRequest.listenRoomUser(new LCResponse() {
+                        @Override
+                        public void onSuccess(Bundle data) {
+                            Log.i(Tag, "listenRoomUser data = " + data.toString());
+                        }
+
+                        @Override
+                        public void onFailed(int code, String jsonReq) {
+
+                        }
+                    }, false);
                 }
 
                 LCRequest request = LCRequest.enterRoom(roomId, new LCResponse() {

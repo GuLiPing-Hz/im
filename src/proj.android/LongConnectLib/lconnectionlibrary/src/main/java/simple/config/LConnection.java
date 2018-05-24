@@ -140,20 +140,23 @@ public class LConnection {
 
                             final Bundle data = new Bundle();
                             if (TextUtils.equals(method, "enterRoom")) {
-                                data.putBoolean("enter", true);
+                                data.putBoolean("is_enter", true);
                                 data.putString("room_id", result.arg0);
-                                IMUser user = new IMUser(result.arg1, Integer.parseInt(result.arg2));
+                                int type = 0;
+                                if (!TextUtils.isEmpty(result.arg2))//如果不为空
+                                    type = Integer.parseInt(result.arg2);
+                                IMUser user = new IMUser(result.arg1, type);
                                 ArrayList<IMUser> list = new ArrayList<>();
                                 list.add(user);
                                 data.putSerializable("uids", list);
                             } else if (TextUtils.equals(method, "exitRoom")) {
-                                data.putBoolean("enter", false);
+                                data.putBoolean("is_enter", false);
                                 IMUser user = new IMUser(result.arg1);
                                 ArrayList<IMUser> list = new ArrayList<>();
                                 list.add(user);
                                 data.putSerializable("uids", list);
                             } else {
-                                data.putBoolean("enter", true);
+                                data.putBoolean("is_enter", true);
 
                                 ArrayList<IMUser> list = new ArrayList<>();
                                 try {

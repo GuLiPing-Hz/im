@@ -14,4 +14,12 @@ public class IMUser implements Serializable {
     public IMUser(String uid) {
         this.uid = uid;
     }
+
+    @Override
+    public String toString() {
+        return "IMUser{" +
+                "uid='" + uid + '\'' +
+                ", type=" + type +
+                '}';
+    }
 }

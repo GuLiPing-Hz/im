@@ -7,7 +7,7 @@
 #include "pool.h"
 
 #if CFG_TARGET_PLATFORM == CC_PLATFORM_ANDROID
-#include <tr1/memory>
+//#include <tr1/memory>
 #endif
 
 namespace Wrap{

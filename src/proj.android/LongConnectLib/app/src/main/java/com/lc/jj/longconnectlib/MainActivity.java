@@ -1,8 +1,8 @@
 package com.lc.jj.longconnectlib;
 
-import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String Tag = "MainActivity";
 
     public static final String APPKEY = "4ed38057df363e8355229ec53687c549";
-    public static final String HOST = "123.206.229.213";//"192.168.1.11";//
+    public static final String HOST = "192.168.0.18";//"123.206.229.213";//
     public static final short PORT = 27710;
 
     public static final String UID1 = "1000001";
@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         }, false);
-        LCRequest request = LCRequest.enterRoom(UID1, new LCResponse() {
+        LCRequest request = LCRequest.enterRoom("1000", new LCResponse() {
             @Override
             public void onSuccess(Bundle bundle) {
                 Toast.makeText(MainActivity.this, "进入房间成功", Toast.LENGTH_SHORT).show();
@@ -199,3 +199,4 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 }
+

@@ -12,7 +12,7 @@
 #include "wrap/ext/thread.h"
 #include "wrap/funcs.h"
 
-std::string HOST = "123.206.229.213";
+std::string HOST = "192.168.0.18";// "123.206.229.213";
 short PORT = 27710;
 
 void testXN(){

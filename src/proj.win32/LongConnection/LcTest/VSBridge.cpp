@@ -18,6 +18,8 @@ VSBridge::~VSBridge() {
 #define APPKEY  "4ed38057df363e8355229ec53687c549"
 #define UID1  "1000001"
 #define TOKEN1  "018f0be0cb075ee761cf8d44be2b287e"
+#define UID12  "1000012"
+#define TOKEN12  "30f9f8feceee317a66df684915be86f9"
 
 void VSBridge::callNative(const std::string& method, const std::string& param)
 {
@@ -28,8 +30,8 @@ void VSBridge::callNative(const std::string& method, const std::string& param)
 		rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> &allocator = doc.GetAllocator();
 		rapidjson::Value root(rapidjson::kObjectType);
 		root.AddMember("method", "login", allocator);
-		root.AddMember("arg0", UID1, allocator);
-		root.AddMember("arg1", TOKEN1, allocator);
+		root.AddMember("arg0", UID12, allocator);
+		root.AddMember("arg1", TOKEN12, allocator);
 		root.AddMember("arg2", APPKEY, allocator);
 
 		callByNative(GetStrFromRoot(root));
@@ -42,7 +44,7 @@ void VSBridge::callNative(const std::string& method, const std::string& param)
 		rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> &allocator = doc.GetAllocator();
 		rapidjson::Value root(rapidjson::kObjectType);
 		root.AddMember("method", "enterRoom", allocator);
-		root.AddMember("arg0", "1000001", allocator);
+		root.AddMember("arg0", "1000", allocator); 
 		callByNative(GetStrFromRoot(root));
 	}
 	else if (method == "sayTo") {
