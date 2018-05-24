@@ -113,7 +113,7 @@ extern "C" {
 	/*
 	离开房间
 	*/
-	DLL_LC int LCExitRoom();
+	DLL_LC int LCExitRoom(const int seq);
 
 	/*
 	心跳包

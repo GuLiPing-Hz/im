@@ -136,6 +136,7 @@ public class MainActivity extends AppCompatActivity {
             public void onSuccess(Bundle bundle) {
                 Toast.makeText(MainActivity.this, "进入房间成功", Toast.LENGTH_SHORT).show();
 
+                exitRoom();
                 //sayTo(LConnection.TYPE_TEAM,UID1,"<gpmsg from=\"3001041\" dateline=\"2017-10-27 11:25:13\" id=\"30010411509074713903\" type=\"1\" to=\"3002167\"><send avatar=\"http://eaglelive-10077467.image.myqcloud.com/31cc83ff-2ef6-43fe-9b96-5d5df6ce66dc?imageView2/1/w/260/h/260 \" uid=\"3001041\" nickname=\"Erennnnnnnnnnnnn\" level=\"100\" grade=\"0\" role_id=\"1\" icon=\"0\"/><gift image=\"\" id=\"\" mode=\"\" number=\"\" name=\"\"/><praise num=\"\"/>" + "<action avatar=\"\" gender=\"\" uid=\"\" nickname=\"\" age=\"\" total_num=\"\" role_id=\"\" type=\"\"/><msg file_location=\"\" file=\"\" body=\"是\"/></gpmsg>");
 
 //                new Thread() {
@@ -174,6 +175,30 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "正在进入房间...", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this, "进入房间请求失败...", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    void exitRoom() {
+        LCRequest request = LCRequest.exitRoom(new LCResponse() {
+            @Override
+            public void onSuccess(Bundle bundle) {
+                Toast.makeText(MainActivity.this, "离开房间成功", Toast.LENGTH_SHORT).show();
+
+                //销毁的时候关闭监听
+//                finish();
+            }
+
+            @Override
+            public void onFailed(int i, String s) {
+                Log.e(Tag, "失败,请求内容是:(code=" + i + ")" + s);
+                Toast.makeText(MainActivity.this, "离开房间失败 code =" + i, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        if (request != null) {
+            Toast.makeText(this, "离开房间...", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "离开房间请求失败...", Toast.LENGTH_SHORT).show();
         }
     }
 

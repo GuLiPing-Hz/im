@@ -41,7 +41,7 @@ void LCSetSeqIsBack(const int seq) {
 }
 
 int LCSendMsg(const char *msg, const unsigned long len, const int seq, const bool needBack) {
-	//LOGD("________Send Msg: msg[%ld]=[%s]\n", len, ByteString(msg, len));
+	//LOGD("________Send Msg: msg[%ld]=[%s]", len, ByteString(msg, len));
     
     return gReq.sendMsgToLobby(msg, len, seq, needBack);
 }
@@ -178,12 +178,12 @@ int LCEnterRoom(const int seq, const char *room_id) {
 /*
 离开房间
 */
-int LCExitRoom() {
-	Wrap::NativeBuffer *nativeBuf = BuildNativeBuffer(CMD_EXITROOM_C2S2C, 0);
+int LCExitRoom(const int seq) {
+	Wrap::NativeBuffer *nativeBuf = BuildNativeBuffer(CMD_EXITROOM_C2S2C, seq);
     std::string ret = FinishNativeBufferW(nativeBuf);
     if (ret.empty())
         return -1;
-    return LCSendMsg(ret.c_str(), ret.length(), 0, false);
+	return LCSendMsg(ret.c_str(), ret.length(), seq, true);
 }
 
 int LCHeartbeat() {

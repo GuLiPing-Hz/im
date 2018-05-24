@@ -2,6 +2,7 @@
 #include "LongConnection.h"
 #include <memory>
 #include <stdarg.h>
+#include <windows.h>
 
 VSBridge *VSBridge::getInstance() {
 	static VSBridge sIns;
@@ -23,7 +24,9 @@ VSBridge::~VSBridge() {
 
 void VSBridge::callNative(const std::string& method, const std::string& param)
 {
-	LOGI("%s : %s", __FUNCTION__, param.c_str());
+	LOGI("服务器回调数据 %s: %s|%s", __FUNCTION__, method.c_str(), param.c_str());
+	rapidjson::Document paramDoc;
+	paramDoc.Parse(param.c_str());
 	if (method == "onLobbyTunnelConnectSuccess"){
 
 		rapidjson::Document doc;
@@ -39,21 +42,25 @@ void VSBridge::callNative(const std::string& method, const std::string& param)
 	}
 	else if (method == "login") {
 		//LCLogout();
+		if (paramDoc["code"] != 0)
+			return;
 
+		//Sleep(3000);
 		rapidjson::Document doc;
 		rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> &allocator = doc.GetAllocator();
 		rapidjson::Value root(rapidjson::kObjectType);
 		root.AddMember("method", "enterRoom", allocator);
+		//root.AddMember("method", "exitRoom", allocator);
 		root.AddMember("arg0", "1000", allocator); 
 		callByNative(GetStrFromRoot(root));
 	}
 	else if (method == "sayTo") {
-		LOGI("sayTo %s\n", param.c_str());
+		LOGI("sayTo %s", param.c_str());
 	}
 	else if (method == "notify") {
 	}
 	else if (method == "enterRoom") {
-		LOGI("enterRoom %s\n", param.c_str());
+		//LOGI("enterRoom %s", param.c_str());
 
 		//rapidjson::Document doc;
 		//rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> &allocator = doc.GetAllocator();
@@ -64,7 +71,13 @@ void VSBridge::callNative(const std::string& method, const std::string& param)
 		//root.AddMember("arg2", "1000002", allocator);
 		//root.AddMember("arg3", "123456", allocator);
 		//root.AddMember("arg4", "", allocator);
-		//callByNative(GetStrFromRoot(root));
+
+		rapidjson::Document doc;
+		rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> &allocator = doc.GetAllocator();
+		rapidjson::Value root(rapidjson::kObjectType);
+		root.AddMember("method", "exitRoom", allocator);
+
+		callByNative(GetStrFromRoot(root));
 	}
 	else if (method == "exitRoom") {
 	}

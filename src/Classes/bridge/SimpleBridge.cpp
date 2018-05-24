@@ -12,7 +12,7 @@ std::string GetStrFromRoot(const rapidjson::Value &root) {
     root.Accept(writer);
     std::string result = buffer.GetString();
 //#ifdef WIN32
-    LOGI("GetStrFromRoot result = %s", result.c_str());
+    //LOGI("GetStrFromRoot result = %s", result.c_str());
 //#endif
     return result;
 }
@@ -64,7 +64,7 @@ void AddParam(rapidjson::Document &doc, rapidjson::Value &root, const std::strin
                 const Wrap::BufferValue *item = data->list[i];
 
                 std::stringstream ss;
-                ss << name[i] << "_" << i;//增加名字
+                ss << name << "_" << i;//增加名字
                 AddParam(doc, arraValue, ss.str(), item, true);//递归调用判断
             }
 
@@ -74,36 +74,42 @@ void AddParam(rapidjson::Document &doc, rapidjson::Value &root, const std::strin
                 root.AddMember(nameValue, arraValue, doc.GetAllocator());
         }
     } else {
-        root.AddMember(nameValue, rapidjson::Value(rapidjson::kNullType), doc.GetAllocator());
+		if (isInner)
+			root.PushBack(rapidjson::Value(rapidjson::kNullType), doc.GetAllocator());
+		else
+			root.AddMember(nameValue, rapidjson::Value(rapidjson::kNullType), doc.GetAllocator());
     }
 }
 
 void AddParamEx(rapidjson::Document &doc, rapidjson::Value &root, const Wrap::BufferValue *data,
-                const VECSTRING &name) {
+                const VECSTRING &names) {
     if (!data) {
         root.SetArray();
         return;
 	}
 
-	for (unsigned int i = 0; i < name.size(); i++) {
+	for (unsigned int i = 0; i < names.size(); i++) {
 		if (i >= data->list.size())
 			break;
         const Wrap::BufferValue *unit = data->list[i];
+		if (!unit)//如果是空值 
+			continue;
+
         if (!unit->list.empty()) {//首先检查是不是一个数组，
             rapidjson::Value arraValue(rapidjson::kArrayType);
             for (unsigned int j = 0; j < unit->list.size(); j++) {
                 const Wrap::BufferValue *arra1 = unit->list[j];
 
                 std::stringstream ss;
-                ss << name[i] << "_" << j;//增加名字
+                ss << names[i] << "_" << j;//增加名字
                 AddParam(doc, arraValue, ss.str(), arra1, true);
             }
 
             rapidjson::Value nameValue(rapidjson::kStringType);
-            nameValue.SetString(name[i].c_str(), name[i].size(), doc.GetAllocator());
+            nameValue.SetString(names[i].c_str(), names[i].size(), doc.GetAllocator());
             root.AddMember(nameValue, arraValue, doc.GetAllocator());
         } else {
-            AddParam(doc, root, name[i], unit, false);
+            AddParam(doc, root, names[i], unit, false);
         }
     }
 }
@@ -312,7 +318,7 @@ MethodParam SimpleBridge::removeSeq(const int seq) {
 
 int SimpleBridge::callByNative(const std::string &param) {
     int ret = 0;
-    //LOGD("%s param=%s",__FUNCTION__,param.c_str());
+    LOGD("请求服务器 %s param=%s",__FUNCTION__,param.c_str());
 
     rapidjson::Document doc;
     //rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> &allocator = doc.GetAllocator();
@@ -386,7 +392,14 @@ int SimpleBridge::callByNative(const std::string &param) {
                 ret = 0;
             }
         } else if (method == "exitRoom") {
-            ret = LCExitRoom();
+			int seq = LCGetSeq();
+
+            ret = LCExitRoom(seq);
+
+			if (ret == seq) {
+				appendSeq(seq, method, param);
+				ret = 0;
+			}
         } else {
             goto FAILED;
         }

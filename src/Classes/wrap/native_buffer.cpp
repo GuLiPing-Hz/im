@@ -19,32 +19,33 @@ namespace Wrap {
 
 		if (type == BufferValue::type_char) {
 			nativeBuf->readChar(ret->data.base.c);
-			len = 1;
+			len += 1;
 		}
 		else if (type == BufferValue::type_short) {
 			nativeBuf->readShort(ret->data.base.s);
-			len = 2;
+			len += 2;
 		}
 		else if (type == BufferValue::type_int) {
 			nativeBuf->readInt(ret->data.base.i);
-			len = 4;
+			len += 4;
 		}
 		else if (type == BufferValue::type_int64) {
 			//这里 js引擎默认把long long 型数据转换为stirng，所以需要数字比较的时候记得转int
 			nativeBuf->readInt64(ret->data.base.ll);//直接我这里把它转了
-			len = 8;
+			len += 8;
 		}
 		else if (type == BufferValue::type_float) {
 			nativeBuf->readFloat(ret->data.base.f);
-			len = 4;
+			len += 4;
 		}
 		else if (type == BufferValue::type_str) {
 			ret->data.str = nativeBuf->readString();
-			len = 2 + (int)ret->data.str.length();//字符串长度+字符串
+			len += 2 + (int)ret->data.str.length();//字符串长度+字符串
 		}
 		else {
 			ret->type = BufferValue::type_unknow;
 			LOGE("readNativeBufferSingle unknown type= %d", type);
+			//len += 0;
 		}
 
 		// Log.i("readNativeBufferSingle type=" + typeof ret.value + ",value = " + ret.value);
@@ -71,6 +72,7 @@ namespace Wrap {
 			char realType = type & 0xf;//数据具体类型
 			short arraLen;
 			nativeBuf->readShort(arraLen);
+			len += 2;
 			// Log.i("readNativeBufferData realType=" + realType + ",arraLen=" + arraLen);
 
 			BufferValue *arra = wrap_new(BufferValue);//PoolMgr::GetIns()->getFromPool<BufferValue>("BufferValue");//数组存储
@@ -79,6 +81,7 @@ namespace Wrap {
 			for (int i = 0; i < arraLen; i++) {
 				int inLen = 0;
 				BufferValue *tempRet = ReadNativeBufferValue(nativeBuf, realType, inLen);
+				len += inLen;
 				arra->list.push_back(tempRet);//把值记录下来
 			}
 
@@ -105,6 +108,7 @@ namespace Wrap {
 			char realType = type & 0xf;//数据具体类型
 			short arraLen;
 			nativeBuf->readShort(arraLen);
+			len += 2;
 			// Log.i("readNativeBufferData realType=" + realType + ",arraLen=" + arraLen);
 
 			BufferValue *arra = wrap_new(BufferValue);//PoolMgr::GetIns()->getFromPool<BufferValue>("BufferValue");//数组存储
@@ -114,6 +118,7 @@ namespace Wrap {
 					//读取数据结构长度
 					short structLen;
 					nativeBuf->readShort(structLen);
+					len += 2;
 					// Log.i("readNativeBufferData structLen = " + structLen);
 
 					int tempLen = 0;
@@ -134,13 +139,15 @@ namespace Wrap {
 							int remainLen = structLen - tempLen;
 							if (remainLen > 0) {
 								//把多余的数据跳过一下
-								nativeBuf->skipBuffer(remainLen);
+								nativeBuf->skipBuffer(remainLen, true);
 							}
 							break;
 						}
 
 						tempLen += inLen;
 					}
+
+					len += structLen;
 					arra->list.push_back(struc);//放入结构数据
 				}
 			}
@@ -165,7 +172,6 @@ namespace Wrap {
 		if (!ret)
 			return ret;
 
-		int len = 0;
 		do {
 			char type;
 			nativeBuf->readChar(type);//读取标志位
@@ -173,11 +179,13 @@ namespace Wrap {
 				break;
 
 			if (type == BufferValue::type_array_custom) {//自定义结构
+				int len = 0;
 				BufferValue* tempRet = ReadNativeBufferSingleAndArrayEx(nativeBuf, type, len);
 				//把值记录下来
 				ret->list.push_back(tempRet);
 			}
 			else {//简单数组或者简单值
+				int len = 0;
 				BufferValue* tempRet = ReadNativeBufferSingleAndArray(nativeBuf, type, len);
 				//把值记录下来
 				ret->list.push_back(tempRet);
@@ -313,11 +321,15 @@ namespace Wrap {
 		return readPos_ < data_.getPos();
 	}
 
-	bool NativeBuffer::skipBuffer(const unsigned int len) {
+	bool NativeBuffer::skipBuffer(const unsigned int len, bool force) {
 		if (readPos_ + len < data_.getPos()) {
 			readPos_ = readPos_ + len;
 			return true;
 		}
+
+		if (force)//强制跳，我们设定到buffer的最后位置
+			readPos_ = data_.getPos();
+
 		return false;
 	}
 

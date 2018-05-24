@@ -158,6 +158,9 @@ public class RoomActivity extends AppCompatActivity {
                     public void onFailed(int i, String s) {
                         Log.e(Tag, "失败,请求内容是:(code=" + i + ")" + s);
                         Toast.makeText(RoomActivity.this, "离开房间失败 code =" + i, Toast.LENGTH_SHORT).show();
+
+                        //请求失败我们也要离开房间
+                        finish();
                     }
                 });
 

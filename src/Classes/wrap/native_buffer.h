@@ -53,7 +53,7 @@ namespace Wrap{
 
 		bool hasData();
 
-		bool skipBuffer(const unsigned int len);
+		bool skipBuffer(const unsigned int len, bool force = false);
 
 		/**
 		*

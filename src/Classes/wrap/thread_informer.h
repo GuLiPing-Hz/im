@@ -120,7 +120,7 @@ namespace Wrap{
 			getInformer()->inform();
 			return seq;
 		}
-		int getMessage(MSGINFO& msg){
+		int getMessage(MSGINFO& msg) {
 			Guard lock(mMutex);
 			if (!m_requestlist.empty()) {
 				msg = m_requestlist.front();
@@ -175,7 +175,7 @@ namespace Wrap{
 		void setTimeout(eType value){
 			type = value;
 			if (type == TYPE_TIMEOUT){
-				timeout = 30;//30秒后回调到上层
+				timeout = 20;//20秒后回调到上层
 			}
 			else{
 				timeout = 3;//3秒后回调到上层
