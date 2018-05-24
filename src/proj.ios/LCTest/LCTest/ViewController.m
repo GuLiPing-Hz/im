@@ -11,8 +11,8 @@
 
 #define APPKEY @"4ed38057df363e8355229ec53687c549"
 //#define HOST @"192.168.1.67"
-//#define HOST @"192.168.1.9"
-#define HOST  @"123.206.229.213"
+#define HOST @"192.168.0.18"
+//#define HOST  @"123.206.229.213"
 #define PORT  27710
 
 #define UID1 @"1000001"
@@ -142,6 +142,34 @@
     } withAuto:NO];
 }
 
+-(void)listenRoomUser
+{
+    self.mRoomUserReq = [LCRequest listenRoomUser:^(int type,NSDictionary* successData,int failedCode,NSString* reqJson) {
+        if(type == RESPONSE_SUCCESS){
+            NSNumber* temp1 = successData[@"is_enter"];
+            BOOL isEnter = [temp1 boolValue];
+            NSArray* uids = successData[@"uids"];
+            
+            NSString* log;
+            for(NSDictionary* uid in uids){
+                NSString* dicType = uid[@"type"];
+                NSString* typeDec = @"未知";
+                if(dicType.intValue == 0){
+                    typeDec = @"普通用户";
+                } else if(dicType.intValue == 0){
+                    typeDec = @"机器人";
+                }
+                log = [NSString stringWithFormat:@"【%@[%@]】 %@",uid[@"uid"],typeDec,isEnter?@"进入房间":@"离开房间"];
+                NSLog(@"%@",log);
+            }
+            //消息这里只是log了一下
+            //显示最后一条消息
+            [self.mTextStatus setText:log];
+            
+        }//监听不会收到失败消息
+    } withAuto:NO];
+}
+
 - (IBAction)clickLogin:(id)sender {
     if(self.mIsLogin){
         [self showTip:@"您已经登录"];
@@ -194,6 +222,7 @@
         
         [LConnection removeReq:self.mSayReq];
         [LConnection removeReq:self.mConnectReq];
+        [LConnection removeReq:self.mRoomUserReq];
         
         self.mMyUID = nil;
         self.mIsLogin = NO;
@@ -225,6 +254,7 @@
         return;
     }
     
+    [self listenRoomUser];
     LCRequest* req = [LCRequest enterRoom:roomId withResp:^(int type,NSDictionary* successData,int failedCode,NSString* reqJson) {
         if(type == RESPONSE_SUCCESS){
             [self showStatus:@"进入房间成功"];
@@ -249,6 +279,8 @@
         return ;
     }
     
+    //离开房间移除监听
+    [LConnection removeReq:self.mRoomUserReq];
     LCRequest* req = [LCRequest exitRoom:^(int type,NSDictionary* successData,int failedCode,NSString* reqJson) {
         if(type == RESPONSE_SUCCESS){
             [self showStatus:@"离开房间成功"];

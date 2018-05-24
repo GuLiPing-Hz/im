@@ -145,6 +145,53 @@ static NSLock* sLock = NULL;
                     request.mResponse(RESPONSE_FAILED, nil, code, result[RESULT_REQUEST]);
                 });
             }
+            else if(strcmp(request.mMethod.UTF8String, "roomUser") == 0 && (strcmp(method , "roomUser")==0 ||
+                strcmp(method , "enterRoom")==0 || strcmp(method , "exitRoom")==0)){
+                
+                //优先移除监听
+                if (request.mAutoRemove) {
+                    //检查是否需要移除当前监听
+                    [sLCRequests removeObject:request];
+                }
+                
+                NSDictionary* data = nil;
+                if (strcmp(method , "enterRoom")==0 ) {
+                    NSString* strType =result[RESULT_ARG0];
+                    //默认当初是普通用户
+                    NSNumber* type = strType!=nil?[NSNumber numberWithInt:strType.intValue]:[NSNumber numberWithInteger:0];
+                    
+                    NSDictionary* user = [NSDictionary dictionaryWithObjectsAndKeys:result[RESULT_ARG1],@"uid",type,@"type", nil];
+                    NSArray* users = [[NSArray alloc] initWithObjects:user, nil];
+
+                    data = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:YES],@"is_enter",result[RESULT_ARG0]
+                        ,@"room_id",users,@"uids",nil];
+                } else if(strcmp(method , "exitRoom")==0){
+                    NSDictionary* user = [NSDictionary dictionaryWithObjectsAndKeys:result[RESULT_ARG1],@"uid",[NSNumber numberWithInteger:-0],@"type", nil];
+                    NSArray* users = [[NSArray alloc] initWithObjects:user, nil];
+                    data = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:YES],@"is_enter",result[RESULT_ARG0]
+                            ,@"room_id",users,@"uids",nil];
+                } else{
+                    //将字符串写到缓冲区。
+                    NSString* tempUsers = result[RESULT_ARG1];
+                    NSData* tempJsonData = [tempUsers dataUsingEncoding:NSUTF8StringEncoding];
+                    //解析json数据，使用系统方法 JSONObjectWithData:  options: error:
+                    NSArray* tempResult = [NSJSONSerialization JSONObjectWithData:tempJsonData options:NSJSONReadingMutableLeaves error:nil];
+                    
+                    NSMutableArray* users = [[NSMutableArray alloc] init];
+                    for (int i=0; i<[tempResult count]; i++) {
+                        NSDictionary* dicUserBefore = [tempResult objectAtIndex:i];
+                        NSString* strType = dicUserBefore[@"arg1_1"];
+                        NSDictionary* dicUser = [NSDictionary dictionaryWithObjectsAndKeys:dicUserBefore[@"arg1_0"],@"uid",[NSNumber numberWithInt:strType.intValue],@"type", nil];
+                        [users addObject:dicUser];
+                    }
+                    data = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:YES],@"is_enter",users,@"uids",nil];
+                }
+
+                //如果我们在登录的时候监听到error
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    request.mResponse(RESPONSE_SUCCESS, data, 0, nil);
+                });
+            }
             else if (strcmp(request.mMethod.UTF8String, method) == 0) {
 
                 //优先移除监听

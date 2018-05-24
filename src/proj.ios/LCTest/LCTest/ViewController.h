@@ -13,6 +13,7 @@
 
 @property(nonatomic,retain) LCRequest* mConnectReq;
 @property(nonatomic,retain) LCRequest* mSayReq;
+@property(nonatomic,retain) LCRequest* mRoomUserReq;
 
 @property(nonatomic,retain) NSString* mMyUID;
 @property(nonatomic,retain) NSString* mMyRoomId;

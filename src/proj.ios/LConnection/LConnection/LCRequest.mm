@@ -289,6 +289,18 @@ static BOOL sISLogining = NO;
     return [[LCRequest alloc] init:@"exitRoom" withResponse:response withAuto:_auto];
 }
 
+/**
+ * 监听房间用户进出的消息，会监听自己的消息
+ *
+ * @param response
+ * @param auto
+ * @return
+ */
++(instancetype)listenRoomUser:(response_bloct_t) response withAuto:(BOOL) _auto
+{
+    return [[LCRequest alloc] init:@"roomUser" withResponse:response withAuto:_auto];
+}
+
 @end
 
 

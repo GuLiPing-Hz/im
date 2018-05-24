@@ -140,5 +140,14 @@ typedef void (^response_bloct_t)(int,NSDictionary*,int,NSString*);
  */
 +(instancetype)listenExitRoom:(response_bloct_t) response withAuto:(BOOL) _auto;
 
+
+/**
+ * 监听房间用户进出的消息，会监听自己的消息
+ *
+ * @param response
+ * @param auto
+ * @return
+ */
++(instancetype)listenRoomUser:(response_bloct_t) response withAuto:(BOOL) _auto;
 @end
 
