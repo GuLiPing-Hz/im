@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3DC49F1C20B81CC200A1C2C1 /* IMUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 3DC49F1B20B81CC200A1C2C1 /* IMUser.m */; };
 		3F186F051F95A0F50032C556 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F186F041F95A0F50032C556 /* AppDelegate.m */; };
 		3F186F081F95A0F50032C556 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F186F071F95A0F50032C556 /* ViewController.m */; };
 		3F186F0B1F95A0F50032C556 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3F186F091F95A0F50032C556 /* Main.storyboard */; };
@@ -39,6 +40,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3DC49F1A20B81CC200A1C2C1 /* IMUser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IMUser.h; sourceTree = "<group>"; };
+		3DC49F1B20B81CC200A1C2C1 /* IMUser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IMUser.m; sourceTree = "<group>"; };
 		3F186F001F95A0F50032C556 /* LCTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LCTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3F186F031F95A0F50032C556 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		3F186F041F95A0F50032C556 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -108,6 +111,8 @@
 				3F186F0E1F95A0F50032C556 /* LaunchScreen.storyboard */,
 				3F186F111F95A0F50032C556 /* Info.plist */,
 				3F186F121F95A0F50032C556 /* main.m */,
+				3DC49F1A20B81CC200A1C2C1 /* IMUser.h */,
+				3DC49F1B20B81CC200A1C2C1 /* IMUser.m */,
 			);
 			path = LCTest;
 			sourceTree = "<group>";
@@ -222,6 +227,7 @@
 				3F186F131F95A0F50032C556 /* main.m in Sources */,
 				3FEE4EAA1FA3225F0004EACA /* WSIndefiniteAnimationView.m in Sources */,
 				3FEE4EAC1FA3225F0004EACA /* WSProgressHUD.m in Sources */,
+				3DC49F1C20B81CC200A1C2C1 /* IMUser.m in Sources */,
 				3F186F051F95A0F50032C556 /* AppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

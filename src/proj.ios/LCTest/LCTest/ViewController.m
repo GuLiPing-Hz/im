@@ -8,6 +8,7 @@
 
 #import "ViewController.h"
 #include "WSProgressHUD.h"
+#import "IMUser.h"
 
 #define APPKEY @"4ed38057df363e8355229ec53687c549"
 //#define HOST @"192.168.1.67"
@@ -39,6 +40,7 @@
     self.mMyRoomId = nil;
     self.mIsLogin = NO;
     self.mIsInRoom = NO;
+    self.mRoomUser = [[NSMutableDictionary alloc] init];
     
     [self.mEtUid setText:UID1];
     [self.mEtToken setText:TOKEN1];
@@ -144,30 +146,60 @@
 
 -(void)listenRoomUser
 {
+    [self.mRoomUser removeAllObjects];
     self.mRoomUserReq = [LCRequest listenRoomUser:^(int type,NSDictionary* successData,int failedCode,NSString* reqJson) {
-        if(type == RESPONSE_SUCCESS){
-            NSNumber* temp1 = successData[@"is_enter"];
-            BOOL isEnter = [temp1 boolValue];
-            NSArray* uids = successData[@"uids"];
+        //监听不会收到失败消息
+        NSNumber* temp1 = successData[@"is_enter"];
+        BOOL isEnter = [temp1 boolValue];
+        NSArray* uids = successData[@"uids"];
+        
+        //排除自己进入房间的消息
+        if(uids.count == 1 && [uids[0][@"uid"] caseInsensitiveCompare:self.mMyUID] == NSOrderedSame){
+            return;
+        }
+        
+        
+        NSString* log;
+        for(NSDictionary* uid in uids){
+            NSString* dicType = uid[@"type"];
             
-            NSString* log;
-            for(NSDictionary* uid in uids){
-                NSString* dicType = uid[@"type"];
-                NSString* typeDec = @"未知";
-                if(dicType.intValue == 0){
-                    typeDec = @"普通用户";
-                } else if(dicType.intValue == 0){
-                    typeDec = @"机器人";
-                }
-                log = [NSString stringWithFormat:@"【%@[%@]】 %@",uid[@"uid"],typeDec,isEnter?@"进入房间":@"离开房间"];
-                NSLog(@"%@",log);
+            if(isEnter){
+                IMUser* user = [[IMUser alloc] init:uid[@"uid"] withType:dicType.intValue];
+                [self.mRoomUser setObject:user forKey:uid[@"uid"]];
+            } else {
+                [self.mRoomUser removeObjectForKey:uid[@"uid"]];
             }
-            //消息这里只是log了一下
-            //显示最后一条消息
-            [self.mTextStatus setText:log];
             
-        }//监听不会收到失败消息
+            log = [NSString stringWithFormat:@"用户【%@[%@]】 %@",uid[@"uid"],[self getIMUserType:dicType.intValue],isEnter?@"进入房间":@"离开房间"];
+            NSLog(@"%@",log);
+        }
+        //消息这里只是log了一下
+        //显示最后一条消息
+        [self.mTextStatus setText:log];
+        
+        [self logRoomUser];
+        
     } withAuto:NO];
+}
+
+-(void) logRoomUser {
+    NSLog(@"查看房间其它用户 begin");
+    for(NSString* key in self.mRoomUser){
+        IMUser* user = self.mRoomUser[key];
+        NSLog(@"房间用户 【uid=%@(%@)】",key,[self getIMUserType:user.type]);
+    }
+    NSLog(@"查看房间其它用户 end");
+}
+
+-(NSString*)getIMUserType:(int) type
+{
+    NSString* typeDec = @"未知";
+    if(type == 0){
+        typeDec = @"普通用户";
+    } else if(type == 1){
+        typeDec = @"机器人";
+    }
+    return typeDec;
 }
 
 - (IBAction)clickLogin:(id)sender {
@@ -284,13 +316,13 @@
     LCRequest* req = [LCRequest exitRoom:^(int type,NSDictionary* successData,int failedCode,NSString* reqJson) {
         if(type == RESPONSE_SUCCESS){
             [self showStatus:@"离开房间成功"];
-            
-            self.mIsInRoom = NO;
-            self.mMyRoomId = nil;
         } else if(type == RESPONSE_FAILED){
             NSLog(@"失败,请求内容是:(code=%d) %@",failedCode,reqJson);
             [self showStatus:[NSString stringWithFormat:@"离开房间失败 code =%d",failedCode]];
         }
+        
+        self.mIsInRoom = NO;
+        self.mMyRoomId = nil;
     }];
     
     if(req != nil)

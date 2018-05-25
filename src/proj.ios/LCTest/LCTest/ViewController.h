@@ -18,6 +18,8 @@
 @property(nonatomic,retain) NSString* mMyUID;
 @property(nonatomic,retain) NSString* mMyRoomId;
 
+@property(nonatomic,retain) NSMutableDictionary* mRoomUser;
+
 @property(nonatomic,assign) BOOL mIsLogin;
 @property(nonatomic,assign) BOOL mIsInRoom;
 
