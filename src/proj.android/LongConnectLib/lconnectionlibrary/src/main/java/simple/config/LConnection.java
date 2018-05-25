@@ -151,7 +151,7 @@ public class LConnection {
                                 data.putSerializable("uids", list);
                             } else if (TextUtils.equals(method, "exitRoom")) {
                                 data.putBoolean("is_enter", false);
-                                IMUser user = new IMUser(result.arg1);
+                                IMUser user = new IMUser(result.arg0);
                                 ArrayList<IMUser> list = new ArrayList<>();
                                 list.add(user);
                                 data.putSerializable("uids", list);

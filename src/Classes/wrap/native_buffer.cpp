@@ -90,20 +90,21 @@ namespace Wrap {
 			return ret;
 		}
 		else {
+			LOGE("ReadNativeBufferSingleAndArray unknown type= %d", type);
 			return nullptr;
 		}
 	}
 
 	BufferValue *ReadNativeBufferSingleAndArrayEx(NativeBuffer *nativeBuf, int type, int &len) {
 		if (type == BufferValue::type_array_custom) {//自定义结构数组
-			BufferValue* ret = NULL;
 			if (!nativeBuf)
 				return NULL;
 
 			wrap_new_begin;
-			ret = wrap_new(BufferValue);//PoolMgr::GetIns()->getFromPool<BufferValue>("BufferValue");
-			if (!ret)
-				return ret;
+			//BufferValue* ret = NULL;
+			//ret = wrap_new(BufferValue);//PoolMgr::GetIns()->getFromPool<BufferValue>("BufferValue");
+			//if (!ret)
+			//	return ret;
 
 			char realType = type & 0xf;//数据具体类型
 			short arraLen;
@@ -112,6 +113,8 @@ namespace Wrap {
 			// Log.i("readNativeBufferData realType=" + realType + ",arraLen=" + arraLen);
 
 			BufferValue *arra = wrap_new(BufferValue);//PoolMgr::GetIns()->getFromPool<BufferValue>("BufferValue");//数组存储
+			if (!arra)
+				return arra;
 			arra->type = (BufferValue::eDataType) realType;//数组的具体类型
 			if (arraLen > 0) {//不是空数组
 				for (int i = 0; i < arraLen; i++) {
@@ -152,8 +155,9 @@ namespace Wrap {
 				}
 			}
 
-			ret->list.push_back(arra);
-			return ret;
+			//ret->list.push_back(arra);
+			//return ret;
+			return arra;
 		}
 		else {
 			return ReadNativeBufferSingleAndArray(nativeBuf, type, len);

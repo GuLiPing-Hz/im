@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.lc.jj.myapplication.adapter.TalkAdapter;
 import com.lc.jj.myapplication.bean.TalkBean;
+import com.lc.jj.myapplication.data.RoomUserMgr;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import simple.bean.IMUser;
 import simple.config.LCRequest;
 import simple.config.LCResponse;
 import simple.config.LConnection;
@@ -129,6 +131,10 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
 
+                if (TextUtils.isEmpty(LoginActivity.sMyUID))
+                    return;
+                RoomUserMgr.GetInstance().clearIMUser();
+
                 //离开房间后，就算监听着，因为服务器不会给我们消息，所以等于没有监听
                 //那我就简单的输出个用户进出房间的日志
                 if (sRoomUserListener == null) {
@@ -137,6 +143,27 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(Bundle data) {
                             Log.i(Tag, "listenRoomUser data = " + data.toString());
+
+                            boolean isEnter = data.getBoolean("is_enter");
+                            ArrayList<IMUser> users = (ArrayList<IMUser>) data.getSerializable("uids");
+
+                            if (users == null)
+                                return;
+                            if (isEnter) {
+                                //排除自己进入房间的消息
+                                if (users.size() == 1 && TextUtils.equals(users.get(0).uid, LoginActivity.sMyUID))
+                                    return;
+                                //更新在线用户列表
+                                for (int i = 0; i < users.size(); i++) {//遍历速度最快
+                                    RoomUserMgr.GetInstance().putIMUser(users.get(i));
+                                }
+                            } else {
+                                for (int i = 0; i < users.size(); i++) {//遍历速度最快
+                                    RoomUserMgr.GetInstance().removeIMUser(users.get(i).uid);
+                                }
+                            }
+
+                            RoomUserMgr.GetInstance().logIMUser();
                         }
 
                         @Override
