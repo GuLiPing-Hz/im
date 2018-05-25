@@ -38,10 +38,12 @@ public class RoomUserMgr {
     }
 
     public void putIMUser(IMUser user) {
+        Log.i(Tag, "用户 【uid=" + user.uid + "(" + getIMUserType(user) + ")】 进入房间");
         mIMUserMap.put(user.uid, user);
     }
 
     public void removeIMUser(String uid) {
+        Log.i(Tag, "用户 【uid=" + uid + "】 离开房间");
         mIMUserMap.remove(uid);
     }
 
@@ -51,6 +53,7 @@ public class RoomUserMgr {
 
     public void logIMUser() {
         //
+        Log.i(Tag, "查看房间其他用户 begin");
         Set<Map.Entry<String, IMUser>> set = mIMUserMap.entrySet();
         Iterator<Map.Entry<String, IMUser>> iter = set.iterator();
         while (iter.hasNext()) {
@@ -64,5 +67,17 @@ public class RoomUserMgr {
             }
             Log.i(Tag, "房间用户 【uid=" + data.getKey() + "(" + type + ")】");
         }
+        Log.i(Tag, "查看房间其他用户 end");
+    }
+
+    public String getIMUserType(IMUser user) {
+        String type = "未知";
+        int itype = user.type;
+        if (itype == 0) {
+            type = "普通用户";
+        } else if (itype == 1) {
+            type = "机器人";
+        }
+        return type;
     }
 }
