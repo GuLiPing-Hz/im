@@ -87,7 +87,30 @@ public class LConnection {
                 @Override
                 public String call(String method, String param) {
 
-                    final CallNativeArg result = GsonUtils.getGson().fromJson(param, CallNativeArg.class);
+                    CallNativeArg resultTemp;
+                    try {
+                        resultTemp = GsonUtils.getGson().fromJson(param, CallNativeArg.class);
+                    } catch (Throwable e) {
+                        //e.printStackTrace();//我们数据解析失败啦，，，一般都是由于string包含了一个json数组或者json对象
+                        resultTemp = new CallNativeArg();
+                        try {
+                            //尝试用原生解析
+                            JSONObject jsonObject = new JSONObject(param);
+                            resultTemp.method = jsonObject.optString("method");
+                            resultTemp.code = jsonObject.optInt("code", -1);
+                            resultTemp.arg0 = jsonObject.optString("arg0");
+                            resultTemp.arg1 = jsonObject.optString("arg1");
+                            resultTemp.arg2 = jsonObject.optString("arg2");
+                            resultTemp.arg3 = jsonObject.optString("arg3");
+                            resultTemp.arg4 = jsonObject.optString("arg4");
+                            resultTemp.arg5 = jsonObject.optString("arg5");
+
+                            resultTemp.request = jsonObject.optString("request");
+                        } catch (JSONException e1) {
+                            e1.printStackTrace();
+                        }
+                    }
+                    final CallNativeArg result = resultTemp;
                     mLock.lock();
                     Iterator<LCRequest> it = sLCRequests.iterator();
                     while (it.hasNext()) {
@@ -162,11 +185,11 @@ public class LConnection {
                                 try {
                                     JSONArray jsonArray = new JSONArray(result.arg1);
                                     for (int i = 0; i < jsonArray.length(); i++) {
-                                        JSONObject jsonObject = (JSONObject) jsonArray.get(i);
-                                        IMUser user = new IMUser(jsonObject.getString("arg1_0"), jsonObject.getInt("arg1_1"));
+                                        JSONArray innerArray = (JSONArray) jsonArray.get(i);
+                                        IMUser user = new IMUser(innerArray.getString(0), innerArray.getInt(1));
                                         list.add(user);
                                     }
-                                } catch (JSONException e) {
+                                } catch (Throwable e) {
                                     e.printStackTrace();
                                 }
 

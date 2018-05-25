@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         LCRequest.SetMaxReLoginTimes(3);
         LCRequest.SetAppHostPort(APPKEY, HOST, PORT, 2);
 
-        LCRequest req = LCRequest.login(UID1, TOKEN1, new LCResponse() {
+        LCRequest req = LCRequest.login(UID2, TOKEN2, new LCResponse() {
             @Override
             public void onSuccess(Bundle data) {
                 /**

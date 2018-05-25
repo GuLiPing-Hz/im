@@ -12,27 +12,27 @@ import java.io.IOException;
  */
 public class StringTypeAdapter extends TypeAdapter<String> {
     @Override
-    public void write(JsonWriter writer, String value) throws IOException {
+    public void write(JsonWriter writer, String value) {
         try {
-            if(value == null){
+            if (value == null) {
                 writer.nullValue();
                 return;
             }
             writer.value(value);
-        }catch (Throwable ex){
+        } catch (Throwable ex) {
             ex.printStackTrace();
         }
     }
 
     @Override
-    public String read(JsonReader reader) throws IOException {
+    public String read(JsonReader reader) {
         try {
-            if(reader.peek() == JsonToken.NULL){
+            if (reader.peek() == JsonToken.NULL) {
                 reader.nextNull();
                 return "";//原先是返回Null，这里改为返回空字符串
             }
             return reader.nextString();
-        }catch (Throwable ex){
+        } catch (Throwable ex) {
             ex.printStackTrace();
         }
         return "";

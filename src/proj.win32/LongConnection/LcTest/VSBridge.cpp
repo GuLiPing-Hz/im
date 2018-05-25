@@ -86,12 +86,12 @@ void VSBridge::callNative(const std::string& method, const std::string& param)
 		updateRoomUser(true, paramDoc["arg1"].GetString(), type);
 		logRoomUser();
 
-		rapidjson::Document doc;
-		rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> &allocator = doc.GetAllocator();
-		rapidjson::Value root(rapidjson::kObjectType);
-		root.AddMember("method", "exitRoom", allocator);
+		//rapidjson::Document doc;
+		//rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> &allocator = doc.GetAllocator();
+		//rapidjson::Value root(rapidjson::kObjectType);
+		//root.AddMember("method", "exitRoom", allocator);
 
-		callByNative(GetStrFromRoot(root));
+		//callByNative(GetStrFromRoot(root));
 	}
 	else if (method == "exitRoom") {
 		updateRoomUser(false, paramDoc["arg0"].GetString(), -1);
