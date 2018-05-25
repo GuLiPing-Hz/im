@@ -120,9 +120,17 @@ void VSBridge::updateRoomUser(bool isEnter, std::string uid, int type) {
 		user.uid = uid;
 		user.type = type;
 		mUsers.insert(std::make_pair(uid, user));
+
+		std::string stype = "未知";
+		if (type == 0)
+			stype = "普通用户";
+		else if (type == 1)
+			stype = "机器人";
+		LOGI("用户 【uid=%s(%s)】进入房间", uid.c_str(), stype.c_str());
 	}
 	else {
 		mUsers.erase(uid);
+		LOGI("用户 【uid=%s】离开房间", uid.c_str());
 	}
 }
 
