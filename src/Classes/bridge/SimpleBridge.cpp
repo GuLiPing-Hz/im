@@ -318,7 +318,7 @@ MethodParam SimpleBridge::removeSeq(const int seq) {
 
 int SimpleBridge::callByNative(const std::string &param) {
     int ret = 0;
-    LOGD("请求服务器 %s param=%s",__FUNCTION__,param.c_str());
+    //LOGD("请求服务器 %s param=%s",__FUNCTION__,param.c_str());
 
     rapidjson::Document doc;
     //rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> &allocator = doc.GetAllocator();
