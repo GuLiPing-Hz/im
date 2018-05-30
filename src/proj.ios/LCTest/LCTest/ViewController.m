@@ -170,7 +170,13 @@
                 [self.mRoomUser removeObjectForKey:uid[@"uid"]];
             }
             
-            log = [NSString stringWithFormat:@"用户【%@[%@]】 %@",uid[@"uid"],[self getIMUserType:dicType.intValue],isEnter?@"进入房间":@"离开房间"];
+            //离开房间的时候不会传入type，可根据自己的在线列表知晓用户类型
+            if(isEnter){
+                log = [NSString stringWithFormat:@"用户【%@[%@]】 %@",uid[@"uid"],[self getIMUserType:dicType.intValue],@"进入房间"];
+            } else {
+                log = [NSString stringWithFormat:@"用户【%@】 %@",uid[@"uid"],@"离开房间"];
+            }
+            
             NSLog(@"%@",log);
         }
         //消息这里只是log了一下
