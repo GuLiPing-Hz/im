@@ -162,9 +162,13 @@
         NSString* log;
         for(NSDictionary* uid in uids){
             NSString* dicType = uid[@"type"];
+            NSString* dicRoleId = uid[@"roleId"]
+            NSString* dicLevel = uid[@"level"]
             
+            IMUser* user = nil;
             if(isEnter){
-                IMUser* user = [[IMUser alloc] init:uid[@"uid"] withType:dicType.intValue];
+                user = [[IMUser alloc] init:uid[@"uid"] withType:dicType.intValue withAvatar:uid[@"avatar"] 
+                    withName:uid[@"name"]  withRoleId:dicRoleId.intValue withLevel:dicLevel.intValue];
                 [self.mRoomUser setObject:user forKey:uid[@"uid"]];
             } else {
                 [self.mRoomUser removeObjectForKey:uid[@"uid"]];
@@ -172,9 +176,9 @@
             
             //离开房间的时候不会传入type，可根据自己的在线列表知晓用户类型
             if(isEnter){
-                log = [NSString stringWithFormat:@"用户【%@[%@]】 %@",uid[@"uid"],[self getIMUserType:dicType.intValue],@"进入房间"];
+                log = [NSString stringWithFormat:@"用户【%@】 进入房间 %@",[self getIMUserType:dicType.intValue],[user toString]];
             } else {
-                log = [NSString stringWithFormat:@"用户【%@】 %@",uid[@"uid"],@"离开房间"];
+                log = [NSString stringWithFormat:@"用户【%@】 离开房间",uid[@"uid"]];
             }
             
             NSLog(@"%@",log);

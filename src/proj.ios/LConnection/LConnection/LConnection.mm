@@ -27,6 +27,7 @@ lipo -info 编译的exe
 #define RESULT_ARG3  @"arg3"
 #define RESULT_ARG4  @"arg4"
 #define RESULT_ARG5  @"arg5"
+#define RESULT_ARG6  @"arg6"
 #define RESULT_REQUEST @"request"
 
 @implementation LConnection
@@ -161,7 +162,9 @@ static NSLock* sLock = NULL;
                     //默认当初是普通用户
                     NSNumber* type = strType!=nil?[NSNumber numberWithInt:strType.intValue]:[NSNumber numberWithInteger:-1];
                     
-                    NSDictionary* user = [NSDictionary dictionaryWithObjectsAndKeys:result[RESULT_ARG1],@"uid",type,@"type", nil];
+                    NSDictionary* user = [NSDictionary dictionaryWithObjectsAndKeys:result[RESULT_ARG1],@"uid",type,@"type"
+                    	,result[RESULT_ARG3],@"avatar",result[RESULT_ARG4],@"name",result[RESULT_ARG5],@"roleId"
+                    	,result[RESULT_ARG6],@"level", nil];
                     NSArray* users = [[NSArray alloc] initWithObjects:user, nil];
 
                     data = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:YES],@"is_enter",result[RESULT_ARG0]
@@ -181,7 +184,10 @@ static NSLock* sLock = NULL;
                     for (int i=0; i<[tempResult count]; i++) {
                         NSArray* arraUserBefore = [tempResult objectAtIndex:i];
                         NSString* strType = arraUserBefore[1];
-                        NSDictionary* dicUser = [NSDictionary dictionaryWithObjectsAndKeys:arraUserBefore[0],@"uid",[NSNumber numberWithInt:strType.intValue],@"type", nil];
+                        NSDictionary* dicUser = [NSDictionary dictionaryWithObjectsAndKeys:arraUserBefore[0],@"uid"
+                        	,[NSNumber numberWithInt:strType.intValue],@"type"
+                        	,arraUserBefore[2],@"avatar",arraUserBefore[3],@"name"
+                        	,,arraUserBefore[4],@"roleId",arraUserBefore[5],@"level", nil];
                         [users addObject:dicUser];
                     }
                     data = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:YES],@"is_enter",users,@"uids",nil];

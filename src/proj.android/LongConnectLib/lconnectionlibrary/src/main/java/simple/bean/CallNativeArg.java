@@ -12,7 +12,8 @@ public class CallNativeArg {
     public String arg2 = null;//: 第三个参数
     public String arg3 = null;//: 第四个参数
     public String arg4 = null;//: 第五个参数
-    public String arg5 = null;//: 第六个参数   最多支持6个参数
+    public String arg5 = null;//: 第六个参数
+    public String arg6 = null;//: 第7个参数
 
     public String request = null;//失败回调的时候的请求参数
 }

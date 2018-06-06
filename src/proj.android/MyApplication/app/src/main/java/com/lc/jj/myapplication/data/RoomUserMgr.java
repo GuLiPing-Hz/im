@@ -65,7 +65,7 @@ public class RoomUserMgr {
             } else if (itype == 1) {
                 type = "机器人";
             }
-            Log.i(Tag, "房间用户 【uid=" + data.getKey() + "(" + type + ")】");
+            Log.i(Tag, "房间用户 【" + type + "】" + data.getValue().toString());
         }
         Log.i(Tag, "查看房间其他用户 end");
     }

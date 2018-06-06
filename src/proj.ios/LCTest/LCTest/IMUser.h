@@ -12,7 +12,15 @@
 
 @property(nonatomic,copy) NSString* uid;
 @property(nonatomic,assign) int type;
+@property(nonatomic,copy) NSString* avatar;
+@property(nonatomic,copy) NSString* name;
+@property(nonatomic,assign) int roleId;
+@property(nonatomic,assign) int level;
 
 -(instancetype)init:(NSString*)uid withType:(int)type;
+-(instancetype)init:(NSString*)uid withType:(int)type withAvatar:(NSString*)avatar 
+	withName:(NSString*)name withRoleId:(int)roleId withLevel:(int)level;
+
+-(NSString*)toString;
 
 @end

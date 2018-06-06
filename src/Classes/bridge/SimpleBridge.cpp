@@ -273,7 +273,8 @@ SimpleBridge::onLobbyMsg(const int code, const char *msg, const unsigned int len
         } else if (cmd == CMD_ENTERROOM_C2S2C) {
             //VECBUNIT data = AutoParseNativeBuffer(nativeBuf);
             Wrap::BufferValue *data = AutoParseNativeBufferEx(nativeBuf);
-            AddParamNames(doc, paramRoot, data, 3, "arg0", "arg1", "arg2");
+            AddParamNames(doc, paramRoot, data, 7, "arg0", "arg1", "arg2", "arg3"
+				, "arg4", "arg5", "arg6");
             callNative("enterRoom", GetStrFromRoot(paramRoot));
             ReleaseBufferValue(data);
         } else if (cmd == CMD_EXITROOM_C2S2C) {

@@ -44,6 +44,10 @@ enum eCMD{
 	string room_id  房间ID
 	string uid
 	short  type   用户类型 0表示普通用户，1表示机器人
+	string avatar
+	string name
+	int RoleId
+	int Level
 	*/
 	CMD_ENTERROOM_C2S2C = 5,//进入房间
 
@@ -71,6 +75,10 @@ enum eCMD{
 	custom[] {  
 			string uid  房间用户ID数组
 			short type 房间用户对应的类型  两者长度一致
+			string avatar 头像
+			string name 昵称
+			int RoleId vip等级
+			int Level 等级
 			}
 	*/
 	CMD_ROOM_USERS_S2C = 9,//进入房间用户收到已经在房间的用户列表

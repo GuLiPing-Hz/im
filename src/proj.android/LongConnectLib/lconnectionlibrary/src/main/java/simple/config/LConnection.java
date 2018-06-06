@@ -104,6 +104,7 @@ public class LConnection {
                             resultTemp.arg3 = jsonObject.optString("arg3");
                             resultTemp.arg4 = jsonObject.optString("arg4");
                             resultTemp.arg5 = jsonObject.optString("arg5");
+                            resultTemp.arg6 = jsonObject.optString("arg6");
 
                             resultTemp.request = jsonObject.optString("request");
                         } catch (JSONException e1) {
@@ -166,9 +167,15 @@ public class LConnection {
                                 data.putBoolean("is_enter", true);
                                 data.putString("room_id", result.arg0);
                                 int type = 0;
+                                int roleId = 0;
+                                int level = 0;
                                 if (!TextUtils.isEmpty(result.arg2))//如果不为空
                                     type = Integer.parseInt(result.arg2);
-                                IMUser user = new IMUser(result.arg1, type);
+                                if (!TextUtils.isEmpty(result.arg5))//如果不为空
+                                    roleId = Integer.parseInt(result.arg5);
+                                if (!TextUtils.isEmpty(result.arg6))//如果不为空
+                                    level = Integer.parseInt(result.arg6);
+                                IMUser user = new IMUser(result.arg1, type, result.arg3, result.arg4, roleId, level);
                                 ArrayList<IMUser> list = new ArrayList<>();
                                 list.add(user);
                                 data.putSerializable("uids", list);
@@ -186,7 +193,9 @@ public class LConnection {
                                     JSONArray jsonArray = new JSONArray(result.arg1);
                                     for (int i = 0; i < jsonArray.length(); i++) {
                                         JSONArray innerArray = (JSONArray) jsonArray.get(i);
-                                        IMUser user = new IMUser(innerArray.getString(0), innerArray.getInt(1));
+                                        IMUser user = new IMUser(innerArray.getString(0), innerArray.getInt(1)
+                                                , innerArray.getString(2), innerArray.getString(3)
+                                                , innerArray.getInt(4), innerArray.getInt(5));
                                         list.add(user);
                                     }
                                 } catch (Throwable e) {

@@ -38,6 +38,7 @@ public class JsAndroidBridge {
     public static final String RESULT_ARG3 = "arg3";
     public static final String RESULT_ARG4 = "arg4";
     public static final String RESULT_ARG5 = "arg5";
+    public static final String RESULT_ARG6 = "arg6";
 
     //Js Call Native
     public static final String JS_2_NATIVE_GET_NET_STATUS = "GET_NET_STATUS";
