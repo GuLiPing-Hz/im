@@ -38,7 +38,7 @@ public class RoomUserMgr {
     }
 
     public void putIMUser(IMUser user) {
-        Log.i(Tag, "用户 【uid=" + user.uid + "(" + getIMUserType(user) + ")】 进入房间");
+        Log.i(Tag, "用户 【uid=" + user.uid + "(" + getIMUserType(user) + ")】 进入房间 " + user.toString());
         mIMUserMap.put(user.uid, user);
     }
 

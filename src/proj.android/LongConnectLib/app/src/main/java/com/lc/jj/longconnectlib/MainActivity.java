@@ -33,13 +33,13 @@ public class MainActivity extends AppCompatActivity {
     public static final String HOST = "192.168.0.18";//"123.206.229.213";//
     public static final short PORT = 27710;
 
-    public static final String UID1 = "1000001";
+    public static final String UID1 = "1100001";
     public static final String TOKEN1 = "018f0be0cb075ee761cf8d44be2b287e";
-    public static final String UID2 = "1000002";
+    public static final String UID2 = "1100002";
     public static final String TOKEN2 = "9a78580de4e75b65b9b3e6840aede0dd";
-    public static final String UID11 = "1000011";
+    public static final String UID11 = "1100011";
     public static final String TOKEN11 = "06c16a5cf83d77f8f531c3e0d65e31a9";
-    public static final String UID12 = "1000012";
+    public static final String UID12 = "1100012";
     public static final String TOKEN12 = "30f9f8feceee317a66df684915be86f9";
     public static final String UID0 = "5757009";
     public static final String TOKEN0 = "76f0622bc02c8272300cbe13c9add794";

@@ -13,8 +13,8 @@ public class IMUser implements Serializable {
     public IMUser(String uid, int type, String avatar, String name, int roleId, int level) {
         this.uid = uid;
         this.type = type;
-        this.avatar = avatar;
-        this.name = name;
+        this.avatar = avatar == null ? "" : avatar;
+        this.name = name == null ? "" : name;
         this.roleId = roleId;
         this.level = level;
     }

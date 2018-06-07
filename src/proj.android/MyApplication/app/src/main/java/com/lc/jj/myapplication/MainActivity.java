@@ -142,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
                     sRoomUserListener = LCRequest.listenRoomUser(new LCResponse() {
                         @Override
                         public void onSuccess(Bundle data) {
-                            Log.i(Tag, "listenRoomUser data = " + data.toString());
+//                            Log.i(Tag, "listenRoomUser data = " + data.toString());
 
                             boolean isEnter = data.getBoolean("is_enter");
                             ArrayList<IMUser> users = (ArrayList<IMUser>) data.getSerializable("uids");
