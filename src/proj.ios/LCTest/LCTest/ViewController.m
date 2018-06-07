@@ -16,13 +16,13 @@
 //#define HOST  @"123.206.229.213"
 #define PORT  27710
 
-#define UID1 @"1000001"
+#define UID1 @"1100001"
 #define TOKEN1 @"018f0be0cb075ee761cf8d44be2b287e"
-#define UID2  @"1000002"
+#define UID2  @"1100002"
 #define TOKEN2  @"9a78580de4e75b65b9b3e6840aede0dd"
-#define UID11 @"1000011"
+#define UID11 @"1100011"
 #define TOKEN11 @"06c16a5cf83d77f8f531c3e0d65e31a9"
-#define UID12 @"1000012"
+#define UID12 @"1100012"
 #define TOKEN12 @"30f9f8feceee317a66df684915be86f9"
 
 
