@@ -187,7 +187,7 @@ static NSLock* sLock = NULL;
                         NSDictionary* dicUser = [NSDictionary dictionaryWithObjectsAndKeys:arraUserBefore[0],@"uid"
                         	,[NSNumber numberWithInt:strType.intValue],@"type"
                         	,arraUserBefore[2],@"avatar",arraUserBefore[3],@"name"
-                        	,,arraUserBefore[4],@"roleId",arraUserBefore[5],@"level", nil];
+                        	,arraUserBefore[4],@"roleId",arraUserBefore[5],@"level", nil];
                         [users addObject:dicUser];
                     }
                     data = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:YES],@"is_enter",users,@"uids",nil];

@@ -29,7 +29,7 @@
         self.avatar = avatar;
         self.name = name;
         self.roleId = roleId;
-        self.level = level
+        self.level = level;
     }
     
     return self;
@@ -37,8 +37,7 @@
 
 -(NSString*)toString
 {
-	return @"IMUser{uid='" + this.uid + @'\'' + @", type=" + this.type + @", avatar='" + this.avatar + @'\'' + @", name='" + this.name + @'\'' 
-		+ @", roleId=" + this.roleId + @", level=" + this.level + @'}';
+    return [NSString stringWithFormat:@"IMUser{uid='%@', type=%d, avatar='%@', name='%@', roleId=%d, level=%d",self.uid,self.type,self.avatar,self.name,self.roleId,self.level];
 }
 
 @end

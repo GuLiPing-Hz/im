@@ -20,6 +20,8 @@
 #define TOKEN1 @"018f0be0cb075ee761cf8d44be2b287e"
 #define UID2  @"1100002"
 #define TOKEN2  @"9a78580de4e75b65b9b3e6840aede0dd"
+#define UID3 @"1100003"
+#define TOKEN3  @"1773273t62t346ghde"
 #define UID11 @"1100011"
 #define TOKEN11 @"06c16a5cf83d77f8f531c3e0d65e31a9"
 #define UID12 @"1100012"
@@ -162,8 +164,8 @@
         NSString* log;
         for(NSDictionary* uid in uids){
             NSString* dicType = uid[@"type"];
-            NSString* dicRoleId = uid[@"roleId"]
-            NSString* dicLevel = uid[@"level"]
+            NSString* dicRoleId = uid[@"roleId"];
+            NSString* dicLevel = uid[@"level"];
             
             IMUser* user = nil;
             if(isEnter){
@@ -404,6 +406,10 @@
         [self.mEtToken setText:TOKEN11];
     }else if([self.mEtUid.text caseInsensitiveCompare:UID12] == NSOrderedSame){
         [self.mEtToken setText:TOKEN12];
+    }else if([self.mEtUid.text caseInsensitiveCompare:UID3] == NSOrderedSame){
+        [self.mEtToken setText:TOKEN3];
+    }else {
+        [self.mEtToken setText:@""];
     }
 }
 
