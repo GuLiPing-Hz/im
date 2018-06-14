@@ -12,8 +12,10 @@
 
 #define APPKEY @"4ed38057df363e8355229ec53687c549"
 //#define HOST @"192.168.1.67"
-#define HOST @"192.168.0.18"
+//#define HOST @"192.168.0.18"
 //#define HOST  @"123.206.229.213"
+//正式服
+#define HOST  @"34.199.120.59"
 #define PORT  27710
 
 #define UID1 @"1100001"
@@ -27,6 +29,11 @@
 #define UID12 @"1100012"
 #define TOKEN12 @"30f9f8feceee317a66df684915be86f9"
 
+//正式服
+#define UID4218 @"4218458"
+#define TOKEN4218 @"fc8a24d0c45c698dcffafeb57fcdbdee"
+#define UID4219 @"4217955"
+#define TOKEN4219 @"c0e7ae7d85fca3ae30c5053d1b0b5954"
 
 @interface ViewController ()
 
@@ -408,6 +415,10 @@
         [self.mEtToken setText:TOKEN12];
     }else if([self.mEtUid.text caseInsensitiveCompare:UID3] == NSOrderedSame){
         [self.mEtToken setText:TOKEN3];
+    }else if([self.mEtUid.text caseInsensitiveCompare:UID4218] == NSOrderedSame){
+        [self.mEtToken setText:TOKEN4218];
+    }else if([self.mEtUid.text caseInsensitiveCompare:UID4219] == NSOrderedSame){
+        [self.mEtToken setText:TOKEN4219];
     }else {
         [self.mEtToken setText:@""];
     }
