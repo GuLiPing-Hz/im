@@ -37,7 +37,9 @@ public class LoginActivity extends AppCompatActivity {
 
     public static final String APPKEY = "4ed38057df363e8355229ec53687c549";
     //    public static final String HOST = "192.168.1.67";//
-    public static final String HOST = "192.168.0.18";//
+//    public static final String HOST = "192.168.0.18";//
+    //正式服
+    public static final String HOST = "34.199.120.59";
     //    public static final String HOST = "123.206.229.213";
     public static final short PORT = 27710;
 
@@ -49,6 +51,12 @@ public class LoginActivity extends AppCompatActivity {
     public static final String TOKEN11 = "06c16a5cf83d77f8f531c3e0d65e31a9";
     public static final String UID12 = "1100012";
     public static final String TOKEN12 = "30f9f8feceee317a66df684915be86f9";
+
+    //正式服
+    public static final String UID4218 = "4218458";
+    public static final String TOKEN4218 = "fc8a24d0c45c698dcffafeb57fcdbdee";
+    public static final String UID4219 = "4217955";
+    public static final String TOKEN4219 = "c0e7ae7d85fca3ae30c5053d1b0b5954";
 
     @BindView(R.id.et_uid)
     EditText mEtUid;
@@ -215,6 +223,10 @@ public class LoginActivity extends AppCompatActivity {
             mEtToken.setText(TOKEN11);
         } else if (TextUtils.equals(text, UID12)) {
             mEtToken.setText(TOKEN12);
+        } else if (TextUtils.equals(text, UID4218)) {
+            mEtToken.setText(TOKEN4218);
+        } else if (TextUtils.equals(text, UID4219)) {
+            mEtToken.setText(TOKEN4219);
         }
     }
 }
