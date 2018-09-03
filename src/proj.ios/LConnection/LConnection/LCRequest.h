@@ -20,6 +20,7 @@
 #define RESPONSE_FAILED 1
 #define RESPONSE_CLOSED 2
 typedef void (^response_bloct_t)(int,NSDictionary*,int,NSString*);
+typedef void (^error_report_bloct_t)(NSError*);
 
 @interface LCRequest : NSObject
 
@@ -39,7 +40,8 @@ typedef void (^response_bloct_t)(int,NSDictionary*,int,NSString*);
 //设定最大重连次数
 +(void)SetMaxReloginTime:(int)times;
 //设置IM appkey和服务器参数
-+(void)SetAppHostPort:(NSString*)appkey withIp:(NSString*)ip withPort:(short)port withTimeout:(int)timeout;
++(void)SetAppHostPort:(NSString*)appkey withIp:(NSString*)ip withPort:(short)port withTimeout:(int)timeout withErrorReport:(error_report_bloct_t)report;
++(void)ReportError:(NSError*)err;
 
 -(instancetype)init:(NSString*)method withResponse:(response_bloct_t)response;
 -(instancetype)init:(NSString*)method withResponse:(response_bloct_t)response withAuto:(BOOL) _auto;

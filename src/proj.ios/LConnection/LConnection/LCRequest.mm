@@ -14,6 +14,8 @@
 static NSString* sAppKey;
 static NSString* sUId;
 static NSString* sToken;
+static error_report_bloct_t sReport;
+
 
 static NSString* sIp;
 static short sPort = 0;
@@ -32,12 +34,18 @@ static BOOL sISLogining = NO;
 {
     sMaxReLoginTimes = times;
 }
-+(void)SetAppHostPort:(NSString*)appkey withIp:(NSString*)ip withPort:(short)port withTimeout:(int)timeout
++(void)SetAppHostPort:(NSString*)appkey withIp:(NSString*)ip withPort:(short)port withTimeout:(int)timeout withErrorReport:(error_report_bloct_t)report
 {
     sAppKey = appkey;
     sIp = ip;
     sPort = port;
     sTimeout = timeout;
+    sReport = report;
+}
++(void)ReportError:(NSError*)err
+{
+    if(sReport)
+        sReport(err);
 }
 
 -(instancetype)init:(NSString*)method withResponse:(response_bloct_t)response

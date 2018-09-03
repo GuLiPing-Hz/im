@@ -94,10 +94,21 @@ static NSLock* sLock = NULL;
     sLCRequests = [NSMutableArray array];
     
     FUNCIOS callback = [=](const char* method,const char* param)->void{
+        if(!method || !param){
+            NSError* err = [NSError errorWithDomain:@"method is null or param is null" code:-1 userInfo:nil];
+            [LCRequest ReportError:err];
+            return;
+        }
+        
         //将字符串写到缓冲区。
         NSData* jsonData = [[NSString stringWithUTF8String:param] dataUsingEncoding:NSUTF8StringEncoding];
         //解析json数据，使用系统方法 JSONObjectWithData:  options: error:
-        NSDictionary* result = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingMutableLeaves error:nil];
+        NSError* error = [[NSError alloc] init];
+        NSDictionary* result = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingMutableLeaves error:&error];
+        if(result == nil){
+            [LCRequest ReportError:error];
+            return;
+        }
         
         NSNumber* nsCode = result[RESULT_CODE];
         int code = nsCode.intValue;

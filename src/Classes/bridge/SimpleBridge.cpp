@@ -1,4 +1,4 @@
-﻿#include "SimpleBridge.h"
+#include "SimpleBridge.h"
 #include "../LongConnection.h"
 #include "../protocol.h"
 #include <memory>
@@ -241,7 +241,9 @@ SimpleBridge::onLobbyMsg(const int code, const char *msg, const unsigned int len
 
         MethodParam mp;
         if (seq > 0) {
-            mp = std::move(removeSeq(seq));
+            MethodParam temp = removeSeq(seq);
+            mp.method = temp.method;
+            mp.param = temp.param;
             LCSetSeqIsBack(seq);
         }
 
@@ -249,7 +251,7 @@ SimpleBridge::onLobbyMsg(const int code, const char *msg, const unsigned int len
         MAKE_PARAM_ROOT(netRet);
         if (netRet != 0) {//请求失败，那么带上我们之前的请求数据
             rapidjson::Value value;
-            value.SetString(mp.param.c_str(), mp.param.size(), allocator);
+            value.SetString(mp.param.c_str(), (unsigned int)mp.param.size(), allocator);
             paramRoot.AddMember("request", value, allocator);//加上请求的的东西，告诉应用层，这个请求超时了
         }
 
@@ -298,7 +300,7 @@ SimpleBridge::onLobbyMsg(const int code, const char *msg, const unsigned int len
         MAKE_PARAM_ROOT(code);
 
         rapidjson::Value value;
-        value.SetString(mp.param.c_str(), mp.param.size(), doc.GetAllocator());
+        value.SetString(mp.param.c_str(), (unsigned int)mp.param.size(), doc.GetAllocator());
         paramRoot.AddMember("request", value, doc.GetAllocator());//加上请求的的东西，告诉应用层，这个请求超时了
         callNative(mp.method, GetStrFromRoot(paramRoot));
     }
