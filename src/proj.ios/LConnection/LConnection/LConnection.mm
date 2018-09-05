@@ -110,12 +110,18 @@ static NSLock* sLock = NULL;
         
         //将字符串写到缓冲区。
         NSData* jsonData = [[NSString stringWithUTF8String:param] dataUsingEncoding:NSUTF8StringEncoding];
-        if(!jsonData){
+        if(!jsonData){//判断有没有转换成功
             std::stringstream ss;
             ss << "NSString转NSData异常;method=" << (method?method:"null") << ",param=" << (param?param:"null");
             
-            [LConnection reportError:ss.str()];
-            return;
+            [LConnection reportError:ss.str()];//向上报错
+//            return;
+            
+            //运行lossy转换
+            jsonData = [[NSString stringWithUTF8String:param] dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:YES];
+            
+            if(!jsonData)//再判断一次
+                return;
         }
         
         //解析json数据，使用系统方法 JSONObjectWithData:  options: error:
