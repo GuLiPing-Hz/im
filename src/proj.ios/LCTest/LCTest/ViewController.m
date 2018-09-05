@@ -56,7 +56,9 @@
     
     [LConnection initLConnection];
     [LCRequest SetMaxReloginTime:3];
-    [LCRequest SetAppHostPort:APPKEY withIp:HOST withPort:PORT withTimeout:10];
+    [LCRequest SetAppHostPort:APPKEY withIp:HOST withPort:PORT withTimeout:10 withErrorReport:^(NSError * err) {
+        NSLog(@"ERROR = %@",err.localizedDescription);
+    }];
 }
 
 -(void)viewWillDisappear:(BOOL)animated{

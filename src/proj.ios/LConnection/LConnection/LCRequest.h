@@ -22,6 +22,8 @@
 typedef void (^response_bloct_t)(int,NSDictionary*,int,NSString*);
 typedef void (^error_report_bloct_t)(NSError*);
 
+#define IM_ERROR_DOMAIN @"IM_Domain"
+
 @interface LCRequest : NSObject
 
 @property(nonatomic,copy) NSString* mMethod;

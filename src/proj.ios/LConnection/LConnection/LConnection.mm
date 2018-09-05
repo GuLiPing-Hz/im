@@ -10,6 +10,7 @@
 #import "LCRequest.h"
 #include "SimpleBridgeIos.h"
 #include <string.h>
+#include <sstream>
 
 /*
  查看framework
@@ -88,6 +89,12 @@ static NSLock* sLock = NULL;
     [sLock unlock];
 }
 
++(void)reportError:(std::string)str
+{
+    NSError* err = [NSError errorWithDomain:IM_ERROR_DOMAIN code:-1 userInfo:@{NSLocalizedDescriptionKey : [NSString stringWithUTF8String:str.c_str()]}];
+    [LCRequest ReportError:err];
+}
+
 +(BOOL)initLConnection
 {
     sLock = [[NSLock alloc] init];
@@ -95,18 +102,27 @@ static NSLock* sLock = NULL;
     
     FUNCIOS callback = [=](const char* method,const char* param)->void{
         if(!method || !param){
-            NSError* err = [NSError errorWithDomain:@"method is null or param is null" code:-1 userInfo:nil];
-            [LCRequest ReportError:err];
+            std::stringstream ss;
+            ss << "参数为空;method=" << (method?method:"null") << ",param=" << (param?param:"null");
+            [LConnection reportError:ss.str()];
             return;
         }
         
         //将字符串写到缓冲区。
         NSData* jsonData = [[NSString stringWithUTF8String:param] dataUsingEncoding:NSUTF8StringEncoding];
+        if(!jsonData){
+            std::stringstream ss;
+            ss << "NSString转NSData异常;method=" << (method?method:"null") << ",param=" << (param?param:"null");
+            
+            [LConnection reportError:ss.str()];
+            return;
+        }
+        
         //解析json数据，使用系统方法 JSONObjectWithData:  options: error:
-        NSError* error = [[NSError alloc] init];
-        NSDictionary* result = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingMutableLeaves error:&error];
+        NSError* err;
+        NSDictionary* result = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingMutableLeaves error:&err];
         if(result == nil){
-            [LCRequest ReportError:error];
+            [LCRequest ReportError:err];
             return;
         }
         
