@@ -7,7 +7,7 @@
 #include "SimpleBridge.h"
 #include <functional>
 
-typedef std::function<void(const char*,const char*)> FUNCIOS;
+typedef std::function<void(const std::string&,const std::string&)> FUNCIOS;
 
 /*
  这个类用于ios的回调

@@ -91,7 +91,9 @@ static NSLock* sLock = NULL;
 
 +(void)reportError:(std::string)str
 {
-    NSError* err = [NSError errorWithDomain:IM_ERROR_DOMAIN code:-1 userInfo:@{NSLocalizedDescriptionKey : [NSString stringWithUTF8String:str.c_str()]}];
+    //使用普通的initWithUTF8String会导致nstr为空，导致崩溃，这里用下面的函数
+    NSString *nstr = [[NSString alloc]initWithBytes:str.c_str() length:str.length() encoding:NSUTF8StringEncoding];
+    NSError* err = [NSError errorWithDomain:IM_ERROR_DOMAIN code:-1 userInfo:@{NSLocalizedDescriptionKey : nstr?nstr:@"未知NSString"}];
     [LCRequest ReportError:err];
 }
 
@@ -100,25 +102,18 @@ static NSLock* sLock = NULL;
     sLock = [[NSLock alloc] init];
     sLCRequests = [NSMutableArray array];
     
-    FUNCIOS callback = [=](const char* method,const char* param)->void{
-        if(!method || !param){
-            std::stringstream ss;
-            ss << "参数为空;method=" << (method?method:"null") << ",param=" << (param?param:"null");
-            [LConnection reportError:ss.str()];
-            return;
-        }
-        
+    FUNCIOS callback = [=](const std::string& method,const std::string& param)->void{
         //将字符串写到缓冲区。
-        NSData* jsonData = [[NSString stringWithUTF8String:param] dataUsingEncoding:NSUTF8StringEncoding];
+        NSData* jsonData = [[NSString stringWithUTF8String:param.c_str()] dataUsingEncoding:NSUTF8StringEncoding];
         if(!jsonData){//判断有没有转换成功
             std::stringstream ss;
-            ss << "NSString转NSData异常;method=" << (method?method:"null") << ",param=" << (param?param:"null");
+            ss << "NSString转NSData异常;method=" << method << ",param=" << param;
             
             [LConnection reportError:ss.str()];//向上报错
 //            return;
             
             //运行lossy转换
-            jsonData = [[NSString stringWithUTF8String:param] dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:YES];
+            jsonData = [[NSString stringWithUTF8String:param.c_str()] dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:YES];
             
             if(!jsonData)//再判断一次
                 return;
@@ -143,20 +138,20 @@ static NSLock* sLock = NULL;
             
 //            LOGI("for method = %s , request method = %s",method,request.mMethod.UTF8String);
             
-            if ([request.mMethod caseInsensitiveCompare:@"connectLobby" ] == NSOrderedSame && (strcmp(method, "onLobbyTunnelConnectSuccess") == 0
-                                                                      || strcmp(method , "onLobbyTunnelConnectTimeout" ) == 0|| strcmp(method , "onLobbyTunnelConnectError")==0
-                                                                      || strcmp(method , "onLobbyTunnelClose")==0 || strcmp(method , "onLobbyTunnelError")==0 || strcmp(method,"driveAway") == 0)) {
+            if ([request.mMethod caseInsensitiveCompare:@"connectLobby" ] == NSOrderedSame && (strcmp(method.c_str(), "onLobbyTunnelConnectSuccess") == 0
+                                                                      || strcmp(method.c_str() , "onLobbyTunnelConnectTimeout" ) == 0|| strcmp(method.c_str() , "onLobbyTunnelConnectError")==0
+                                                                      || strcmp(method.c_str() , "onLobbyTunnelClose")==0 || strcmp(method.c_str() , "onLobbyTunnelError")==0 || strcmp(method.c_str(),"driveAway") == 0)) {
                 //优先移除监听
                 if (request.mAutoRemove) {//写在判断里面是因为必须找到对应的回调才能移除，否则依旧继续监听
                 //检查是否需要移除当前监听
                     [sLCRequests removeObject:request];
                 }
                 
-                if (strcmp(method , "onLobbyTunnelConnectSuccess") == 0) {
+                if (strcmp(method.c_str() , "onLobbyTunnelConnectSuccess") == 0) {
                     dispatch_async(dispatch_get_main_queue(), ^{//分发到主线程
                         request.mResponse(RESPONSE_SUCCESS, nil, 0, nil);
                     });
-                } else if (strcmp(method , "onLobbyTunnelClose") == 0 || strcmp(method,"driveAway") == 0) {
+                } else if (strcmp(method.c_str() , "onLobbyTunnelClose") == 0 || strcmp(method.c_str(),"driveAway") == 0) {
                     dispatch_async(dispatch_get_main_queue(), ^{
                         request.mResponse(RESPONSE_CLOSED, nil, code, nil);
                     });
@@ -166,7 +161,7 @@ static NSLock* sLock = NULL;
                     });
                 }
             }
-            else if(strcmp(request.mMethod.UTF8String, "login") == 0 && strcmp(method , "onLobbyTunnelError")==0){
+            else if(strcmp(request.mMethod.UTF8String, "login") == 0 && strcmp(method.c_str() , "onLobbyTunnelError")==0){
                 
                 //优先移除监听
                 if (request.mAutoRemove) {
@@ -179,8 +174,8 @@ static NSLock* sLock = NULL;
                     request.mResponse(RESPONSE_FAILED, nil, code, result[RESULT_REQUEST]);
                 });
             }
-            else if(strcmp(request.mMethod.UTF8String, "roomUser") == 0 && (strcmp(method , "roomUser")==0 ||
-                strcmp(method , "enterRoom")==0 || strcmp(method , "exitRoom")==0)){
+            else if(strcmp(request.mMethod.UTF8String, "roomUser") == 0 && (strcmp(method.c_str() , "roomUser")==0 ||
+                strcmp(method.c_str() , "enterRoom")==0 || strcmp(method.c_str() , "exitRoom")==0)){
                 
                 //优先移除监听
                 if (request.mAutoRemove) {
@@ -189,7 +184,7 @@ static NSLock* sLock = NULL;
                 }
                 
                 NSDictionary* data = nil;
-                if (strcmp(method , "enterRoom")==0 ) {
+                if (strcmp(method.c_str() , "enterRoom")==0 ) {
                     //RESULT_ARG0 是room_id
                     NSString* strType =result[RESULT_ARG2];
                     //默认当初是普通用户
@@ -202,7 +197,7 @@ static NSLock* sLock = NULL;
 
                     data = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:YES],@"is_enter",result[RESULT_ARG0]
                         ,@"room_id",users,@"uids",nil];
-                } else if(strcmp(method , "exitRoom")==0){
+                } else if(strcmp(method.c_str() , "exitRoom")==0){
                     NSDictionary* user = [NSDictionary dictionaryWithObjectsAndKeys:result[RESULT_ARG0],@"uid",[NSNumber numberWithInteger:-1],@"type", nil];
                     NSArray* users = [[NSArray alloc] initWithObjects:user, nil];
                     data = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:NO],@"is_enter",result[RESULT_ARG0]
@@ -231,7 +226,7 @@ static NSLock* sLock = NULL;
                     request.mResponse(RESPONSE_SUCCESS, data, 0, nil);
                 });
             }
-            else if (strcmp(request.mMethod.UTF8String, method) == 0) {
+            else if (strcmp(request.mMethod.UTF8String, method.c_str()) == 0) {
 
                 //优先移除监听
                 if (request.mAutoRemove) {
@@ -240,11 +235,11 @@ static NSLock* sLock = NULL;
                 }
 
                 if (code == 0) {
-                    if (strcmp(method , "login") == 0) {
+                    if (strcmp(method.c_str() , "login") == 0) {
                         dispatch_async(dispatch_get_main_queue(), ^{
                             request.mResponse(RESPONSE_SUCCESS, nil, 0, nil);
                         });
-                    } else if (strcmp(method , "sayTo") == 0) {
+                    } else if (strcmp(method.c_str() , "sayTo") == 0) {
                         id param4 = result[RESULT_ARG4];
                         NSDictionary* data = [NSDictionary dictionaryWithObjectsAndKeys:result[RESULT_ARG0]
                         ,@"type",result[RESULT_ARG1],@"from",result[RESULT_ARG2],@"to",result[RESULT_ARG3],@"content",@"ext",param4 == nil?@"":param4, nil];
@@ -252,21 +247,21 @@ static NSLock* sLock = NULL;
                         dispatch_async(dispatch_get_main_queue(), ^{
                             request.mResponse(RESPONSE_SUCCESS, data, 0, nil);
                         });
-                    } else if (strcmp(method , "notify") == 0) {
+                    } else if (strcmp(method.c_str() , "notify") == 0) {
                         NSDictionary* data = [NSDictionary dictionaryWithObjectsAndKeys:result[RESULT_ARG0]
                                               ,@"from",result[RESULT_ARG1],@"content", nil];
                         
                         dispatch_async(dispatch_get_main_queue(), ^{
                             request.mResponse(RESPONSE_SUCCESS, data, 0, nil);
                         });
-                    } else if (strcmp(method , "enterRoom") == 0) {
+                    } else if (strcmp(method.c_str() , "enterRoom") == 0) {
                         NSDictionary* data = [NSDictionary dictionaryWithObjectsAndKeys:result[RESULT_ARG0]
                                               ,@"room_id",result[RESULT_ARG1],@"uid", nil];
                         
                         dispatch_async(dispatch_get_main_queue(), ^{
                             request.mResponse(RESPONSE_SUCCESS, data, 0, nil);
                         });
-                    } else if (strcmp(method , "exitRoom") == 0) {
+                    } else if (strcmp(method.c_str() , "exitRoom") == 0) {
                         NSDictionary* data = [NSDictionary dictionaryWithObjectsAndKeys:result[RESULT_ARG0]                                              ,@"uid", nil];
                         
                         dispatch_async(dispatch_get_main_queue(), ^{
